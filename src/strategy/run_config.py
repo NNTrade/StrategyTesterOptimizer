@@ -5,13 +5,22 @@ from itertools import product
 
 
 class RunConfig:
+    # TODO: [FI-82] Описать RunConfig
+    """configuration of single strategy run
+    """
+
+    def __init__(self) -> None:
+        pass
+
+
+class RunConfigSet:
     """Container of testing or optimization running config
 
     """
     @staticmethod
-    def buildSameTradeInterval(stock_list: List[str], from_date: date, untill_date: date, parameters: Dict[str, Iterable] = {}, validation_func: Callable[[Dict], bool] = lambda config: True) -> RunConfig:
+    def buildSameTradeInterval(stock_list: List[str], from_date: date, untill_date: date, parameters: Dict[str, Iterable] = {}, validation_func: Callable[[Dict], bool] = lambda config: True) -> RunConfigSet:
         stocks_dic = {s: (from_date, untill_date) for s in stock_list}
-        return RunConfig(stocks_dic, parameters, validation_func)
+        return RunConfigSet(stocks_dic, parameters, validation_func)
 
     def __init__(self, stocks: Dict[str, Tuple[date, date]], parameters: Dict[str, Iterable] = {}, validation_func: Callable[[Dict], bool] = lambda config: True) -> None:
         for from_date, untill_date in stocks.values():

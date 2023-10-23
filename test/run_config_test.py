@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.run_config import RunConfig, date
+from src.strategy.run_config import RunConfigSet, date
 
 
 class RunConfig_TestCase(unittest.TestCase):
@@ -11,7 +11,7 @@ class RunConfig_TestCase(unittest.TestCase):
 
     def test_WHEN_build_with_same_time_interval_THEN_get_correct_instance(self):
         # Array
-        rc = RunConfig.buildSameTradeInterval(
+        rc = RunConfigSet.buildSameTradeInterval(
             ["s1", "s2"], date(2020, 1, 1), date(2021, 1, 1))
         # Act
         assertedConfig = rc.stocks
@@ -29,7 +29,7 @@ class RunConfig_TestCase(unittest.TestCase):
             "s1": (date(2020, 1, 1), date(2021, 1, 1)),
             "s2": (date(2022, 1, 1), date(2023, 1, 1))
         }
-        rc = RunConfig(expectedConfig)
+        rc = RunConfigSet(expectedConfig)
         # Act
         assertedConfig = rc.stocks
 
@@ -55,7 +55,7 @@ class RunConfig_TestCase(unittest.TestCase):
 
         # Assert
         with self.assertRaises(AttributeError) as context:
-            rc = RunConfig(expectedConfig)
+            rc = RunConfigSet(expectedConfig)
 
     def test_WHEN_config_is_imutable_THEN_nothing_can_be_changed(self):
         # Array
@@ -63,7 +63,7 @@ class RunConfig_TestCase(unittest.TestCase):
             "s1": (date(2020, 1, 1), date(2021, 1, 1)),
             "s2": (date(2022, 1, 1), date(2023, 1, 1))
         }
-        rc = RunConfig(expectedConfig)
+        rc = RunConfigSet(expectedConfig)
 
         # Act1
         config = rc.stocks
@@ -95,7 +95,7 @@ class RunConfig_TestCase(unittest.TestCase):
             "p1": [2, 3, 5],
             "p2": range(3)
         }
-        rc = RunConfig.buildSameTradeInterval(
+        rc = RunConfigSet.buildSameTradeInterval(
             ["s1", "s2"], date(2020, 1, 1), date(2021, 1, 1), expectedParameters)
 
         # Act
@@ -122,7 +122,7 @@ class RunConfig_TestCase(unittest.TestCase):
             "p1": [2, 3, 5],
             "p2": range(3)
         }
-        rc = RunConfig.buildSameTradeInterval(
+        rc = RunConfigSet.buildSameTradeInterval(
             ["s1", "s2"], date(2020, 1, 1), date(2021, 1, 1), expectedParameters)
 
         # Act
@@ -152,7 +152,7 @@ class RunConfig_TestCase(unittest.TestCase):
             "p1": [2, 3, 5],
             "p2": range(3)
         }
-        rc = RunConfig.buildSameTradeInterval(
+        rc = RunConfigSet.buildSameTradeInterval(
             ["s1", "s2"], date(2020, 1, 1), date(2021, 1, 1), expectedParameters)
 
         # Act
@@ -178,7 +178,7 @@ class RunConfig_TestCase(unittest.TestCase):
             "p1": [2, 3, 5],
             "p2": range(3)
         }
-        rc = RunConfig.buildSameTradeInterval(
+        rc = RunConfigSet.buildSameTradeInterval(
             ["s1", "s2"], date(2020, 1, 1), date(2021, 1, 1), expectedParameters, lambda conf: not (conf["p1"] == 3 and conf["p2"] == 2))
 
         # Act
