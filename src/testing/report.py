@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Dict
 from datetime import date
-from ..strategy.RunReport import RunReport
+from ..strategy.run_report import Report
 from ..strategy.run_config import RunConfigSet
 
 
@@ -55,7 +55,7 @@ class TesterReport:
         """Factory of Testing stage report
         """
 
-        def __init__(self, strategy_report_factory: RunReport.Factory) -> None:
+        def __init__(self, strategy_report_factory: Report.Factory) -> None:
             self.__srf = strategy_report_factory
             pass
 
@@ -70,7 +70,7 @@ class TesterReport:
             """
             trb = TesterReport.Builder()
             for rec in run_config_set.records:
-                srr: RunReport = self.__srf.get(rec)
+                srr: Report = self.__srf.get(rec)
                 trb.add(srr)
 
             return trb.build()
@@ -82,7 +82,7 @@ class TesterReport:
         def __init__(self):
             pass
 
-        def add(self, strategy_run_report: RunReport):
+        def add(self, strategy_run_report: Report):
             """Add strategy run report to testing stage report
 
             Args:
