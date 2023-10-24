@@ -21,7 +21,7 @@ class RunConfig_TestCase(unittest.TestCase):
     self.assertIn("A", rc.stock_list)
     self.assertIn("B", rc.stock_list)
     self.assertEqual(date(2020, 1, 1), rc.from_date)
-    self.assertEqual(date(2021, 1, 1), rc.until_date)
+    self.assertEqual(date(2021, 1, 1), rc.till_date)
     self.assertEqual(2, len(rc.parameters.keys()))
     self.assertEqual(1, rc.parameters["p1"])
     self.assertEqual(2, rc.parameters["p2"])
@@ -39,7 +39,7 @@ class RunConfig_TestCase(unittest.TestCase):
     with self.assertRaises(AttributeError):
       rc.from_date = date(2020, 1, 2)
     with self.assertRaises(AttributeError):
-      rc.until_date = date(2021, 1, 2)
+      rc.till_date = date(2021, 1, 2)
     with self.assertRaises(TypeError):
       rc.parameters["p1"] = 2
     with self.assertRaises(AttributeError):
@@ -50,7 +50,7 @@ class RunConfig_TestCase(unittest.TestCase):
     self.assertIn("A", rc.stock_list)
     self.assertIn("B", rc.stock_list)
     self.assertEqual(date(2020, 1, 1), rc.from_date)
-    self.assertEqual(date(2021, 1, 1), rc.until_date)
+    self.assertEqual(date(2021, 1, 1), rc.till_date)
     self.assertEqual(2, len(rc.parameters.keys()))
     self.assertEqual(1, rc.parameters["p1"])
     self.assertEqual(2, rc.parameters["p2"])

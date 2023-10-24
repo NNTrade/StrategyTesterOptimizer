@@ -7,13 +7,13 @@ from ..strategy.run_config import RunConfigSet
 
 class ParameterSetReport:
     class Key:
-        def __init__(self, stock: str, from_date: date, untill_date: date, parameters: Dict) -> None:
+        def __init__(self, stock: str, from_date: date, till_date: date, parameters: Dict) -> None:
             self._stock = stock
             self._from_date = from_date
-            self._untill_date = untill_date
+            self._till_date = till_date
             self._parameters = parameters
             self.__hash = hash(
-                (self.stock, self.from_date, self.until_date, frozenset(self.parameters.items())))
+                (self.stock, self.from_date, self.till_date, frozenset(self.parameters.items())))
 
         @property
         def stock(self):
@@ -24,8 +24,8 @@ class ParameterSetReport:
             return self._from_date
 
         @property
-        def until_date(self):
-            return self._untill_date
+        def till_date(self):
+            return self._till_date
 
         @property
         def parameters(self):
@@ -34,7 +34,7 @@ class ParameterSetReport:
         def __eq__(self, other):
             if not isinstance(other, ParameterSetReport.Key):
                 return False
-            return (self.stock, self.from_date, self.until_date, self.parameters) == (other.stock, other.from_date, other.until_date, other.parameters)
+            return (self.stock, self.from_date, self.till_date, self.parameters) == (other.stock, other.from_date, other.till_date, other.parameters)
 
         def __hash__(self):
             return self.__hash
