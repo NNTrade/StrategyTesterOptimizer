@@ -8,7 +8,6 @@ from dataclasses import dataclass
 
 @dataclass(unsafe_hash=True)
 class RunConfig:
-    # TODO: [FI-82] Описать RunConfig
     """configuration of single strategy run
     """
 
