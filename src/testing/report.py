@@ -1,19 +1,19 @@
 from __future__ import annotations
 from typing import Dict
 from datetime import date
-from ..strategy.RunReport import RunReport
+from ..strategy.run_report import Report
 from ..strategy.run_config import RunConfigSet
 
 
 class ParameterSetReport:
     class Key:
-        def __init__(self, stock: str, from_date: date, untill_date: date, parameters: Dict) -> None:
+        def __init__(self, stock: str, from_date: date, till_date: date, parameters: Dict) -> None:
             self._stock = stock
             self._from_date = from_date
-            self._untill_date = untill_date
+            self._till_date = till_date
             self._parameters = parameters
             self.__hash = hash(
-                (self.stock, self.from_date, self.until_date, frozenset(self.parameters.items())))
+                (self.stock, self.from_date, self.till_date, frozenset(self.parameters.items())))
 
         @property
         def stock(self):
@@ -24,8 +24,8 @@ class ParameterSetReport:
             return self._from_date
 
         @property
-        def until_date(self):
-            return self._untill_date
+        def till_date(self):
+            return self._till_date
 
         @property
         def parameters(self):
@@ -34,7 +34,7 @@ class ParameterSetReport:
         def __eq__(self, other):
             if not isinstance(other, ParameterSetReport.Key):
                 return False
-            return (self.stock, self.from_date, self.until_date, self.parameters) == (other.stock, other.from_date, other.until_date, other.parameters)
+            return (self.stock, self.from_date, self.till_date, self.parameters) == (other.stock, other.from_date, other.till_date, other.parameters)
 
         def __hash__(self):
             return self.__hash
@@ -55,7 +55,7 @@ class TesterReport:
         """Factory of Testing stage report
         """
 
-        def __init__(self, strategy_report_factory: RunReport.Factory) -> None:
+        def __init__(self, strategy_report_factory: Report.Factory) -> None:
             self.__srf = strategy_report_factory
             pass
 
@@ -70,7 +70,7 @@ class TesterReport:
             """
             trb = TesterReport.Builder()
             for rec in run_config_set.records:
-                srr: RunReport = self.__srf.get(rec)
+                srr: Report = self.__srf.get(rec)
                 trb.add(srr)
 
             return trb.build()
@@ -82,7 +82,7 @@ class TesterReport:
         def __init__(self):
             pass
 
-        def add(self, strategy_run_report: RunReport):
+        def add(self, strategy_run_report: Report):
             """Add strategy run report to testing stage report
 
             Args:

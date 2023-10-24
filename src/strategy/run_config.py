@@ -11,11 +11,11 @@ class RunConfig:
     """configuration of single strategy run
     """
 
-    def __init__(self, stock_list: List[str], from_date: date, until_date: date, parameters: Dict = {}):
+    def __init__(self, stock_list: List[str], from_date: date, till_date: date, parameters: Dict = {}):
         # Convert to a tuple to make it immutable
         self._stock_list = tuple(stock_list)
         self._from_date = from_date
-        self._until_date = until_date
+        self._till_date = till_date
         self._parameters = MappingProxyType(parameters)
 
     @property
@@ -27,8 +27,8 @@ class RunConfig:
         return self._from_date
 
     @property
-    def until_date(self) -> date:
-        return self._until_date
+    def till_date(self) -> date:
+        return self._till_date
 
     @property
     def parameters(self) -> Dict:
@@ -39,13 +39,13 @@ class RunConfigSet:
 
     """
     @staticmethod
-    def buildSameTradeInterval(stock_list: List[str], from_date: date, untill_date: date, parameters: Dict[str, Iterable] = {}, validation_func: Callable[[Dict], bool] = lambda config: True) -> RunConfigSet:
-        stocks_dic = {s: (from_date, untill_date) for s in stock_list}
+    def buildSameTradeInterval(stock_list: List[str], from_date: date, till_date: date, parameters: Dict[str, Iterable] = {}, validation_func: Callable[[Dict], bool] = lambda config: True) -> RunConfigSet:
+        stocks_dic = {s: (from_date, till_date) for s in stock_list}
         return RunConfigSet(stocks_dic, parameters, validation_func)
 
     def __init__(self, stocks: Dict[str, Tuple[date, date]], parameters: Dict[str, Iterable] = {}, validation_func: Callable[[Dict], bool] = lambda config: True) -> None:
-        for from_date, untill_date in stocks.values():
-            if from_date >= untill_date:
+        for from_date, till_date in stocks.values():
+            if from_date >= till_date:
                 raise AttributeError("From date must be less then untill date")
 
         self.__stocks = stocks
