@@ -1,4 +1,4 @@
-from .. import Strategy
+from ..absStrategy import absStrategy
 from ..run_config import RunConfig
 from .report import Report
 from .storage import Storage
@@ -8,14 +8,14 @@ class Factory:
     """Factory for producing Reports of strategy run by RunConfig
     """
 
-    def __init__(self, strategy_factory: Strategy.Factory, report_storage: Storage = None) -> None:
+    def __init__(self, strategy_factory: absStrategy.Factory, report_storage: Storage = None) -> None:
         """Constructor
 
         Args:
             strategy_factory (Strategy.Factory): Strategy factory
             report_storage (Storage, optional): Run report storage. Defaults to None.
         """
-        self.__strategy_factory: Strategy.Factory = strategy_factory
+        self.__strategy_factory: absStrategy.Factory = strategy_factory
         self.__report_storage: Storage = report_storage
         pass
 

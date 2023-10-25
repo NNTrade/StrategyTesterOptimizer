@@ -2,17 +2,18 @@ from __future__ import annotations
 from typing import Dict, List, Union
 import unittest
 import logging
-from src.strategy.run_report import Report, Strategy, RunConfig, Deal, Factory, Storage
+from src.strategy.absStrategy import absStrategy
+from src.strategy.run_report import Report, RunConfig, Deal, Factory, Storage
 from datetime import date, datetime, timedelta
 
 
-class RunReport_Factory_TestCase(unittest.TestCase):
+class Factory_TestCase(unittest.TestCase):
 
     logger = logging.getLogger(__name__)
     logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
-    class FakeStr(Strategy):
+    class FakeStr(absStrategy):
         def __init__(self) -> None:
             self._capital_log = {}
             self._deal = []
@@ -37,16 +38,16 @@ class RunReport_Factory_TestCase(unittest.TestCase):
         def deal_list(self) -> List[Deal]:
             return self._deal.copy()
 
-    class FakeFactory(Strategy.Factory):
+    class FakeFactory(absStrategy.Factory):
         def __init__(self) -> None:
             super().__init__()
 
-        def build(self, parameters: Dict) -> Strategy:
-            return RunReport_Factory_TestCase.FakeStr()
+        def build(self, parameters: Dict) -> absStrategy:
+            return Factory_TestCase.FakeStr()
 
     def test_WHEN_request_report_THEN_get_correct_report(self):
         # Array
-        ff = RunReport_Factory_TestCase.FakeFactory()
+        ff = Factory_TestCase.FakeFactory()
         rrf = Factory(ff)
         rc = RunConfig(["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5))
 
@@ -75,7 +76,7 @@ class RunReport_Factory_TestCase(unittest.TestCase):
     def test_WHEN_report_storage_has_report_THEN_return_it(self):
         # Array
         rc = RunConfig(["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5))
-        expected_run_report = Report(RunReport_Factory_TestCase.FakeStr().run(
+        expected_run_report = Report(Factory_TestCase.FakeStr().run(
             rc.stock_list, date(2020, 1, 1), date(2020, 1, 2)))
 
         class ReportStorage(Storage):
@@ -83,7 +84,7 @@ class RunReport_Factory_TestCase(unittest.TestCase):
                 if run_config == rc:
                   return expected_run_report
         rs = ReportStorage()
-        ff = RunReport_Factory_TestCase.FakeFactory()
+        ff = Factory_TestCase.FakeFactory()
         rrf = Factory(ff, rs)
 
         # Act
