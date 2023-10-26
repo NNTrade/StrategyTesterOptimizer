@@ -1,4 +1,4 @@
-from ..run_config import RunConfig
+from ..run_config.run_config import RunConfig
 from .report import Report
 from abc import ABC
 from typing import Union

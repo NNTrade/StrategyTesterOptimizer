@@ -1,5 +1,5 @@
 from ..absStrategy import absStrategy
-from ..run_config import RunConfig
+from ..run_config.run_config import RunConfig
 from .report import Report
 from .storage import Storage
 

@@ -19,12 +19,12 @@ class Factory_TestCase(unittest.TestCase):
             self._deal = []
             super().__init__()
 
-        def run(self, stock_list: List[str], from_date: date, till_date: date):
+        def run(self, stock_list: List[str], from_date: date, untill_date: date):
             cur_d = from_date
             cap = 1
             self._deal.append(
                 Deal(cur_d, cap, cur_d+timedelta(days=2), cap+1, cap))
-            while cur_d < till_date:
+            while cur_d < untill_date:
                 self._capital_log[cur_d] = cap
                 cap = cap + 1
                 cur_d = cur_d + timedelta(days=1)

@@ -1,7 +1,7 @@
 from dataclasses import FrozenInstanceError
 import unittest
 import logging
-from src.strategy.run_config import RunConfig, date
+from src.strategy.run_config.run_config import RunConfig, date
 
 
 class RunConfig_TestCase(unittest.TestCase):

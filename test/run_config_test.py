@@ -1,6 +1,7 @@
 import unittest
 import logging
-from src.strategy.run_config import RunConfigSet, date
+from src.strategy.run_config.run_config_set import RunConfigSet
+from src.strategy.run_config.run_config import date
 
 
 class RunConfig_TestCase(unittest.TestCase):
@@ -101,7 +102,7 @@ class RunConfig_TestCase(unittest.TestCase):
         # Act
 
         # Assert
-        assertedParameters = rc.parameters
+        assertedParameters = rc.strategy_parameters
         self.assertEqual(2, len(assertedParameters))
 
         p1 = assertedParameters["p1"]
@@ -127,11 +128,11 @@ class RunConfig_TestCase(unittest.TestCase):
 
         # Act
 
-        rc.parameters["p3"] = [3, 5]
-        rc.parameters["p1"][0] = 99
+        rc.strategy_parameters["p3"] = [3, 5]
+        rc.strategy_parameters["p1"][0] = 99
 
         # Assert
-        assertedParameters = rc.parameters
+        assertedParameters = rc.strategy_parameters
         self.assertEqual(2, len(assertedParameters))
 
         p1 = assertedParameters["p1"]
@@ -156,7 +157,7 @@ class RunConfig_TestCase(unittest.TestCase):
             ["s1", "s2"], date(2020, 1, 1), date(2021, 1, 1), expectedParameters)
 
         # Act
-        records = rc.records
+        records = rc.parameters_as_records
 
         # Assert
         self.assertEqual(9, len(records))
@@ -182,7 +183,7 @@ class RunConfig_TestCase(unittest.TestCase):
             ["s1", "s2"], date(2020, 1, 1), date(2021, 1, 1), expectedParameters, lambda conf: not (conf["p1"] == 3 and conf["p2"] == 2))
 
         # Act
-        records = rc.records
+        records = rc.parameters_as_records
 
         # Assert
         self.assertEqual(8, len(records))
