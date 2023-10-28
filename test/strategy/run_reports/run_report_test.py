@@ -40,7 +40,7 @@ class Report_TestCase(unittest.TestCase):
 
         # Assert
         with self.assertRaises(AttributeError) as context:
-            RunReport(used_str)
+            RunReport.build_from_strategy(used_str)
 
     def test_WHEN_give_cap_in_wrong_order_THEN_correct_return_order(self):
         # Array
@@ -50,7 +50,7 @@ class Report_TestCase(unittest.TestCase):
             datetime(2023, 9, 2): 15.7,
         }
         used_str = Report_TestCase.FakeStr().set_cap(expected_cap)
-        asserted_rep = RunReport(used_str)
+        asserted_rep = RunReport.build_from_strategy(used_str)
 
         # Act
         asserted_cap_log = asserted_rep.abs_capital_log
@@ -68,3 +68,78 @@ class Report_TestCase(unittest.TestCase):
 
         self.assertEqual(datetime(2023, 9, 3), asserted_cap_log_as_list[2][0])
         self.assertEqual(12.2, asserted_cap_log_as_list[2][1])
+
+    def test_WHEN_equals_or_hash_THEN_correct_return(self):
+        # Array
+
+        base_rr = RunReport({datetime(2023, 9, 1): 10.5,
+                             datetime(2023, 9, 3): 12.2,
+                             datetime(2023, 9, 2): 15.7,
+                             },
+                            [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)])
+
+        equal_rr_arr = [
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+            RunReport({datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 2): 15.7,
+                       datetime(2023, 9, 3): 12.2,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3), Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3)])
+        ]
+
+        not_equal_rr_arr = [
+            RunReport({datetime(2023, 9, 1): 10.1,
+                       datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 4): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3)]),
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 2, datetime(2023, 9, 3), 2, 3)]),
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3, -1)]),
+            RunReport({datetime(2023, 9, 1): 10.5,
+                       datetime(2023, 9, 3): 12.2,
+                       datetime(2023, 9, 2): 15.7,
+                       },
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 4), 2, 3)])
+        ]
+        # Act
+
+        # Assert
+        for eq_rr in equal_rr_arr:
+            self.assertEqual(hash(base_rr), hash(eq_rr), msg=eq_rr)
+            self.assertEqual(base_rr, eq_rr, msg=eq_rr)
+
+        for not_eq_rr in not_equal_rr_arr:
+            self.assertNotEqual(hash(base_rr), hash(not_eq_rr), msg=not_eq_rr)
+            self.assertNotEqual(base_rr, not_eq_rr, msg=not_eq_rr)

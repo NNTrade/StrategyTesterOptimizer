@@ -1,9 +1,17 @@
-from dataclasses import dataclass
+from typing import Dict
 from datetime import datetime
 
 
-@dataclass(unsafe_hash=True)
 class Deal:
+    OPEN_DATE_F = "open_date"
+    OPEN_PRICE_F = "open_price"
+    CLOSE_DATE_F = "close_date"
+    CLOSE_PRICE_F = "close_price"
+    AMOUNT_F = "amount"
+    COMMISSION_OPEN_F = "commission_open"
+    COMMISSION_CLOSE_F = "commission_close"
+    COMMISSION_HOLDING_F = "commission_holding"
+
     def __init__(self, open_date: datetime,
                  open_price: float,
                  close_date: datetime,
@@ -78,3 +86,42 @@ class Deal:
     @property
     def result(self) -> float:
         return self.__result
+
+    def to_dict(self) -> Dict:
+        return {
+            self.OPEN_DATE_F: self.open_date,
+            self.OPEN_PRICE_F: self.open_price,
+            self.CLOSE_DATE_F: self.close_date,
+            self.CLOSE_PRICE_F: self.close_price,
+            self.AMOUNT_F: self.amount,
+            self.COMMISSION_OPEN_F: self.commission_open,
+            self.COMMISSION_CLOSE_F: self.commission_close,
+            self.COMMISSION_HOLDING_F: self.commission_holding,
+        }
+
+    def __hash__(self):
+        # Create a hash based on a tuple of hashable attributes
+        return hash(tuple(self.to_dict().values()))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Deal):
+            return False
+        return self.to_dict() == other.to_dict()
+
+    def __lt__(self, other):
+        # Custom less-than comparison for sorting
+        key_order = [
+            self.OPEN_DATE_F, self.CLOSE_DATE_F, self.AMOUNT_F,
+            self.OPEN_PRICE_F, self.CLOSE_PRICE_F,
+            self.COMMISSION_OPEN_F, self.COMMISSION_CLOSE_F, self.COMMISSION_HOLDING_F
+        ]
+        for key in key_order:
+            if getattr(self, key) != getattr(other, key):
+                return getattr(self, key) > getattr(other, key)
+        return False
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    def __repr__(self):
+        return self.__str__()

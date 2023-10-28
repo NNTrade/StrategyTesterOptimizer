@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.strategy.run_config import RunConfigSet, MarketConfigSet, StrategyConfigSet, date
+from src.strategy.run_config import RunConfigSet, MarketConfigSet, StrategyConfigSet, date, StrategyId
 
 
 class RunConfigSets_TestCase(unittest.TestCase):
@@ -11,13 +11,14 @@ class RunConfigSets_TestCase(unittest.TestCase):
 
     def test_WHEN_build_records_THEN_get_correct_list(self):
         # Array
+        si = StrategyId("test", "0.0.1")
         mcs = MarketConfigSet.Builder()\
             .add_stocks(["S1", "S2"], date(2020, 1, 1), date(2021, 1, 1))\
             .add_stock("S3", date(2022, 1, 1), date(2023, 1, 1))\
             .build()
         scs = StrategyConfigSet.Builder().add_set(
             "A", [1, 2, 3]).add_set("B", [4, 5, 6]).add_validation_func(lambda rec: rec != {"A": 2, "B": 4}).build()
-        rcs = RunConfigSet(mcs, scs)
+        rcs = RunConfigSet(si, mcs, scs)
 
         # Act
         asserted_list = rcs.as_records()
@@ -26,6 +27,7 @@ class RunConfigSets_TestCase(unittest.TestCase):
         self.assertEqual(16, len(asserted_list))
 
         i = 0
+        self.assertEqual(si, asserted_list[i].strategy_id)
         self.assertEqual(["S1", "S2"], asserted_list[i].market_cfg.stocks)
         self.assertEqual(date(2020, 1, 1),
                          asserted_list[i].market_cfg.from_date)
@@ -34,6 +36,7 @@ class RunConfigSets_TestCase(unittest.TestCase):
         self.assertEqual({"A": 1, "B": 4},  asserted_list[i].strategy_cfg)
 
         i = 8
+        self.assertEqual(si, asserted_list[i].strategy_id)
         self.assertEqual(["S3"], asserted_list[i].market_cfg.stocks)
         self.assertEqual(date(2022, 1, 1),
                          asserted_list[i].market_cfg.from_date)
@@ -43,7 +46,8 @@ class RunConfigSets_TestCase(unittest.TestCase):
 
     def test_WHEN_build_with_same_time_interval_THEN_get_correct_instance(self):
         # Array
-        rc = RunConfigSet(MarketConfigSet.Builder().add_stocks_set(
+        si = StrategyId("test", "0.0.1")
+        rc = RunConfigSet(si, MarketConfigSet.Builder().add_stocks_set(
             [["s1"], ["s2"]], date(2020, 1, 1), date(2021, 1, 1)).build())
         # Act
         assertedConfig = rc.market_cfg_set.as_records()

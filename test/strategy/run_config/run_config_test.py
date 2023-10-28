@@ -1,7 +1,7 @@
 from dataclasses import FrozenInstanceError
 import unittest
 import logging
-from src.strategy.run_config import RunConfig, date, MarketConfig, StrategyConfig
+from src.strategy.run_config import RunConfig, date, MarketConfig, StrategyConfig, StrategyId
 
 
 class RunConfig_TestCase(unittest.TestCase):
@@ -12,11 +12,13 @@ class RunConfig_TestCase(unittest.TestCase):
 
     def test_WHEN_construct_THEN_construct_correctly(self):
         # Array
-        rc = RunConfig(MarketConfig(("A", "B"), date(2020, 1, 1),
+        si = StrategyId("test", "0.0.1")
+        rc = RunConfig(si, MarketConfig(("A", "B"), date(2020, 1, 1),
                        date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2}))
         # Act
 
         # Assert
+        self.assertEqual(si, rc.strategy_id)
         self.assertEqual(2, len(rc.market_cfg.stocks))
         self.assertIn("A", rc.market_cfg.stocks)
         self.assertIn("B", rc.market_cfg.stocks)
@@ -28,7 +30,8 @@ class RunConfig_TestCase(unittest.TestCase):
 
     def test_WHEN_construct_THEN_it_is_imutable(self):
         # Array
-        rc = RunConfig(MarketConfig(["A", "B"], date(2020, 1, 1),
+        si = StrategyId("test", "0.0.1")
+        rc = RunConfig(si, MarketConfig(["A", "B"], date(2020, 1, 1),
                        date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2}))
 
         # Act
@@ -45,6 +48,7 @@ class RunConfig_TestCase(unittest.TestCase):
             rc.strategy_cfg = {"p3": 3}
 
         # Assert
+        self.assertEqual(si, rc.strategy_id)
         self.assertEqual(2, len(rc.market_cfg.stocks))
         self.assertIn("A", rc.market_cfg.stocks)
         self.assertIn("B", rc.market_cfg.stocks)
@@ -56,13 +60,39 @@ class RunConfig_TestCase(unittest.TestCase):
 
     def test_WHEN_hash_or_equal_compare_THEN_compare_correctly(self):
         # Array
-        rc1 = RunConfig(MarketConfig(["A", "B"], date(2020, 1, 1),
+        si = StrategyId("test", "0.0.1")
+        rc1 = RunConfig(si,MarketConfig(["A", "B"], date(2020, 1, 1),
                         date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2}))
-        rc2 = RunConfig(MarketConfig(["A", "B"], date(2020, 1, 1),
+        rc2 = RunConfig(StrategyId("test", "0.0.1"), MarketConfig(["A", "B"], date(2020, 1, 1),
                         date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2}))
+        wrong_rc_arr = [
+            RunConfig(si,MarketConfig(["A", "b"], date(2020, 1, 1),
+                                   date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2})),
+            RunConfig(si,MarketConfig(["A", "B"], date(2020, 1, 2),
+                                   date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2})),
+            RunConfig(si,MarketConfig(["A", "B"], date(2020, 1, 1),
+                                   date(2021, 1, 2)), StrategyConfig({"p1": 1, "p2": 2})),
+            RunConfig(si,MarketConfig(["A", "B"], date(2020, 1, 1),
+                                   date(2021, 1, 1)), StrategyConfig({"P1": 1, "p2": 2})),
+            RunConfig(si,MarketConfig(["A", "B"], date(2020, 1, 1),
+                                   date(2021, 1, 1)), StrategyConfig({"p1": 2, "p2": 2})),
+            RunConfig(si,MarketConfig(["A", "B"], date(2020, 1, 1),
+                                   date(2021, 1, 1)), StrategyConfig({"p1": 1})),
+            RunConfig(si,MarketConfig(["A", "B"], date(2020, 1, 1),
+                                   date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2, "p3": 3})),
+            RunConfig(si,MarketConfig(["A"], date(2020, 1, 1),
+                                   date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2})),
+            RunConfig(si,MarketConfig(["A", "B", "b"], date(2020, 1, 1),
+                                   date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2})),
+            RunConfig(StrategyId("test", "0.0.2"), MarketConfig(["A", "B"], date(2020, 1, 1),
+                        date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2}))]
         # Act
 
         # Assert
         self.assertEqual(hash(rc1), hash(rc2))
         self.assertEqual(rc1, rc2)
-    
+
+        for wrong_rc in wrong_rc_arr:
+            self.assertNotEqual(hash(rc1), hash(wrong_rc),
+                                msg=wrong_rc)
+            self.assertNotEqual(rc1, wrong_rc)

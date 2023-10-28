@@ -45,3 +45,32 @@ class MarketConfig_TestCase(unittest.TestCase):
 
         with self.assertRaises(AttributeError) as context:
             rc = MarketConfig(["S1", "S2"], date(2021, 1, 1), date(2021, 1, 1))
+
+    def test_WHEN_hash_or_equal_compare_THEN_compare_correctly(self):
+        # Array
+        mc1 = MarketConfig(["A", "B"], date(2020, 1, 1),
+                           date(2021, 1, 1))
+        mc2 = MarketConfig(["A", "B"], date(2020, 1, 1),
+                           date(2021, 1, 1))
+        wrong_mc_arr = [
+            MarketConfig(["A", "b"], date(2020, 1, 1),
+                         date(2021, 1, 1)),
+            MarketConfig(["A", "B"], date(2020, 1, 2),
+                         date(2021, 1, 1)),
+            MarketConfig(["A", "B"], date(2020, 1, 1),
+                         date(2021, 1, 2)),
+            MarketConfig(["A"], date(2020, 1, 1),
+                         date(2021, 1, 1)),
+            MarketConfig(["A", "B", "b"], date(2020, 1, 1),
+                         date(2021, 1, 1))]
+        # Act
+
+        # Assert
+        self.assertEqual(hash(mc1), hash(mc2))
+        self.assertEqual(mc1, mc2)
+
+        for wrong_rc in wrong_mc_arr:
+            self.assertNotEqual(hash(mc1), hash(wrong_rc),
+                                msg=wrong_rc)
+            self.assertNotEqual(mc1, wrong_rc,
+                                msg=wrong_rc)

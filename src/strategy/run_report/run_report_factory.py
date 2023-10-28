@@ -1,14 +1,14 @@
 from ..absStrategyFactory import absStrategyFactory
 from ..run_config.run_config import RunConfig
 from .run_report import RunReport
-from .storage import Storage
+from .storage.abs_run_report_storage import absRunReportStorage
 
 
 class RunReportFactory:
     """Factory for producing Reports of strategy run by RunConfig
     """
 
-    def __init__(self, strategy_factory: absStrategyFactory, report_storage: Storage = None) -> None:
+    def __init__(self, strategy_factory: absStrategyFactory, report_storage: absRunReportStorage = None) -> None:
         """Constructor
 
         Args:
@@ -16,7 +16,7 @@ class RunReportFactory:
             report_storage (Storage, optional): Run report storage. Defaults to None.
         """
         self.__strategy_factory: absStrategyFactory = strategy_factory
-        self.__report_storage: Storage = report_storage
+        self.__report_storage: absRunReportStorage = report_storage
         pass
 
     def get(self, run_config: RunConfig) -> RunReport:

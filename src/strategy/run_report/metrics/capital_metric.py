@@ -2,6 +2,11 @@ from ...absStrategy import Dict, datetime
 
 
 class CapitalMetric:
+    NET_PROFIT_F = "net_profit"
+    NET_PROFIT_MAX_F = "net_profit_max"
+    MAX_FALL_F = "max_fall"
+
+
     def __init__(self, capital_log: Dict[datetime, float]) -> None:
         if len(capital_log) == 0:
             raise AttributeError(
@@ -51,3 +56,25 @@ class CapitalMetric:
             float: max downfall
         """
         return self.__max_fall
+
+    def to_dict(self) -> Dict:
+        return {
+           CapitalMetric.NET_PROFIT_F: self.net_profit,
+           CapitalMetric.NET_PROFIT_MAX_F: self.net_profit_max,
+           CapitalMetric.MAX_FALL_F: self.max_fall
+        }
+
+    def __str__(self):
+        return f"{self.to_dict()}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __hash__(self):
+        # Create a hash based on a tuple of hashable attributes
+        return hash(tuple(self.to_dict().values()))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, CapitalMetric):
+            return False
+        return self.to_dict() == other.to_dict()

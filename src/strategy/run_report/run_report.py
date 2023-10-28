@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 from types import MappingProxyType
 
 from .metrics.metric_container import MetricContainer
@@ -6,7 +7,9 @@ from ..absStrategy import absStrategy, Dict, datetime, Deal, List
 
 
 class RunReport:
-    # TODO: [FI-83] Описать RunReport
+    METRIC_F = "metric",
+    ABS_CAP_LOG_F = "abs_cap_log",
+    DEAL_LIST_F = "deal_list"
     """Report of strategy run
     """
     @property
@@ -38,7 +41,7 @@ class RunReport:
         if len(self.__capital_log) == 0:
             raise AttributeError(
                 "No infarmation about capitol, must be at least one record", name="strategy.abs_capital_log")
-        self.__deal_list = deal_list.copy()
+        self.__deal_list = sorted(deal_list.copy())
 
         self.__metric_cnt = MetricContainer(
             self.__capital_log, self.__deal_list)
@@ -47,3 +50,25 @@ class RunReport:
     @property
     def metrics(self) -> MetricContainer:
         return self.__metric_cnt
+
+    def to_dict(self) -> Dict:
+        return {
+            RunReport.METRIC_F: self.metrics.to_dict(),
+            RunReport.ABS_CAP_LOG_F: self.abs_capital_log,
+            RunReport.DEAL_LIST_F: self.deal_list
+        }
+
+    def __str__(self):
+        return f"{self.to_dict()}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __hash__(self):
+        # Create a hash based on a tuple of hashable attributes
+        return hash(self.metrics) * math.prod([hash(d) for d in self.deal_list]) * hash(frozenset(self.abs_capital_log))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, RunReport):
+            return False
+        return self.to_dict() == other.to_dict()

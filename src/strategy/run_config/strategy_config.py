@@ -1,6 +1,7 @@
 from __future__ import annotations
 from itertools import product
 from typing import Callable, Dict, List, MutableMapping
+from dataclasses import dataclass
 
 
 class StrategyConfig(MutableMapping):
@@ -21,3 +22,6 @@ class StrategyConfig(MutableMapping):
 
     def __len__(self):
         return len(self.__data)
+    def __hash__(self):
+        # Implement a hash value based on the content of your object
+        return hash(frozenset(self.__data.items()))

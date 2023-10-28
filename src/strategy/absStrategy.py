@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .deal import Deal
 from abc import ABC
-from datetime import sdatetime
+from datetime import datetime
 from typing import Dict, List
 from .run_config import MarketConfig
 

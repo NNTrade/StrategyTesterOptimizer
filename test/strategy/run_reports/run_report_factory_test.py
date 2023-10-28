@@ -3,8 +3,9 @@ from typing import Dict, List, Union
 import unittest
 import logging
 from src.strategy.absStrategy import absStrategy
-from src.strategy.run_report import RunReport, RunConfig, Deal, RunReportFactory, Storage
-from src.strategy.run_config import MarketConfig
+from src.strategy.absStrategyFactory import absStrategyFactory
+from src.strategy.run_report import RunReport, RunConfig, Deal, RunReportFactory, absRunReportStorage
+from src.strategy.run_config import MarketConfig, StrategyId
 from datetime import date, datetime, timedelta
 
 
@@ -39,7 +40,7 @@ class Factory_TestCase(unittest.TestCase):
         def deal_list(self) -> List[Deal]:
             return self._deal.copy()
 
-    class FakeFactory(absStrategy.Factory):
+    class FakeFactory(absStrategyFactory):
         def __init__(self) -> None:
             super().__init__()
 
@@ -48,9 +49,10 @@ class Factory_TestCase(unittest.TestCase):
 
     def test_WHEN_request_report_THEN_get_correct_report(self):
         # Array
+        si = StrategyId("test", "0.0.1")
         ff = Factory_TestCase.FakeFactory()
         rrf = RunReportFactory(ff)
-        rc = RunConfig(MarketConfig(
+        rc = RunConfig(si, MarketConfig(
             ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
 
         expected_cap_log = {
@@ -77,15 +79,19 @@ class Factory_TestCase(unittest.TestCase):
 
     def test_WHEN_report_storage_has_report_THEN_return_it(self):
         # Array
-        rc = RunConfig(MarketConfig(
+        si = StrategyId("test", "0.0.1")
+        rc = RunConfig(si, MarketConfig(
             ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
-        expected_run_report = RunReport(
+        expected_run_report = RunReport.build_from_strategy(
             Factory_TestCase.FakeStr().run(rc.market_cfg))
 
-        class ReportStorage(Storage):
-            def try_get(self, run_config: RunConfig) -> RunReport | None:
+        class ReportStorage(absRunReportStorage):
+            def _try_get(self, run_config: RunConfig) -> Union[RunReport, None]:
                 if run_config == rc:
                     return expected_run_report
+
+            def _try_add(self, run_config: RunConfig, run_report: RunReport) -> bool:
+                raise Exception("Unexpected")
         rs = ReportStorage()
         ff = Factory_TestCase.FakeFactory()
         rrf = RunReportFactory(ff, rs)
