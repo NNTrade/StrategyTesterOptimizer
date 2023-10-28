@@ -3,32 +3,22 @@ from types import MappingProxyType
 from typing import List, Dict
 from datetime import date
 from dataclasses import dataclass
-
-
+from .market_config import MarketConfig
+from .strategy_config import StrategyConfig
 @dataclass(unsafe_hash=True)
 class RunConfig:
     """configuration of single strategy run
     """
 
-    def __init__(self, stock_list: List[str], from_date: date, untill_date: date, parameters: Dict = {}):
+    def __init__(self, market_config: MarketConfig, strategy_cfg: StrategyConfig = StrategyConfig()):
         # Convert to a tuple to make it immutable
-        self._stock_list = tuple(stock_list)
-        self._from_date = from_date
-        self._till_date = untill_date
-        self._parameters = MappingProxyType(parameters)
+        self._market_cfg = market_config
+        self._strategy_cfg = strategy_cfg
 
     @property
-    def stock_list(self) -> List[str]:
-        return self._stock_list
+    def market_cfg(self) -> MarketConfig:
+        return self._market_cfg
 
     @property
-    def from_date(self) -> date:
-        return self._from_date
-
-    @property
-    def untill_date(self) -> date:
-        return self._till_date
-
-    @property
-    def parameters(self) -> Dict:
-        return self._parameters
+    def strategy_cfg(self) -> StrategyConfig:
+        return self._strategy_cfg

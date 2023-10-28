@@ -4,6 +4,7 @@ import unittest
 import logging
 from src.strategy.absStrategy import absStrategy
 from src.strategy.run_report import Report, RunConfig, Deal, Factory, Storage
+from src.strategy.run_config import MarketConfig
 from datetime import date, datetime, timedelta
 
 
@@ -19,12 +20,12 @@ class Factory_TestCase(unittest.TestCase):
             self._deal = []
             super().__init__()
 
-        def run(self, stock_list: List[str], from_date: date, untill_date: date):
-            cur_d = from_date
+        def run(self, market_cfg: MarketConfig):
+            cur_d = market_cfg.from_date
             cap = 1
             self._deal.append(
                 Deal(cur_d, cap, cur_d+timedelta(days=2), cap+1, cap))
-            while cur_d < untill_date:
+            while cur_d < market_cfg.untill_date:
                 self._capital_log[cur_d] = cap
                 cap = cap + 1
                 cur_d = cur_d + timedelta(days=1)
@@ -49,7 +50,8 @@ class Factory_TestCase(unittest.TestCase):
         # Array
         ff = Factory_TestCase.FakeFactory()
         rrf = Factory(ff)
-        rc = RunConfig(["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5))
+        rc = RunConfig(MarketConfig(
+            ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
 
         expected_cap_log = {
             date(2020, 1, 1): 1,
@@ -75,14 +77,15 @@ class Factory_TestCase(unittest.TestCase):
 
     def test_WHEN_report_storage_has_report_THEN_return_it(self):
         # Array
-        rc = RunConfig(["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5))
-        expected_run_report = Report(Factory_TestCase.FakeStr().run(
-            rc.stock_list, date(2020, 1, 1), date(2020, 1, 2)))
+        rc = RunConfig(MarketConfig(
+            ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
+        expected_run_report = Report(
+            Factory_TestCase.FakeStr().run(rc.market_cfg))
 
         class ReportStorage(Storage):
             def try_get(self, run_config: RunConfig) -> Report | None:
                 if run_config == rc:
-                  return expected_run_report
+                    return expected_run_report
         rs = ReportStorage()
         ff = Factory_TestCase.FakeFactory()
         rrf = Factory(ff, rs)

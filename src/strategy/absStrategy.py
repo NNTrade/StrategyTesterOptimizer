@@ -3,7 +3,7 @@ from .deal import Deal
 from abc import ABC
 from datetime import date, datetime
 from typing import Dict, List
-
+from .run_config import MarketConfig
 
 class absStrategy(ABC):
   # TODO [FI-85]: Описать abstract Strategy
@@ -23,7 +23,7 @@ class absStrategy(ABC):
   def deal_list(self) -> List[Deal]:
     ...
 
-  def run(self, stock_list: List[str], from_date: date, untill_date: date) -> absStrategy:
+  def run(self, market_cfg: MarketConfig) -> absStrategy:
     """run strategy for maket list on period from_date untill_date
 
     Args:

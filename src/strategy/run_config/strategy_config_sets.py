@@ -1,6 +1,7 @@
 from __future__ import annotations
 from itertools import product
 from typing import Callable, Dict, List, MutableMapping
+from .strategy_config import StrategyConfig
 
 
 class StrategyConfigSets(MutableMapping):
@@ -40,12 +41,12 @@ class StrategyConfigSets(MutableMapping):
     def __len__(self):
         return len(self.__data)
 
-    def as_records(self) -> List[Dict]:
+    def as_records(self) -> List[StrategyConfig]:
         if len(self.__data) == 0:
             return []
         ret_list = [dict(zip(self.__data.keys(), combo))
                     for combo in product(*self.__data.values())]
-        return [r for r in ret_list if self.__is_valid_func(r)]
+        return [StrategyConfig(r) for r in ret_list if self.__is_valid_func(r)]
 
     @property
     def is_valid_func(self) -> Callable[[Dict], bool]:

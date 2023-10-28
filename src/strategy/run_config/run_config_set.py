@@ -3,32 +3,26 @@ from datetime import date
 from itertools import product
 from typing import Callable, Dict, Iterable, List, Tuple
 from .strategy_config_sets import StrategyConfigSets
-
-# TODO [FI-88]: Переделать RunConfigSet
-
+from .market_config_sets import MarketConfigSets
+from .run_config import RunConfig
 
 class RunConfigSet:
-    """Container of testing or optimization running config
-
-    """
-    @staticmethod
-    def buildSameTradeInterval(stock_list: List[str], from_date: date, untill_date: date, strategy_parameters: StrategyConfigSets = StrategyConfigSets()) -> RunConfigSet:
-        stocks_dic = {s: (from_date, untill_date) for s in stock_list}
-        return RunConfigSet(stocks_dic, strategy_parameters)
-
-    def __init__(self, stocks: Dict[str, Tuple[date, date]], strategy_parameters: StrategyConfigSets = StrategyConfigSets()) -> None:
-        for from_date, untill_date in stocks.values():
-            if from_date >= untill_date:
-                raise AttributeError("From date must be less then untill date")
-
-        self.__stocks = stocks
-        self.__parameters = strategy_parameters
+    def __init__(self, market_cfg_set: MarketConfigSets, strategy_cfg_set: StrategyConfigSets = StrategyConfigSets()) -> None:
+        self.__market_cfg_set = market_cfg_set
+        self.__strategy_cfg_set = strategy_cfg_set
         pass
 
     @property
-    def stocks(self) -> Dict[str, Tuple[date, date]]:
-        return self.__stocks.copy()
+    def market_cfg_set(self) -> MarketConfigSets:
+        return self.__market_cfg_set
 
     @property
-    def strategy_parameters(self) -> StrategyConfigSets:
-        return self.__parameters
+    def strategy_cfg_set(self) -> StrategyConfigSets:
+        return self.__strategy_cfg_set
+
+    def as_records(self) -> List[RunConfig]:
+        _ret = []
+        for m_rec in self.__market_cfg_set.as_records():
+            for s_rec in self.__strategy_cfg_set.as_records():
+                _ret.append(RunConfig(m_rec, s_rec))
+        return _ret

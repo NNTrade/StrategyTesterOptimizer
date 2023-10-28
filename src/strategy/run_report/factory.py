@@ -33,8 +33,7 @@ class Factory:
             if rr is not None:
                 return rr
 
-        strategy = self.__strategy_factory.build(run_config.parameters)
-        strategy.run(run_config.stock_list,
-                     run_config.from_date, run_config.till_date)
+        strategy = self.__strategy_factory.build(run_config.strategy_cfg)
+        strategy.run(run_config.market_cfg)
 
         return Report(strategy)

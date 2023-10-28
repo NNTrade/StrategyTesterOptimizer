@@ -9,11 +9,11 @@ class MarketConfigSets_TestCase(unittest.TestCase):
   logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                       datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
-  def test_WHEN_add_set_THEN_it_immutable(self):
+  def test_WHEN_add_data_to_builder_THEN_build_correct_set(self):
     # Array
     mcs = MarketConfigSets.Builder()\
         .add_stocks(["S1", "S2"], date(2020, 1, 1), date(2021, 1, 1))\
-        .add_stocks(["S3", "S4"], date(2022, 1, 1), date(2023, 1, 1))\
+        .add_stock("S3", date(2022, 1, 1), date(2023, 1, 1))\
         .build()
 
     # Act
@@ -22,10 +22,10 @@ class MarketConfigSets_TestCase(unittest.TestCase):
     # Assert
     self.assertEqual(2, len(asserted_list))
 
-    self.assertEqual(("S1", "S2"), asserted_list[0][0])
-    self.assertEqual(date(2020, 1, 1), asserted_list[0][1])
-    self.assertEqual(date(2021, 1, 1), asserted_list[0][2])
+    self.assertEqual(["S1", "S2"], asserted_list[0].stocks)
+    self.assertEqual(date(2020, 1, 1), asserted_list[0].from_date)
+    self.assertEqual(date(2021, 1, 1), asserted_list[0].untill_date)
 
-    self.assertEqual(("S3", "S4"), asserted_list[1][0])
-    self.assertEqual(date(2022, 1, 1), asserted_list[1][1])
-    self.assertEqual(date(2023, 1, 1), asserted_list[1][2])
+    self.assertEqual(["S3"], asserted_list[1].stocks)
+    self.assertEqual(date(2022, 1, 1), asserted_list[1].from_date)
+    self.assertEqual(date(2023, 1, 1), asserted_list[1].untill_date)
