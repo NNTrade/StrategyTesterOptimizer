@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.strategy.run_config.market_config_sets import MarketConfigSets, date
+from src.strategy.run_config.market_config_sets import MarketConfigSet, date
 
 
 class MarketConfigSets_TestCase(unittest.TestCase):
@@ -11,7 +11,7 @@ class MarketConfigSets_TestCase(unittest.TestCase):
 
   def test_WHEN_add_data_to_builder_THEN_build_correct_set(self):
     # Array
-    mcs = MarketConfigSets.Builder()\
+    mcs = MarketConfigSet.Builder()\
         .add_stocks(["S1", "S2"], date(2020, 1, 1), date(2021, 1, 1))\
         .add_stock("S3", date(2022, 1, 1), date(2023, 1, 1))\
         .build()

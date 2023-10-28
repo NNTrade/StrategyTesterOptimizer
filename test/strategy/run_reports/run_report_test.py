@@ -2,7 +2,7 @@ from __future__ import annotations
 import unittest
 import logging
 from datetime import datetime
-from src.strategy.run_report import Report, absStrategy, Dict, List, Deal
+from src.strategy.run_report import RunReport, absStrategy, Dict, List, Deal
 
 
 class Report_TestCase(unittest.TestCase):
@@ -40,7 +40,7 @@ class Report_TestCase(unittest.TestCase):
 
         # Assert
         with self.assertRaises(AttributeError) as context:
-            Report(used_str)
+            RunReport(used_str)
 
     def test_WHEN_give_cap_in_wrong_order_THEN_correct_return_order(self):
         # Array
@@ -50,7 +50,7 @@ class Report_TestCase(unittest.TestCase):
             datetime(2023, 9, 2): 15.7,
         }
         used_str = Report_TestCase.FakeStr().set_cap(expected_cap)
-        asserted_rep = Report(used_str)
+        asserted_rep = RunReport(used_str)
 
         # Act
         asserted_cap_log = asserted_rep.abs_capital_log

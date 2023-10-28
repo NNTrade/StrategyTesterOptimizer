@@ -4,23 +4,23 @@ from typing import Callable, Dict, List, MutableMapping
 from .strategy_config import StrategyConfig
 
 
-class StrategyConfigSets(MutableMapping):
+class StrategyConfigSet(MutableMapping):
     class Builder:
         def __init__(self) -> None:
             self.data = {}
             self.validation_func: Callable[[Dict], bool] = lambda config: True
             pass
 
-        def add_set(self, parameterName, parameterSet: List) -> StrategyConfigSets.Builder:
+        def add_set(self, parameterName, parameterSet: List) -> StrategyConfigSet.Builder:
             self.data[parameterName] = parameterSet
             return self
 
-        def add_validation_func(self, validation_func: Callable[[Dict], bool]) -> StrategyConfigSets.Builder:
+        def add_validation_func(self, validation_func: Callable[[Dict], bool]) -> StrategyConfigSet.Builder:
             self.validation_func = validation_func
             return self
 
-        def build(self) -> StrategyConfigSets:
-            return StrategyConfigSets(self.data, self.validation_func)
+        def build(self) -> StrategyConfigSet:
+            return StrategyConfigSet(self.data, self.validation_func)
 
     def __init__(self, data={}, validation_func: Callable[[Dict], bool] = lambda config: True):
         self.__data = data
