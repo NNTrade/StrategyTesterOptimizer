@@ -2,15 +2,15 @@ from __future__ import annotations
 from typing import Dict
 from datetime import date
 from ..strategy.run_report import Report
-from ..strategy.run_config import RunConfigSet
+from ..strategy.run_config.run_config_set import RunConfigSet
 
 
 class ParameterSetReport:
     class Key:
-        def __init__(self, stock: str, from_date: date, till_date: date, parameters: Dict) -> None:
+        def __init__(self, stock: str, from_date: date, untill_date: date, parameters: Dict) -> None:
             self._stock = stock
             self._from_date = from_date
-            self._till_date = till_date
+            self._till_date = untill_date
             self._parameters = parameters
             self.__hash = hash(
                 (self.stock, self.from_date, self.till_date, frozenset(self.parameters.items())))
@@ -24,7 +24,7 @@ class ParameterSetReport:
             return self._from_date
 
         @property
-        def till_date(self):
+        def untill_date(self):
             return self._till_date
 
         @property
@@ -69,7 +69,7 @@ class TesterReport:
                 TesterReport: _description_
             """
             trb = TesterReport.Builder()
-            for rec in run_config_set.records:
+            for rec in run_config_set.parameters_as_records:
                 srr: Report = self.__srf.get(rec)
                 trb.add(srr)
 
