@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 import unittest
 import logging
 from src.strategy.absStrategy import absStrategy
-from src.strategy.run_report import Report, RunConfig, Deal, Factory, Storage
+from src.strategy.run_report import RunReport, RunConfig, Deal, RunReportFactory, Storage
 from src.strategy.run_config import MarketConfig
 from datetime import date, datetime, timedelta
 
@@ -49,7 +49,7 @@ class Factory_TestCase(unittest.TestCase):
     def test_WHEN_request_report_THEN_get_correct_report(self):
         # Array
         ff = Factory_TestCase.FakeFactory()
-        rrf = Factory(ff)
+        rrf = RunReportFactory(ff)
         rc = RunConfig(MarketConfig(
             ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
 
@@ -79,16 +79,16 @@ class Factory_TestCase(unittest.TestCase):
         # Array
         rc = RunConfig(MarketConfig(
             ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
-        expected_run_report = Report(
+        expected_run_report = RunReport(
             Factory_TestCase.FakeStr().run(rc.market_cfg))
 
         class ReportStorage(Storage):
-            def try_get(self, run_config: RunConfig) -> Report | None:
+            def try_get(self, run_config: RunConfig) -> RunReport | None:
                 if run_config == rc:
                     return expected_run_report
         rs = ReportStorage()
         ff = Factory_TestCase.FakeFactory()
-        rrf = Factory(ff, rs)
+        rrf = RunReportFactory(ff, rs)
 
         # Act
         asserted_rr = rrf.get(rc)

@@ -1,5 +1,5 @@
 from ..run_config.run_config import RunConfig
-from .report import Report
+from .run_report import RunReport
 from abc import ABC
 from typing import Union
 
@@ -15,7 +15,7 @@ class Storage(ABC):
         pass
 
     # BUG [FI-87]: try_get method must recive info about strategy and version for searching reports
-    def try_get(self, run_config: RunConfig) -> Union[Report, None]:
+    def try_get(self, run_config: RunConfig) -> Union[RunReport, None]:
         """Search does report for run config exist in storage
 
         Args:

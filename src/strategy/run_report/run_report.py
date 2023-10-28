@@ -1,10 +1,11 @@
+from __future__ import annotations
 from types import MappingProxyType
 
 from .metrics.metric_container import MetricContainer
 from ..absStrategy import absStrategy, Dict, datetime, Deal, List
 
 
-class Report:
+class RunReport:
     # TODO: [FI-83] Описать RunReport
     """Report of strategy run
     """
@@ -24,16 +25,20 @@ class Report:
         Returns:
             List[Deal]: deal info
         """
-        return self.__deal_list
+        return self.__deal_list.copy()
 
-    def __init__(self, strategy: absStrategy) -> None:
+    @staticmethod
+    def build_from_strategy(strategy: absStrategy) -> RunReport:
+        return RunReport(strategy.abs_capital_log, strategy.deal_list)
+
+    def __init__(self, abs_capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
         self.__capital_log = MappingProxyType(
-            dict(sorted(strategy.abs_capital_log.items())))
+            dict(sorted(abs_capital_log.items())))
 
         if len(self.__capital_log) == 0:
             raise AttributeError(
                 "No infarmation about capitol, must be at least one record", name="strategy.abs_capital_log")
-        self.__deal_list = tuple(strategy.deal_list.copy())
+        self.__deal_list = deal_list.copy()
 
         self.__metric_cnt = MetricContainer(
             self.__capital_log, self.__deal_list)
