@@ -7,8 +7,8 @@ from ..absStrategy import absStrategy, Dict, datetime, Deal, List
 
 
 class RunReport:
-    METRIC_F = "metric",
-    ABS_CAP_LOG_F = "abs_cap_log",
+    METRIC_F = "metric"
+    ABS_CAP_LOG_F = "abs_cap_log"
     DEAL_LIST_F = "deal_list"
     """Report of strategy run
     """

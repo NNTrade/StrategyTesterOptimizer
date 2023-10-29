@@ -7,7 +7,7 @@ from ...absStrategy import Deal, List
 
 
 class MetricContainer:
-    CAP_F = "capital",
+    CAP_F = "capital"
     DEALS_F = "deals"
     def __init__(self, capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
         self.__capital_metric = CapitalMetric(capital_log)
