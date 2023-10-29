@@ -15,7 +15,7 @@ class TestingReport:
             self.__run_report_factory = runReportFactory
             pass
 
-        def get(self, runConfigSet: RunConfigSet):
+        def get(self, runConfigSet: RunConfigSet) -> TestingReport:
             trb = TestingReport.Builder()
             for rc in runConfigSet.as_records():
                 rr = self.__run_report_factory.get(rc)
