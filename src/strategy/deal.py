@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Dict
 from datetime import datetime
 
@@ -78,7 +79,7 @@ class Deal:
             raise AttributeError("Open price must be > 0", name="open_price")
         if close_price <= 0:
             raise AttributeError("Close price must be > 0", name="close_price")
-        if open_date > close_date:
+        if close_date is not None and open_date > close_date:
             raise AttributeError(
                 "Close date must be > Open date", name="close_date")
         if amount == 0:
@@ -100,6 +101,7 @@ class Deal:
 
         self.__result = (self.close_price - self.open_price) * \
             self.amount + self.commission_total
+        self.__is_closed = self.__close_date is not None
 
     @property
     def open_date(self) -> datetime:
@@ -141,6 +143,9 @@ class Deal:
     def result(self) -> float:
         return self.__result
 
+    @property
+    def is_closed(self) -> bool:
+        return self.__is_closed
     def to_dict(self) -> Dict:
         return {
             self.OPEN_DATE_F: self.open_date,

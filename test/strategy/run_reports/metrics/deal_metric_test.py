@@ -30,7 +30,8 @@ class DealMetric_TestCase(unittest.TestCase):
         # Array
         deals = [
             Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3),
-            Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)
+            Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3),
+            Deal(datetime(2023, 9, 2), 1, None, 2, 3)
         ]
         asserted_rep = DealMetric(deals)
 
@@ -38,7 +39,7 @@ class DealMetric_TestCase(unittest.TestCase):
         asserted_deal_count = asserted_rep.deal_count
 
         # Assert
-        self.assertEqual(2, asserted_deal_count)
+        self.assertEqual(3, asserted_deal_count)
 
     def test_WHEN_request_success_and_fail_deal_count_THEN_return_correct_info(self):
         # Array
@@ -46,6 +47,7 @@ class DealMetric_TestCase(unittest.TestCase):
             Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3),
             Deal(datetime(2023, 9, 2), 4, datetime(2023, 9, 3), 2, 3),
             Deal(datetime(2023, 9, 1), 2, datetime(2023, 9, 3), 2, 3),
+            Deal(datetime(2023, 9, 1), 2, None, 5, 3),
         ]
         asserted_rep = DealMetric(deals)
 
@@ -54,5 +56,5 @@ class DealMetric_TestCase(unittest.TestCase):
         asserted_loss_deal_count = asserted_rep.fail_deal
 
         # Assert
-        self.assertEqual(1, asserted_success_deal_count)
+        self.assertEqual(2, asserted_success_deal_count)
         self.assertEqual(1, asserted_loss_deal_count)
