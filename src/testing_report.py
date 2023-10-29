@@ -4,7 +4,7 @@ from datetime import date
 from .strategy.run_report import RunReport
 from .strategy.run_config.run_config_set import RunConfigSet
 from .strategy.run_report import RunReportFactory
-
+from tqdm import tqdm
 
 class TestingReport:
     """Report of testing stage
@@ -17,7 +17,7 @@ class TestingReport:
 
         def get(self, runConfigSet: RunConfigSet) -> TestingReport:
             trb = TestingReport.Builder()
-            for rc in runConfigSet.as_records():
+            for rc in tqdm(runConfigSet.as_records()):
                 rr = self.__run_report_factory.get(rc)
                 trb.add(rr)
             return trb.build()

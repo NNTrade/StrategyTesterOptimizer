@@ -1,1 +1,2 @@
 NNTrade.common @ git+https://git@github.com/NNTrade/common.git#egg=NNTrade.common
+tqdm
