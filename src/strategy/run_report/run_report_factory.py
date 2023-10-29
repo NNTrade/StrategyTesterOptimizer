@@ -36,4 +36,4 @@ class RunReportFactory:
         strategy = self.__strategy_factory.build(run_config.strategy_cfg)
         strategy.run(run_config.market_cfg)
 
-        return RunReport.build_from_strategy(strategy)
+        return RunReport.build_from_strategy(run_config, strategy)

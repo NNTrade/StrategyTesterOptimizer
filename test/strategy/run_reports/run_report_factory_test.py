@@ -86,7 +86,7 @@ class Factory_TestCase(unittest.TestCase):
         s2 = StockConfig("S2", TimeFrame.D)
         rc = RunConfig(si, MarketConfig(
             [s1, s2], TimeFrame.m1, date(2020, 1, 1), date(2020, 1, 5)))
-        expected_run_report = RunReport.build_from_strategy(
+        expected_run_report = RunReport.build_from_strategy(rc,
             Factory_TestCase.FakeStr().run(rc.market_cfg))
 
         class ReportStorage(absRunReportStorage):
