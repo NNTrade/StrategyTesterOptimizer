@@ -12,6 +12,60 @@ class Deal:
     COMMISSION_CLOSE_F = "commission_close"
     COMMISSION_HOLDING_F = "commission_holding"
 
+    class Builder:
+        def __init__(self) -> None:
+            self.open_date: datetime = None
+            self.open_price: float = None
+            self.close_date: datetime = None
+            self.close_price: float = None
+            self.amount: float = None
+            self.commission_open: float = 0
+            self.commission_close: float = 0
+            self.commission_holding: float = 0
+            pass
+
+        def set_open_date(self, value) -> Deal.Builder:
+            self.open_date = value
+            return self
+
+        def set_open_price(self, value) -> Deal.Builder:
+            self.open_price = value
+            return self
+
+        def set_close_date(self, value) -> Deal.Builder:
+            self.close_date = value
+            return self
+
+        def set_close_price(self, value) -> Deal.Builder:
+            self.close_price = value
+            return self
+
+        def set_amount(self, value) -> Deal.Builder:
+            self.amount = value
+            return self
+
+        def set_commission_open(self, value) -> Deal.Builder:
+            self.commission_open = value
+            return self
+
+        def set_commission_close(self, value) -> Deal.Builder:
+            self.commission_close = value
+            return self
+
+        def set_commission_holding(self, value) -> Deal.Builder:
+            self.commission_holding = value
+            return self
+
+        def build(self) -> Deal:
+            return Deal(self.open_date,
+                        self.open_price,
+                        self.close_date,
+                        self.close_price,
+                        self.amount,
+                        self.commission_open,
+                        self.commission_close,
+                        self.commission_holding)
+
     def __init__(self, open_date: datetime,
                  open_price: float,
                  close_date: datetime,
