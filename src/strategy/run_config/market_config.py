@@ -55,7 +55,7 @@ class MarketConfig:
 
     def to_dict(self) -> Dict:
         return {
-            MarketConfig.STOCKS_F: self.stocks,
+            MarketConfig.STOCKS_F: [s.to_dict() for s in self.stocks],
             MarketConfig.STEP_TF_F: self.step_timeframe.short_name(),
             MarketConfig.FROM_DATE_F: self.from_date,
             MarketConfig.UNTILL_DATE_F: self.untill_date

@@ -59,10 +59,10 @@ class RunReport:
 
     def to_dict(self) -> Dict:
         return {
-            RunReport.RUN_CONFIG_F: self.run_config,
+            RunReport.RUN_CONFIG_F: self.run_config.to_dict(),
             RunReport.METRIC_F: self.metrics.to_dict(),
             RunReport.ABS_CAP_LOG_F: self.abs_capital_log,
-            RunReport.DEAL_LIST_F: self.deal_list
+            RunReport.DEAL_LIST_F: [d.to_dict() for d in self.deal_list]
         }
 
     def __str__(self):
