@@ -17,16 +17,16 @@ class StrategyConfigSet(MutableMapping):
             self.data[parameterName] = parameterSet
             return self
 
-        def add_validation_func(self, validation_func: Callable[[Dict], bool]) -> StrategyConfigSet.Builder:
-            self.validation_func = validation_func
+        def add_is_valid_func(self, is_valid_func: Callable[[Dict], bool]) -> StrategyConfigSet.Builder:
+            self.validation_func = is_valid_func
             return self
 
         def build(self) -> StrategyConfigSet:
             return StrategyConfigSet(self.data, self.validation_func)
 
-    def __init__(self, data={}, validation_func: Callable[[Dict], bool] = lambda config: True):
+    def __init__(self, data={}, is_valid_func: Callable[[Dict], bool] = lambda config: True):
         self.__data = data
-        self.__is_valid_func = validation_func
+        self.__is_valid_func = is_valid_func
 
     def __getitem__(self, key):
         return self.__data[key]

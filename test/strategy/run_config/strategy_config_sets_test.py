@@ -38,7 +38,7 @@ class ParametersSets_TestCase(unittest.TestCase):
   def test_WHEN_add_validation_func_THEN_records_contained_only_valid(self):
       # Array
       ps = StrategyConfigSet.Builder().add_set("A", [1, 2, 3]).add_set(
-          "B", [4, 5, 6]).add_validation_func(lambda rec: rec != {"A": 2, "B": 4}).build()
+          "B", [4, 5, 6]).add_is_valid_func(lambda rec: rec != {"A": 2, "B": 4}).build()
 
       # Act
 

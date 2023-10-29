@@ -20,7 +20,7 @@ class RunConfigSets_TestCase(unittest.TestCase):
             .add_stock("S3", TimeFrame.D, date(2022, 1, 1), date(2023, 1, 1))\
             .build()
         scs = StrategyConfigSet.Builder().add_set(
-            "A", [1, 2, 3]).add_set("B", [4, 5, 6]).add_validation_func(lambda rec: rec != {"A": 2, "B": 4}).build()
+            "A", [1, 2, 3]).add_set("B", [4, 5, 6]).add_is_valid_func(lambda rec: rec != {"A": 2, "B": 4}).build()
         rcs = RunConfigSet(si, mcs, scs)
 
         # Act
