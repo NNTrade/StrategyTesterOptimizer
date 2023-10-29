@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 
 class StrategyConfig(MutableMapping):
+    """Strategy parameters
+    """
     def __init__(self, data: Dict = {}):
         self.__data = data.copy()
 

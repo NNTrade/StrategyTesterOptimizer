@@ -6,6 +6,8 @@ from NNTrade.common import TimeFrame
 from .stock_config import StockConfig
 
 class MarketConfigSet:
+    """Set of market configuration data
+    """
     class Builder:
         def __init__(self) -> None:
             self.data: List[MarketConfig] = []

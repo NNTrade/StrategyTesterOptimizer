@@ -6,6 +6,8 @@ from NNTrade.common import TimeFrame
 
 
 class MarketConfig:
+    """Market data configuration
+    """
     STOCKS_F = "stocks"
     STEP_TF_F = "step_timeframe"
     FROM_DATE_F = "from_date"
@@ -29,18 +31,26 @@ class MarketConfig:
 
     @property
     def stocks(self) -> List[StockConfig]:
+        """List of using stock configuration
+        """
         return self.__stocks.copy()
 
     @property
     def step_timeframe(self) -> TimeFrame:
+        """Timeframe of bar step
+        """
         return self.__step_timeframe
 
     @property
     def from_date(self) -> date:
+        """Starting date
+        """
         return self.__from_date
 
     @property
     def untill_date(self) -> date:
+        """End date (excluded from data set)
+        """
         return self.__untill_date
 
     def to_dict(self) -> Dict:

@@ -2,6 +2,8 @@ from typing import Dict
 
 
 class StrategyId:
+  """Id of strategy for define strategy and its version which is using
+  """
   NAME_F = "name"
   V_F = "v"
 
@@ -12,10 +14,20 @@ class StrategyId:
 
   @property
   def name(self) -> str:
+      """Name of strategy
+
+      Returns:
+          str: Name
+      """
       return self.__name
 
   @property
   def version(self) -> str:
+      """Version of strategy
+
+      Returns:
+          str: Version
+      """
       return self.__v
 
   def to_dict(self) -> Dict:

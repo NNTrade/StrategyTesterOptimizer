@@ -5,6 +5,8 @@ from .strategy_config import StrategyConfig
 
 
 class StrategyConfigSet(MutableMapping):
+    """Strategy parameters set
+    """
     class Builder:
         def __init__(self) -> None:
             self.data = {}

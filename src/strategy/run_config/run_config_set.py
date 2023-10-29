@@ -6,7 +6,10 @@ from .strategy_config_sets import StrategyConfigSet
 from .market_config_sets import MarketConfigSet
 from .run_config import RunConfig, StrategyId
 
+
 class RunConfigSet:
+    """Run configuration set
+    """
     def __init__(self, strategy_id: StrategyId, market_cfg_set: MarketConfigSet, strategy_cfg_set: StrategyConfigSet = StrategyConfigSet()) -> None:
         self.__market_cfg_set = market_cfg_set
         self.__strategy_cfg_set = strategy_cfg_set
@@ -15,14 +18,20 @@ class RunConfigSet:
 
     @property
     def strategy_id(self) -> StrategyId:
+        """Strategy id
+        """
         return self.__strategy_id
 
     @property
     def market_cfg_set(self) -> MarketConfigSet:
+        """Set of market data configurations
+        """
         return self.__market_cfg_set
 
     @property
     def strategy_cfg_set(self) -> StrategyConfigSet:
+        """Set of strategy configurations
+        """
         return self.__strategy_cfg_set
 
     def as_records(self) -> List[RunConfig]:

@@ -3,6 +3,8 @@ from typing import Dict
 
 
 class StockConfig:
+    """Configuration of stock data
+    """
     TICKER_F = "ticker"
     TF_F = "timeframe"
 
@@ -12,14 +14,13 @@ class StockConfig:
 
     @property
     def ticker(self) -> str:
+        """Stock ticker name
+        """
         return self.__ticker
 
     @property
     def timeframe(self) -> TimeFrame:
         """Timeframe of candle data
-
-        Returns:
-            TimeFrame: _description_
         """
         return self.__timeframe
 

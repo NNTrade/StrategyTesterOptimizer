@@ -6,11 +6,11 @@ from .strategy_id import StrategyId
 
 
 class RunConfig:
+    """configuration of single strategy run
+    """
     STRATEGY_ID_F = "strategy_id"
     MARKET_CFG_F = "market_cfg"
     STRATEGY_CFG_F = "strategy_cfg"
-    """configuration of single strategy run
-    """
 
     def __init__(self, strategy_id: StrategyId, market_config: MarketConfig, strategy_cfg: StrategyConfig = StrategyConfig()):
         # Convert to a tuple to make it immutable
@@ -20,14 +20,20 @@ class RunConfig:
 
     @property
     def strategy_id(self) -> StrategyId:
+        """Strategy id
+        """
         return self._strategy_id
 
     @property
     def market_cfg(self) -> MarketConfig:
+        """Configuration of market data
+        """
         return self._market_cfg
 
     @property
     def strategy_cfg(self) -> StrategyConfig:
+        """Strategy configuration parameter
+        """
         return self._strategy_cfg
 
     def to_dict(self) -> Dict:
