@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from __future__ import annotations
 from datetime import date
 from typing import List, Dict
 from .stock_config import StockConfig
 from NNTrade.common import TimeFrame
-
+from datetime import datetime, timedelta
 
 class MarketConfig:
     """Market data configuration
@@ -52,6 +52,22 @@ class MarketConfig:
         """End date (excluded from data set)
         """
         return self.__untill_date
+
+    def split(self, chunks_count: int) -> List[MarketConfig]:
+        ts = self.untill_date - self.from_date
+        step_ts = timedelta(days=int(ts.days/chunks_count))
+        cur_dt = self.from_date
+        ret_cfg = []
+        for i in range(chunks_count-1):
+            new_untill = cur_dt + step_ts
+            if new_untill > self.untill_date:
+                new_untill = self.untill_date
+            ret_cfg.append(MarketConfig(
+                self.stocks, self.step_timeframe, cur_dt, new_untill))
+            cur_dt = new_untill
+        ret_cfg.append(MarketConfig(
+            self.stocks, self.step_timeframe, cur_dt, self.untill_date))
+        return ret_cfg
 
     def to_dict(self) -> Dict:
         return {

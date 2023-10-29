@@ -5,6 +5,7 @@ from .market_config import MarketConfig
 from NNTrade.common import TimeFrame
 from .stock_config import StockConfig
 
+
 class MarketConfigSet:
     """Set of market configuration data
     """
@@ -30,7 +31,8 @@ class MarketConfigSet:
         def add_stocks_set(self, stocks_set: List[List[str]], step_timeframe: TimeFrame, from_dt: date, untill_dt: date, aggregation_timeframe: TimeFrame = None) -> MarketConfigSet.Builder:
             for stocks in stocks_set:
                 if isinstance(stocks, str):
-                    raise AttributeError("Stocks set must contain list of stocks set.",name="stocks_set")
+                    raise AttributeError(
+                        "Stocks set must contain list of stocks set.", name="stocks_set")
                 self.add_stocks(stocks, step_timeframe, from_dt,
                                 untill_dt, aggregation_timeframe)
             return self
@@ -41,7 +43,13 @@ class MarketConfigSet:
     def __init__(self, data: List[MarketConfig] = []):
         if len(data) == 0:
             raise AttributeError("Cann't set no market configs")
-        self.__data: Tuple = tuple(data)
+        self.__data: Tuple[MarketConfig] = tuple(data)
+
+    def split(self, chunks_count: int) -> MarketConfigSet:
+        ret_cfg = []
+        for mc in self.__data:
+            ret_cfg.extend(mc.split(chunks_count))
+        return MarketConfigSet(ret_cfg)
 
     def as_records(self) -> List[MarketConfig]:
         return [rec for rec in self.__data]
