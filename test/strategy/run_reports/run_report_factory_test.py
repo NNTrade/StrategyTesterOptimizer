@@ -5,7 +5,7 @@ import logging
 from src.strategy.absStrategy import absStrategy
 from src.strategy.absStrategyFactory import absStrategyFactory
 from src.strategy.run_report import RunReport, RunConfig, Deal, RunReportFactory, absRunReportStorage
-from src.strategy.run_config import MarketConfig, StrategyId
+from src.strategy.run_config import MarketConfig, StrategyId, TimeFrame, StockConfig
 from datetime import date, datetime, timedelta
 
 
@@ -52,8 +52,10 @@ class Factory_TestCase(unittest.TestCase):
         si = StrategyId("test", "0.0.1")
         ff = Factory_TestCase.FakeFactory()
         rrf = RunReportFactory(ff)
+        s1 = StockConfig("S1", TimeFrame.D)
+        s2 = StockConfig("S2", TimeFrame.D)
         rc = RunConfig(si, MarketConfig(
-            ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
+            [s1, s2], TimeFrame.D, date(2020, 1, 1), date(2020, 1, 5)))
 
         expected_cap_log = {
             date(2020, 1, 1): 1,
@@ -80,8 +82,10 @@ class Factory_TestCase(unittest.TestCase):
     def test_WHEN_report_storage_has_report_THEN_return_it(self):
         # Array
         si = StrategyId("test", "0.0.1")
+        s1 = StockConfig("S1", TimeFrame.D)
+        s2 = StockConfig("S2", TimeFrame.D)
         rc = RunConfig(si, MarketConfig(
-            ["S1", "S2"], date(2020, 1, 1), date(2020, 1, 5)))
+            [s1, s2], TimeFrame.m1, date(2020, 1, 1), date(2020, 1, 5)))
         expected_run_report = RunReport.build_from_strategy(
             Factory_TestCase.FakeStr().run(rc.market_cfg))
 
