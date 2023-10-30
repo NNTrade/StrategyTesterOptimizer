@@ -3,7 +3,7 @@ from datetime import date
 from typing import List, Dict
 from .stock_config import StockConfig
 from NNTrade.common import TimeFrame
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 class MarketConfig:
     """Market data configuration

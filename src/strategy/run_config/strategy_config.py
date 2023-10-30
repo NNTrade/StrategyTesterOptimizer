@@ -1,7 +1,5 @@
 from __future__ import annotations
-from itertools import product
-from typing import Callable, Dict, List, MutableMapping
-from dataclasses import dataclass
+from typing import Dict, MutableMapping
 
 
 class StrategyConfig(MutableMapping):
