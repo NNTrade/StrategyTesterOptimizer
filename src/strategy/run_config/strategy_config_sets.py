@@ -2,31 +2,28 @@ from __future__ import annotations
 from itertools import product
 from typing import Callable, Dict, List, MutableMapping
 from .strategy_config import StrategyConfig
+from .abs_base_config import absBaseConfigSet, absBaseBuilder
 
 
-class StrategyConfigSet(MutableMapping):
+class StrategyConfigSet(MutableMapping, absBaseConfigSet):
     """Strategy parameters set
     """
-    class Builder:
+    class Builder(absBaseBuilder["StrategyConfigSet.Builder", StrategyConfig]):
         def __init__(self) -> None:
             self.data = {}
             self.validation_func: Callable[[Dict], bool] = lambda config: True
-            pass
+            super().__init__()
 
         def add_set(self, parameterName, parameterSet: List) -> StrategyConfigSet.Builder:
             self.data[parameterName] = parameterSet
             return self
 
-        def add_is_valid_func(self, is_valid_func: Callable[[Dict], bool]) -> StrategyConfigSet.Builder:
-            self.validation_func = is_valid_func
-            return self
-
         def build(self) -> StrategyConfigSet:
-            return StrategyConfigSet(self.data, self.validation_func)
+            return StrategyConfigSet(self.data, self.is_valid_func)
 
-    def __init__(self, data={}, is_valid_func: Callable[[Dict], bool] = lambda config: True):
+    def __init__(self, data={}, is_valid_func: Callable[[Dict], bool] = None):
         self.__data = data
-        self.__is_valid_func = is_valid_func
+        super().__init__(is_valid_func)
 
     def __getitem__(self, key):
         return self.__data[key]
@@ -48,8 +45,4 @@ class StrategyConfigSet(MutableMapping):
             return []
         ret_list = [dict(zip(self.__data.keys(), combo))
                     for combo in product(*self.__data.values())]
-        return [StrategyConfig(r) for r in ret_list if self.__is_valid_func(r)]
-
-    @property
-    def is_valid_func(self) -> Callable[[Dict], bool]:
-        return self.__is_valid_func
+        return [StrategyConfig(r) for r in ret_list if self.is_valid(r)]
