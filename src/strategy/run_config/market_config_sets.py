@@ -51,7 +51,7 @@ class MarketConfigSet(absBaseConfigSet[MarketConfig]):
         ret_cfg = []
         for mc in self.__data:
             ret_cfg.extend(mc.split(chunks_count))
-        return MarketConfigSet(ret_cfg)
+        return MarketConfigSet(ret_cfg, self.is_valid_func)
 
     def as_records(self) -> List[MarketConfig]:
         return [rec for rec in self.__data if self.is_valid(rec)]
