@@ -1,8 +1,6 @@
-from dataclasses import FrozenInstanceError
 import unittest
 import logging
 from src.strategy.run_config import RunConfig, date, MarketConfig, StrategyConfig, StrategyId, StockConfig, TimeFrame
-
 
 class RunConfig_TestCase(unittest.TestCase):
 
@@ -74,6 +72,8 @@ class RunConfig_TestCase(unittest.TestCase):
 
         s3 = StockConfig("b", TimeFrame.D)
         wrong_rc_arr = [
+            RunConfig(s1, MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
+                                       date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2})),
             RunConfig(s1, MarketConfig([s1, s2], TimeFrame.m1, date(2020, 1, 1),
                                        date(2021, 1, 1)), StrategyConfig({"p1": 1, "p2": 2})),
             RunConfig(si, MarketConfig([s1, s3], TimeFrame.D, date(2020, 1, 1),
@@ -106,3 +106,4 @@ class RunConfig_TestCase(unittest.TestCase):
             self.assertNotEqual(hash(rc1), hash(wrong_rc),
                                 msg=wrong_rc)
             self.assertNotEqual(rc1, wrong_rc)
+
