@@ -43,6 +43,6 @@ class StrategyConfigSet(MutableMapping, absBaseConfigSet):
     def _build_records(self) -> List:
         if len(self.__data) == 0:
             return []
-        ret_list = [dict(zip(self.__data.keys(), combo))
+        ret_list = [StrategyConfig(dict(zip(self.__data.keys(), combo)))
                     for combo in product(*self.__data.values())]
         return ret_list

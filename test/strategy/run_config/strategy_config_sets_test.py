@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.strategy.run_config.strategy_config_sets import StrategyConfigSet
+from src.strategy.run_config.strategy_config_sets import StrategyConfigSet, StrategyConfig
 
 
 class ParametersSets_TestCase(unittest.TestCase):
@@ -68,3 +68,20 @@ class ParametersSets_TestCase(unittest.TestCase):
 
       # Assert
       self.assertEqual(0, len(asserted_records))
+
+  def test_WHEN_get_records_THEN_it_created_use_startegy_config(self):
+      # Array
+      str_set = StrategyConfigSet.Builder().add_set("A", [1,2]).add_set(
+          "B", [4]).build()
+      expected_record1 = StrategyConfig({"A":1, "B":4})
+      expected_record2 = StrategyConfig({"A":2, "B":4})
+
+      # Act
+      asserted_records = str_set.as_records()
+      
+      # Assert
+      for assert_rec in asserted_records:
+        hash(assert_rec)
+      self.assertEqual(2, len(asserted_records))
+      self.assertIn(expected_record1, asserted_records)
+      self.assertIn(expected_record2, asserted_records)
