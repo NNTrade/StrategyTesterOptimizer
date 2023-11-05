@@ -2,8 +2,8 @@ from ...absStrategy import Dict, datetime
 
 
 class CapitalMetric:
-    NET_PROFIT_F = "net_profit"
-    NET_PROFIT_MAX_F = "net_profit_max"
+    STR_YIELD_F = "strategy_yield"
+    STR_MAX_YIELD_F = "strategy_max_yield"
     MAX_FALL_F = "max_fall"
 
 
@@ -13,9 +13,10 @@ class CapitalMetric:
                 "No infarmation about capitol, must be at least one record", name="strategy.abs_capital_log")
 
         start_cap = capital_log[min(capital_log.keys())]
-        self.__net_profit = capital_log[max(
-            capital_log.keys())]/start_cap
-        self.__net_profit_max = max(capital_log.values())/start_cap
+        last_cap = capital_log[max(
+            capital_log.keys())]
+        self.__strategy_yield = last_cap/start_cap - 1
+        self.__strategy_max_yield = max(capital_log.values())/start_cap - 1
 
         self.__calc_max_loss(capital_log, start_cap)
         pass
@@ -31,22 +32,23 @@ class CapitalMetric:
         self.__max_fall = -max_fall
 
     @property
-    def net_profit(self) -> float:
-        """Net profit (Income - Loss - Commission)
+    def strategy_yield(self) -> float:
+        """Result yeield - (Income - Loss - Commission)/start_cap - 1
 
         Returns:
-            float: Net Profit
+            float: Strategy Yield
         """
-        return self.__net_profit
+        return self.__strategy_yield
+    
 
     @property
-    def net_profit_max(self) -> float:
-        """Maximum net profit gained due to strategy run
+    def strategy_max_yield(self) -> float:
+        """Maximum strategy yield gained due to strategy run
 
         Returns:
-            float: Max Net Profit
+            float: Max Strategy Yield
         """
-        return self.__net_profit_max
+        return self.__strategy_max_yield
 
     @property
     def max_fall(self) -> float:
@@ -59,8 +61,8 @@ class CapitalMetric:
 
     def to_dict(self) -> Dict:
         return {
-           CapitalMetric.NET_PROFIT_F: self.net_profit,
-           CapitalMetric.NET_PROFIT_MAX_F: self.net_profit_max,
+           CapitalMetric.STR_YIELD_F: self.strategy_yield,
+           CapitalMetric.STR_MAX_YIELD_F: self.strategy_max_yield,
            CapitalMetric.MAX_FALL_F: self.max_fall
         }
 

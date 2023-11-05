@@ -20,7 +20,7 @@ class CapitalMetric_TestCase(unittest.TestCase):
         with self.assertRaises(AttributeError) as context:
             CapitalMetric({})
 
-    def test_WHEN_request_net_cap_THEN_correct_return(self):
+    def test_WHEN_request_str_yield_THEN_correct_return(self):
         # Array
         used_cap = {
             datetime(2023, 9, 1): 10.5,
@@ -30,12 +30,12 @@ class CapitalMetric_TestCase(unittest.TestCase):
         asserted_rep = CapitalMetric(used_cap)
 
         # Act
-        asserted_net_cap = asserted_rep.net_profit
+        asserted_net_cap = asserted_rep.strategy_yield
 
         # Assert
-        self.assertEqual(12.2/10.5, asserted_net_cap)
+        self.assertEqual(12.2/10.5 - 1, asserted_net_cap)
 
-    def test_WHEN_request_max_profit_THEN_correct_return(self):
+    def test_WHEN_request_max_str_yield_THEN_correct_return(self):
         # Array
         used_cap = {
             datetime(2023, 9, 1): 10.5,
@@ -45,10 +45,10 @@ class CapitalMetric_TestCase(unittest.TestCase):
         asserted_rep = CapitalMetric(used_cap)
 
         # Act
-        asserted_net_cap = asserted_rep.net_profit_max
+        asserted_net_cap = asserted_rep.strategy_max_yield
 
         # Assert
-        self.assertEqual(15.7/10.5, asserted_net_cap)
+        self.assertEqual(15.7/10.5 - 1, asserted_net_cap)
 
     def assert_max_fall(self, used_list, expect_value):
         # Array
