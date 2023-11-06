@@ -1,7 +1,7 @@
 from typing import Dict
 from datetime import datetime
 
-from .capital_metric import CapitalMetric
+from .capital_metric import CapitalMetric,MarketConfig
 from .deal_metric import DealMetric
 from ...absStrategy import Deal, List
 
@@ -9,8 +9,8 @@ from ...absStrategy import Deal, List
 class MetricContainer:
     CAP_F = "capital"
     DEALS_F = "deals"
-    def __init__(self, capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
-        self.__capital_metric = CapitalMetric(capital_log)
+    def __init__(self, market_cfg: MarketConfig,capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
+        self.__capital_metric = CapitalMetric(market_cfg, capital_log)
         self.__deal_meatric = DealMetric(deal_list)
         pass
 

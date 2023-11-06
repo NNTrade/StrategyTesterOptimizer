@@ -40,6 +40,18 @@ class MarketConfig_TestCase(unittest.TestCase):
         self.assertEqual(2, len(asserted_to_list))
         self.assertEqual([s1, s2], asserted_to_list)
 
+    def test_WHEN_request_period_in_years_THEN_get_correct_unsver(self):
+        # Array
+        s1 = StockConfig("S1", TimeFrame.D)
+        s2 = StockConfig("S2", TimeFrame.D)
+        mc = MarketConfig([s1, s2], TimeFrame.D, date(
+            2020, 1, 1), date(2021, 1, 1))
+        # Act
+    
+        # Assert
+        self.assertEqual(366, mc.period_in_days)
+        self.assertAlmostEquals(366/365, mc.period_in_years,5)
+
     def test_WHEN_check_that_from_LT_untill_THEN_error(self):
         # Array
         # Act

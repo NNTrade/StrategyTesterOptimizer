@@ -44,7 +44,7 @@ class RunReport:
                 "No infarmation about capitol, must be at least one record", name="strategy.abs_capital_log")
         self.__deal_list = sorted(deal_list.copy())
 
-        self.__metric_cnt = MetricContainer(
+        self.__metric_cnt = MetricContainer(run_config.market_cfg,
             self.__capital_log, self.__deal_list)
         self.__run_cfg = run_config
         pass

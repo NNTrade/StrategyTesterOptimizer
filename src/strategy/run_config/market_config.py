@@ -52,6 +52,24 @@ class MarketConfig:
         """End date (excluded from data set)
         """
         return self.__untill_date
+    
+    @property
+    def period_in_days(self)->int:
+        """retun delta between fram_date and untill_date in days
+
+        Returns:
+            float: days in config
+        """
+        return (self.__untill_date - self.__from_date).days
+    
+    @property
+    def period_in_years(self)->float:
+        """retun delta between fram_date and untill_date in years
+
+        Returns:
+            float: years in config
+        """
+        return self.period_in_days/365
 
     def split(self, chunks_count: int) -> List[MarketConfig]:
         ts = self.untill_date - self.from_date
