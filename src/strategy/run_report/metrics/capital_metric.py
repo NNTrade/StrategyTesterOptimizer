@@ -4,7 +4,7 @@ class CapitalMetric:
     STR_YIELD_F = "strategy_yield"
     STR_MAX_YIELD_F = "strategy_max_yield"
     MAX_FALL_F = "max_fall"
-
+    STR_YIELD_YEAR_F = "strategy_yield_per_year"
 
     def __init__(self, market_config: MarketConfig, capital_log: Dict[datetime, float]) -> None:
         if len(capital_log) == 0:
@@ -71,6 +71,7 @@ class CapitalMetric:
     def to_dict(self) -> Dict:
         return {
            CapitalMetric.STR_YIELD_F: self.strategy_yield,
+           CapitalMetric.STR_YIELD_YEAR_F: self.strategy_yield_per_year,
            CapitalMetric.STR_MAX_YIELD_F: self.strategy_max_yield,
            CapitalMetric.MAX_FALL_F: self.max_fall
         }
