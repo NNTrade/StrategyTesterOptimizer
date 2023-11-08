@@ -76,7 +76,7 @@ class TestingReport:
             del rr_dict["deal_list"]
             flat_dict = TestingReport.flatten_dict(rr_dict)
             cutted_flat_dict = TestingReport.cut_level(flat_dict, level_cut)
-        df_rec.append(cutted_flat_dict)
+            df_rec.append(cutted_flat_dict)
         df = pd.DataFrame.from_records(df_rec)
         df.columns = pd.MultiIndex.from_tuples(df.columns)
 
