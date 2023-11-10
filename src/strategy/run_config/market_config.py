@@ -90,6 +90,29 @@ class MarketConfig:
         return ret_cfg
     
     def split_on_opt_chunks(self, optimization_td:timedelta, forward_td:timedelta, forced_split:bool = False, cut_tail:bool = False)->List[Tuple[MarketConfig, MarketConfig]]:
+        """splitt market config to list of optimization and forward market configs
+        [
+         (optimization MarketConfig 1, forward MarketConfig 1),
+         (optimization MarketConfig 2, forward MarketConfig 2),
+        ]
+
+        Args:
+            optimization_td (timedelta): size of optimization interval
+            forward_td (timedelta): size of forward interval
+            forced_split (bool, optional): remove check on optimization and forward interval size relation. Defaults to False.
+            cut_tail (bool, optional): remove check that if current time interval doesn't cutted sharped. Defaults to False.
+
+        Raises:
+            AttributeError: Wrong relation between optimization interval (optimization_td) and forward interval (forward_td).
+            AttributeError: Cannot split interval on round parts
+
+        Returns:
+            List[Tuple[MarketConfig, MarketConfig]]: List of optimization and forward market configs
+                [
+                    (optimization MarketConfig 1, forward MarketConfig 1),
+                    (optimization MarketConfig 2, forward MarketConfig 2),
+                ]
+        """
         if not forced_split:
             interval_rel = forward_td / optimization_td
             if interval_rel < MarketConfig.MIN_RELATION or interval_rel > MarketConfig.MAX_RELATION:
