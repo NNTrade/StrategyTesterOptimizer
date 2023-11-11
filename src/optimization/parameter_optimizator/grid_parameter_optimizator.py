@@ -1,6 +1,6 @@
 from tkinter import NO
 
-from src.optimization.comparer import by_strategy_yield_per_year_comparer
+from .comparer import by_strategy_yield_per_year_comparer
 from .abs_parameter_optimizator import absParameterOptimizator,StrategyConfigSet, StrategyConfig,RunReport, Union,Callable
 from .abs_parameter_optimizator_factory import absParameterOptimizatorFactory
 

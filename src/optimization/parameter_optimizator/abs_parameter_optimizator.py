@@ -1,8 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from .comparer import by_strategy_yield_per_year_comparer
-from ..strategy.run_config import StrategyConfigSet,StrategyConfig
-from ..strategy.run_report import RunReport
+from ...strategy.run_config import StrategyConfigSet,StrategyConfig
+from ...strategy.run_report import RunReport
 from typing import Union, Callable
 
 class absParameterOptimizator(ABC):

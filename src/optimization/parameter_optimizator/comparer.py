@@ -1,4 +1,4 @@
-from src.strategy.run_report import RunReport
+from ...strategy.run_report import RunReport
 
 
 def by_strategy_yield_per_year_comparer(prev:RunReport, new: RunReport)->int:

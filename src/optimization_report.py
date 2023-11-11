@@ -2,7 +2,7 @@ from __future__ import annotations
 from .strategy.run_report import RunReportFactory,RunReport
 from .strategy.run_config import RunConfigSet,RunConfig
 from typing import List,Tuple
-from .optimization.abs_parameter_optimizator_factory import absParameterOptimizatorFactory
+from .optimization.parameter_optimizator import absParameterOptimizatorFactory
 from .optimization.market_config_splitter import absMarketConfigSplitter,DefaultMarketConfigSplitter
 
 
