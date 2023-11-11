@@ -20,7 +20,7 @@ class RunReport:
         Returns:
             Dict[datetime, float]: _description_
         """
-        return self.__capital_log
+        return self.__capital_log.copy()
 
     @property
     def deal_list(self) -> List[Deal]:
@@ -36,8 +36,7 @@ class RunReport:
         return RunReport(run_config, strategy.abs_capital_log, strategy.deal_list)
 
     def __init__(self, run_config: RunConfig, abs_capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
-        self.__capital_log = MappingProxyType(
-            dict(sorted(abs_capital_log.items())))
+        self.__capital_log = dict(sorted(abs_capital_log.items()))
 
         if len(self.__capital_log) == 0:
             raise AttributeError(

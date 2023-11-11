@@ -11,7 +11,7 @@ class StrategyConfigSet(MutableMapping, absBaseConfigSet):
     class Builder(absBaseBuilder["StrategyConfigSet.Builder", StrategyConfig]):
         def __init__(self) -> None:
             self.data = {}
-            self.validation_func: Callable[[Dict], bool] = lambda config: True
+            self.validation_func: Callable[[StrategyConfig], bool] = lambda config: True
             super().__init__()
 
         def add_set(self, parameterName, parameterSet: List) -> StrategyConfigSet.Builder:
@@ -21,7 +21,7 @@ class StrategyConfigSet(MutableMapping, absBaseConfigSet):
         def build(self) -> StrategyConfigSet:
             return StrategyConfigSet(self.data, self.is_valid_func)
 
-    def __init__(self, data={}, is_valid_func: Callable[[Dict], bool] = None):
+    def __init__(self, data={}, is_valid_func: Callable[[StrategyConfig], bool] = None):
         self.__data = data
         super().__init__(is_valid_func)
 
@@ -46,3 +46,4 @@ class StrategyConfigSet(MutableMapping, absBaseConfigSet):
         ret_list = [StrategyConfig(dict(zip(self.__data.keys(), combo)))
                     for combo in product(*self.__data.values())]
         return ret_list
+    
