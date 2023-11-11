@@ -28,7 +28,6 @@ class absRunReportStorage(ABC):
         """
         ...
 
-    # BUG [FI-87]: try_get method must recive info about strategy and version for searching reports
     def try_get(self, run_config: RunConfig) -> Union[RunReport, None]:
         """Search does report for run config exist in storage
 
