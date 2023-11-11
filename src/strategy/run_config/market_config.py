@@ -88,54 +88,6 @@ class MarketConfig:
         ret_cfg.append(MarketConfig(
             self.stocks, self.step_timeframe, cur_dt, self.untill_date))
         return ret_cfg
-    
-    def split_on_opt_chunks(self, optimization_td:timedelta, forward_td:timedelta, forced_split:bool = False, cut_tail:bool = False)->List[Tuple[MarketConfig, MarketConfig]]:
-        """splitt market config to list of optimization and forward market configs
-        [
-         (optimization MarketConfig 1, forward MarketConfig 1),
-         (optimization MarketConfig 2, forward MarketConfig 2),
-        ]
-
-        Args:
-            optimization_td (timedelta): size of optimization interval
-            forward_td (timedelta): size of forward interval
-            forced_split (bool, optional): remove check on optimization and forward interval size relation. Defaults to False.
-            cut_tail (bool, optional): remove check that if current time interval doesn't cutted sharped. Defaults to False.
-
-        Raises:
-            AttributeError: Wrong relation between optimization interval (optimization_td) and forward interval (forward_td).
-            AttributeError: Cannot split interval on round parts
-
-        Returns:
-            List[Tuple[MarketConfig, MarketConfig]]: List of optimization and forward market configs
-                [
-                    (optimization MarketConfig 1, forward MarketConfig 1),
-                    (optimization MarketConfig 2, forward MarketConfig 2),
-                ]
-        """
-        if not forced_split:
-            interval_rel = forward_td / optimization_td
-            if interval_rel < MarketConfig.MIN_RELATION or interval_rel > MarketConfig.MAX_RELATION:
-                raise AttributeError(f"Wrong relation between optimization interval and forward interval ({interval_rel}). It must be between {MarketConfig.MIN_RELATION}-{MarketConfig.MAX_RELATION}")        
-        return_intervals = []
-        cur_dt = self.from_date
-        forward_interval = (cur_dt,cur_dt)
-        while forward_interval[1] < self.untill_date:
-            optimization_interval = (cur_dt, cur_dt + optimization_td)
-            forward_interval = (optimization_interval[1],optimization_interval[1]+forward_td)
-            if forward_interval[1] <= self.untill_date:
-                return_intervals.append((optimization_interval, forward_interval))
-            elif forward_interval[1] > self.untill_date:
-                if not cut_tail:
-                    raise AttributeError("Cannot split interval on round parts")
-            cur_dt = cur_dt + forward_td
-        return [
-            (
-            MarketConfig(self.stocks, self.step_timeframe, opt_interval[0], opt_interval[1]),
-            MarketConfig(self.stocks, self.step_timeframe, fwd_interval[0], fwd_interval[1])
-            ) 
-            for opt_interval, fwd_interval in return_intervals]
-
                                  
     def to_dict(self) -> Dict:
         return {
