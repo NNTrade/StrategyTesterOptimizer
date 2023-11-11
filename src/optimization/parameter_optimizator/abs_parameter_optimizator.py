@@ -32,7 +32,6 @@ class absParameterOptimizator(ABC):
   def _get_next(self,prev_run_report:RunReport)->Union[StrategyConfig, None]:
     ...
 
-  @abstractmethod
   def best(self)->Union[RunReport, None]:
-    ...
+    return self.__best_rr
   

@@ -19,12 +19,9 @@ class GridParameterOptimizator(absParameterOptimizator):
   def first(self)->StrategyConfig:
     return self.__avaliable_str_cfg.pop()
   
-  def _get_next(self)->Union[StrategyConfig, None]:
+  def _get_next(self,prev_run_report:RunReport)->Union[StrategyConfig, None]:
     try:
       return self.__avaliable_str_cfg.pop()
     except IndexError:
       return None
-
-  def best(self)->Union[RunReport, None]:
-    return self.__best_rr
   
