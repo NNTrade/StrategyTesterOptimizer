@@ -49,4 +49,17 @@ class OptimizationReport:
           
 
   def __init__(self,run_report_list: List[Tuple[RunReport,RunReport]]) -> None:
+    self.__run_report_list = run_report_list
     pass
+
+  @property
+  def optimization_reports(self)->List[RunReport]:
+    return [rt[0] for rt in self.__run_report_list]
+  
+  @property
+  def forward_reports(self)->List[RunReport]:
+    return [rt[1] for rt in self.__run_report_list]
+  
+  @property
+  def reports_tuples(self)->List[Tuple[RunReport,RunReport]]:
+    return self.__run_report_list.copy()
