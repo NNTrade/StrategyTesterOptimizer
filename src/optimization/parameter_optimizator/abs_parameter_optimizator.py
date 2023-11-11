@@ -9,6 +9,7 @@ class absParameterOptimizator(ABC):
   def __init__(self,strategy_config_set:StrategyConfigSet, run_report_comparer:Callable[[RunReport,RunReport],int] = by_strategy_yield_per_year_comparer) -> None:
     self._strategy_config_set = strategy_config_set
     self._run_report_comparer = run_report_comparer
+    self.__best_rr = None
     super().__init__()
   
   @abstractmethod
