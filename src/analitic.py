@@ -1,6 +1,8 @@
 import pandas as pd
 from typing import Dict
 from .testing_report import TestingReport
+from .strategy.run_report import metrics as m
+from .strategy import run_config as rcfg
 
 class Analitic:
   def __init__(self,testing_rep: TestingReport)-> None:
@@ -10,8 +12,8 @@ class Analitic:
 
   @staticmethod
   def get_metric(name:str,df:pd.DataFrame)->Dict:
-    str_yield_per_year_std = df[("capital", "strategy_yield_per_year")].std()
-    str_yield_per_year_median = df[("capital", "strategy_yield_per_year")].median()
+    str_yield_per_year_std = df[(m.MetricContainer.CAP_F, m.CapitalMetric.STR_YIELD_YEAR_F)].std()
+    str_yield_per_year_median = df[(m.MetricContainer.CAP_F, m.CapitalMetric.STR_YIELD_YEAR_F)].median()
     std_median_rel = round(str_yield_per_year_std/str_yield_per_year_median*100,3)
     return {
       "name":name,
@@ -23,8 +25,8 @@ class Analitic:
   def get_success_yield(name:str,df:pd.DataFrame)->Dict:
     return {
       "name":name,
-      "yield > 0, %":round(len(df[df[("capital","strategy_yield")]>0])/len(df)*100,3),
-      "median(success_deal/deal), %": round((df[("deals", "success_deal_count")] / df[("deals", "deal_count")]).median()*100,3)
+      "yield > 0, %":round(len(df[df[(m.MetricContainer.CAP_F,m.CapitalMetric.STR_YIELD_F)]>0])/len(df)*100,3),
+      "median(success_deal/deal), %": round((df[(m.MetricContainer.DEALS_F, m.DealMetric.SUCCESS_DEAL_COUNT_F)] / df[(m.MetricContainer.DEALS_F, m.DealMetric.DEAL_COUNT_F)]).median()*100,3)
     }
   
   @staticmethod
@@ -33,13 +35,13 @@ class Analitic:
 
     return pd.concat([pd.DataFrame([
       Analitic.get_success_yield("all", df),
-      Analitic.get_success_yield("ticker", df.groupby((("market_cfg", "full_ticker"))).median()),
-      Analitic.get_success_yield("str", df.groupby([c for c in df.index.names if c[0]=="strategy_cfg"]).median()),
+      Analitic.get_success_yield("ticker", df.groupby(((rcfg.RunConfig.MARKET_CFG_F, "full_ticker"))).median()),
+      Analitic.get_success_yield("str", df.groupby([c for c in df.index.names if c[0]==rcfg.RunConfig.STRATEGY_CFG_F]).median()),
     ]).set_index("name"),
     pd.DataFrame([
       Analitic.get_metric("all", df),
-      Analitic.get_metric("ticker", df.groupby((("market_cfg", "full_ticker"))).median()),
-      Analitic.get_metric("str",df.groupby([c for c in df.index.names if c[0]=="strategy_cfg"]).median()),
+      Analitic.get_metric("ticker", df.groupby(((rcfg.RunConfig.MARKET_CFG_F, "full_ticker"))).median()),
+      Analitic.get_metric("str",df.groupby([c for c in df.index.names if c[0]==rcfg.RunConfig.STRATEGY_CFG_F]).median()),
     ]).set_index("name")], axis=1)
 
   @property

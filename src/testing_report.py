@@ -1,8 +1,7 @@
 from __future__ import annotations
 from typing import Dict, List
-from datetime import date
 from .strategy.run_report import RunReport
-from .strategy.run_config.run_config_set import RunConfigSet
+from .strategy import run_config as rcfg
 from .strategy.run_report import RunReportFactory
 from tqdm import tqdm
 import pandas as pd
@@ -16,7 +15,7 @@ class TestingReport:
             self.__run_report_factory = runReportFactory
             pass
 
-        def get(self, runConfigSet: RunConfigSet) -> TestingReport:
+        def get(self, runConfigSet: rcfg.RunConfigSet) -> TestingReport:
             trb = TestingReport.Builder()
             for rc in tqdm(runConfigSet.as_records()):
                 rr = self.__run_report_factory.get(rc)
@@ -81,13 +80,13 @@ class TestingReport:
         df.columns = pd.MultiIndex.from_tuples(df.columns)
 
         # drop const values
-        df.drop([('run_config', 'strategy_id')],axis=1,inplace=True)
+        df.drop([(RunReport.RUN_CONFIG_F, rcfg.RunConfig.STRATEGY_ID_F)],axis=1,inplace=True)
         # join ticker cols
-        ticker_cols = [("run_config", "market_cfg", m) for m in  ["stocks_0_ticker",	"stocks_0_timeframe",	"step_timeframe"]]
-        df[("run_config", "market_cfg","full_ticker")] = df[[("run_config", "market_cfg", m) for m in  ["stocks_0_ticker",	"stocks_0_timeframe",	"step_timeframe"]]].apply(lambda row: ':'.join(map(str, row)), axis=1)
+        ticker_cols = [(RunReport.RUN_CONFIG_F, rcfg.RunConfig.MARKET_CFG_F, m) for m in  ["stocks_0_ticker",	"stocks_0_timeframe", rcfg.MarketConfig.STEP_TF_F]]
+        df[(RunReport.RUN_CONFIG_F, rcfg.RunConfig.MARKET_CFG_F,"full_ticker")] = df[[(RunReport.RUN_CONFIG_F, rcfg.RunConfig.MARKET_CFG_F, m) for m in  ["stocks_0_ticker",	"stocks_0_timeframe",rcfg.MarketConfig.STEP_TF_F]]].apply(lambda row: ':'.join(map(str, row)), axis=1)
         df.drop(ticker_cols, axis=1,inplace=True)
         # set index
-        df.set_index([c for c in df.columns if c[0] =="run_config"], inplace=True)
+        df.set_index([c for c in df.columns if c[0] ==RunReport.RUN_CONFIG_F], inplace=True)
         # drop unused level
         df.index.names = [(n[1],n[2]) for n in  df.index.names] 
         df.columns = df.columns.droplevel(0)

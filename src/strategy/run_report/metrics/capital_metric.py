@@ -1,10 +1,10 @@
 from ...absStrategy import Dict, datetime, MarketConfig
 
 class CapitalMetric:
-    STR_YIELD_F = "strategy_yield"
-    STR_MAX_YIELD_F = "strategy_max_yield"
+    STR_YIELD_F = "yield"
+    STR_MAX_YIELD_F = "max_yield"
     MAX_FALL_F = "max_fall"
-    STR_YIELD_YEAR_F = "strategy_yield_per_year"
+    STR_YIELD_YEAR_F = "yield/year"
 
     def __init__(self, market_config: MarketConfig, capital_log: Dict[datetime, float]) -> None:
         if len(capital_log) == 0:
