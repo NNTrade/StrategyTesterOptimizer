@@ -61,7 +61,7 @@ class CapitalMetric:
 
     @property
     def strategy_yield_per_year(self) -> float:
-        """Result yeield per year
+        """Result yield per year
 
         Returns:
             float: Strategy Yield per year
