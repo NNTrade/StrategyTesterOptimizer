@@ -144,12 +144,12 @@ class DealMetric_avg_net_profit_income_loss_TestCase(unittest.TestCase):
 
 class DealMetric_PROM_TestCase(unittest.TestCase):
 
-  logger = logging.getLogger(__name__)
-  logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                                             datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
-  def test_WHEN__THEN_(self):
-    # Array
+    def test_WHEN_request_THEN_correct(self):
+        # Array
         deals = [
             Deal(datetime(2023, 9, 1), 2, datetime(2023, 9, 2), 1, 3),  #-3
             Deal(datetime(2023, 9, 2), 4, datetime(2023, 9, 3), 6, 3),  #+6
@@ -165,4 +165,71 @@ class DealMetric_PROM_TestCase(unittest.TestCase):
         asserted_PROM = asserted_rep.PROM
 
         # Assert
+        self.assertIsNotNone(asserted_PROM)
         self.assertAlmostEqual(expected_PROM, asserted_PROM,5)
+
+    def test_WHEN_only_success_THEN_correct(self):
+        # Array
+        deals = [
+            Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3),  #+3
+            Deal(datetime(2023, 9, 2), 4, datetime(2023, 9, 3), 6, 3),  #+6
+            Deal(datetime(2023, 9, 2), 3, datetime(2023, 9, 3), 3, 3),  #0
+            Deal(datetime(2023, 9, 1), 2, None, 4, 3),                  #+6
+        ]
+        asserted_rep = DealMetric(deals)
+        expected_AGP = 5 * (3 - sqrt(3))
+        expected_AGL = 0 * (0 + sqrt(0))
+        expected_M = 5* 3 - 0 * 0
+        expected_PROM = (expected_AGP + expected_AGL)/expected_M
+        # Act
+        asserted_PROM = asserted_rep.PROM
+
+        # Assert
+        self.assertIsNotNone(asserted_PROM)
+        self.assertAlmostEqual(expected_PROM, asserted_PROM,5)
+
+    def test_WHEN_only_fail_THEN_correct(self):
+        # Array
+        deals = [
+            Deal(datetime(2023, 9, 1), 2, datetime(2023, 9, 2), 1, 3),  #-3
+            Deal(datetime(2023, 9, 2), 6, datetime(2023, 9, 3), 4, 3),  #-6
+            Deal(datetime(2023, 9, 2), 3, datetime(2023, 9, 3), 3, 3),  #0
+            Deal(datetime(2023, 9, 1), 4, None, 2, 3),                  #-6
+        ]
+        asserted_rep = DealMetric(deals)
+        expected_AGP = 0
+        expected_AGL = - 5 * (3 + sqrt(3))
+        expected_M = -5* 3
+        expected_PROM = (expected_AGP + expected_AGL)/expected_M
+
+        # Act
+        asserted_PROM = asserted_rep.PROM
+
+        # Assert
+        self.assertIsNotNone(asserted_PROM)
+        self.assertAlmostEqual(expected_PROM, asserted_PROM,5)
+
+    def test_WHEN_no_deal_THEN_None(self):
+        # Array
+        deals = []
+        asserted_rep = DealMetric(deals)
+
+        # Act
+        asserted_PROM = asserted_rep.PROM
+        
+        # Assert
+        self.assertIsNone(asserted_PROM)
+
+    def test_WHEN_all_deals_is_zero_THEN_None(self):
+        # Array
+        deals = [
+            Deal(datetime(2023, 9, 2), 3, datetime(2023, 9, 3), 3, 3),  #0
+            Deal(datetime(2023, 9, 1), 2, None, 2, 3),                  #0
+        ]
+        asserted_rep = DealMetric(deals)
+
+        # Act
+        asserted_PROM = asserted_rep.PROM
+        
+        # Assert
+        self.assertIsNone(asserted_PROM)
