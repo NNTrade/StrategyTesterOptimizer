@@ -93,7 +93,7 @@ class Report_TestCase(unittest.TestCase):
                              datetime(2023, 9, 3): 12.2,
                              datetime(2023, 9, 2): 15.7,
                              },
-                            [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)])
+                            [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1)])
 
         equal_rr_arr = [
             RunReport(rc,
@@ -101,25 +101,25 @@ class Report_TestCase(unittest.TestCase):
                        datetime(2023, 9, 3): 12.2,
                        datetime(2023, 9, 2): 15.7,
                        },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1)]),
             RunReport(rc,
                       {datetime(2023, 9, 3): 12.2,
                        datetime(2023, 9, 1): 10.5,
                        datetime(2023, 9, 2): 15.7,
                        },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1)]),
             RunReport(rc,
                       {datetime(2023, 9, 1): 10.5,
                        datetime(2023, 9, 2): 15.7,
                        datetime(2023, 9, 3): 12.2,
                        },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1)]),
             RunReport(rc,
                       {datetime(2023, 9, 1): 10.5,
                        datetime(2023, 9, 3): 12.2,
                        datetime(2023, 9, 2): 15.7,
                        },
-                      [Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3), Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3)])
+                      [Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1), Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1)])
         ]
 
         rc2 = cfg.RunConfig(si, cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
@@ -130,37 +130,37 @@ class Report_TestCase(unittest.TestCase):
                        datetime(2023, 9, 3): 12.2,
                        datetime(2023, 9, 2): 15.7,
                        },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1)]),
             RunReport(rc, {datetime(2023, 9, 1): 10.1,
                            datetime(2023, 9, 3): 12.2,
                            datetime(2023, 9, 2): 15.7,
                            },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1)]),
             RunReport(rc, {datetime(2023, 9, 1): 10.5,
                            datetime(2023, 9, 4): 12.2,
                            datetime(2023, 9, 2): 15.7,
                            },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1)]),
             RunReport(rc, {datetime(2023, 9, 1): 10.5,
                            datetime(2023, 9, 3): 12.2,
                            datetime(2023, 9, 2): 15.7,
                            },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1)]),
             RunReport(rc, {datetime(2023, 9, 1): 10.5,
                            datetime(2023, 9, 3): 12.2,
                            datetime(2023, 9, 2): 15.7,
                            },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 2, datetime(2023, 9, 3), 2, 3)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 2, datetime(2023, 9, 3), 2, 3,1)]),
             RunReport(rc, {datetime(2023, 9, 1): 10.5,
                            datetime(2023, 9, 3): 12.2,
                            datetime(2023, 9, 2): 15.7,
                            },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3, -1)]),
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3, 1,-1)]),
             RunReport(rc, {datetime(2023, 9, 1): 10.5,
                            datetime(2023, 9, 3): 12.2,
                            datetime(2023, 9, 2): 15.7,
                            },
-                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 4), 2, 3)])
+                      [Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 3), 2, 3,1), Deal(datetime(2023, 9, 2), 1, datetime(2023, 9, 4), 2, 3,1)])
         ]
         # Act
 
