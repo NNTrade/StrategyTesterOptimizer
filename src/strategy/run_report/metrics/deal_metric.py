@@ -38,10 +38,19 @@ class DealMetric:
         pass
 
     @property
-    def PROM(self)->float:
+    def PROM(self)->Union[float, None]:
+        """The pessimistic return on margin
+
+        Returns:
+            Union[float, None]: The pessimistic return on margin. If no success or fail deals then None
+        """
+        M = self.avg_net_income * self.success_deal + self.avg_net_loss * self.fail_deal
+        if M == 0:
+            return None
+        
         AGP = self.avg_net_income * (self.success_deal - sqrt(self.success_deal))
         AGL = self.avg_net_loss * (self.fail_deal + sqrt(self.fail_deal))
-        M = self.avg_net_income * self.success_deal + self.avg_net_loss * self.fail_deal
+
         return (AGP + AGL)/M
 
     @property
