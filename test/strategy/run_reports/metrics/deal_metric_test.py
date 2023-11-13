@@ -1,4 +1,5 @@
 from __future__ import annotations
+from math import sqrt
 import unittest
 import logging
 from datetime import datetime
@@ -140,3 +141,28 @@ class DealMetric_avg_net_profit_income_loss_TestCase(unittest.TestCase):
         self.assertEqual(9/4, asserted_avg_net_profit)
         self.assertEqual(6, asserted_avg_net_income)
         self.assertEqual(-3, asserted_avg_net_loss)
+
+class DealMetric_PROM_TestCase(unittest.TestCase):
+
+  logger = logging.getLogger(__name__)
+  logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
+                                            datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
+
+  def test_WHEN__THEN_(self):
+    # Array
+        deals = [
+            Deal(datetime(2023, 9, 1), 2, datetime(2023, 9, 2), 1, 3),  #-3
+            Deal(datetime(2023, 9, 2), 4, datetime(2023, 9, 3), 6, 3),  #+6
+            Deal(datetime(2023, 9, 2), 3, datetime(2023, 9, 3), 3, 3),  #0
+            Deal(datetime(2023, 9, 1), 2, None, 4, 3),                  #+6
+        ]
+        asserted_rep = DealMetric(deals)
+        expected_AGP = 6 * (2 - sqrt(2))
+        expected_AGL = -3 * (1 + sqrt(1))
+        expected_M = 6 * 2 - 3 * 1
+        expected_PROM = (expected_AGP + expected_AGL)/expected_M
+        # Act
+        asserted_PROM = asserted_rep.PROM
+
+        # Assert
+        self.assertAlmostEqual(expected_PROM, asserted_PROM,5)

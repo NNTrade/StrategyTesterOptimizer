@@ -1,3 +1,4 @@
+from math import sqrt
 from ...absStrategy import Deal, List, Dict
 from typing import Union
 import numpy as np
@@ -9,6 +10,7 @@ class DealMetric:
     AVG_NET_INCOME_F = "avg_net_income"
     AVG_NET_LOSS_F = "avg_net_loss"
     AVG_NET_PROFIT_F = "avg_net_profit"
+    PROM_F = "PROM"
 
     def __init__(self, deal_list: List[Deal]) -> None:
         self.__deal_count = len(deal_list)
@@ -34,7 +36,14 @@ class DealMetric:
         else:
             self.__avg_net_loss = 0
         pass
-    
+
+    @property
+    def PROM(self)->float:
+        AGP = self.avg_net_income * (self.success_deal - sqrt(self.success_deal))
+        AGL = self.avg_net_loss * (self.fail_deal + sqrt(self.fail_deal))
+        M = self.avg_net_income * self.success_deal + self.avg_net_loss * self.fail_deal
+        return (AGP + AGL)/M
+
     @property
     def avg_net_profit(self)->Union[float, None]:
         """Average all deal net profit. If no deals then None
@@ -49,7 +58,7 @@ class DealMetric:
         """Average success deal net profit. If no nuccess deals then 0
 
         Returns:
-            Union[float,None]: average deal net income
+            Union[float,None]: average deal net income >= 0
         """
         return self.__avg_net_income
     
@@ -58,7 +67,7 @@ class DealMetric:
         """Average loss deal net profit. If no fail deals then 0
 
         Returns:
-            Union[float,None]: average deal net loss
+            Union[float,None]: average deal net loss <=0
         """
         return self.__avg_net_loss
 
@@ -97,7 +106,8 @@ class DealMetric:
             DealMetric.FAIL_DEAL_COUNT_F: self.fail_deal,
             DealMetric.AVG_NET_PROFIT_F: self.avg_net_profit,
             DealMetric.AVG_NET_INCOME_F: self.avg_net_income,
-            DealMetric.AVG_NET_LOSS_F: self.avg_net_loss
+            DealMetric.AVG_NET_LOSS_F: self.avg_net_loss,
+            DealMetric.PROM_F: self.PROM
         }
 
     def __str__(self):
