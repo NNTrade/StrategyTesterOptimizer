@@ -4,7 +4,7 @@ from .strategy.run_config import RunConfigSet,RunConfig
 from typing import List,Tuple
 from .optimization.parameter_optimizator import absParameterOptimizatorFactory
 from .optimization.market_config_splitter import absMarketConfigSplitter,DefaultMarketConfigSplitter
-
+import logging
 
 class OptimizationReport:
   class Factory:
@@ -12,18 +12,25 @@ class OptimizationReport:
       self.__run_report_factory = runReportFactory
       self.__parametar_optimizator_factory = parametar_optimizator_factory
       self.__market_config_splitter = DefaultMarketConfigSplitter.default_tf_d() if market_config_splitter is None else market_config_splitter
+      self.__logger = logging.getLogger("OptimizationReport")
       pass
 
     def get(self, run_config_set: RunConfigSet)->OptimizationReport:
       rr_list = []
       #Loop all avaliable market configs
-      for mc in run_config_set.market_cfg_set.as_records():
-        
+      mcs_recs = run_config_set.market_cfg_set.as_records()
+      mcs_recs_total = len(mcs_recs)
+      for idx, mc in enumerate(mcs_recs):
+        self.__logger.info("Start %i/%i",idx+1,mcs_recs_total)
+        mc_logger = self.__logger.getChild(f"{idx+1}/{mcs_recs_total}")
+
         #Split all market config on optimization and forward chunks
         mc_set_arr = self.__market_config_splitter.split(mc)
+        mc_set_arr_total = len(mc_set_arr)
 
-        for mc_set in mc_set_arr:
-          
+        for idx,mc_set in enumerate(mc_set_arr):
+          mc_logger.info("Start optimization tuple %i/%i",idx+1,mc_set_arr_total)
+
           #Get new parameter optimizator of current optimization perido
           pof = self.__parametar_optimizator_factory.build(run_config_set.strategy_cfg_set)
 
