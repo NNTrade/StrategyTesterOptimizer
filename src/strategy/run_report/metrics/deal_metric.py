@@ -1,18 +1,67 @@
 from ...absStrategy import Deal, List, Dict
-
+from typing import Union
+import numpy as np
 
 class DealMetric:
     DEAL_COUNT_F = "deal_count"
     SUCCESS_DEAL_COUNT_F = "success_deal_count"
     FAIL_DEAL_COUNT_F = "fail_deal_count"
+    AVG_NET_INCOME_F = "avg_net_income"
+    AVG_NET_LOSS_F = "avg_net_loss"
+    AVG_NET_PROFIT_F = "avg_net_profit"
 
     def __init__(self, deal_list: List[Deal]) -> None:
         self.__deal_count = len(deal_list)
-        self.__success_deal_count = len(
-            [d for d in deal_list if d.result > 0])
-        self.__fail_deal_count = len(
-            [d for d in deal_list if d.result < 0])
+
+        success_deals = [d for d in deal_list if d.result > 0]
+        self.__success_deal_count = len(success_deals)
+        
+        fail_deals = [d for d in deal_list if d.result < 0]
+        self.__fail_deal_count = len(fail_deals)
+
+        if self.__deal_count > 0:
+            self.__avg_net_profit = float(np.mean([d.result for d in deal_list]))
+        else:
+            self.__avg_net_profit = None
+
+        if self.__success_deal_count > 0:
+            self.__avg_net_income = float(np.mean([d.result for d in success_deals]))
+        else:
+            self.__avg_net_income = 0
+
+        if self.__fail_deal_count > 0:
+            self.__avg_net_loss = float(np.mean([d.result for d in fail_deals]))
+        else:
+            self.__avg_net_loss = 0
         pass
+    
+    @property
+    def avg_net_profit(self)->Union[float, None]:
+        """Average all deal net profit. If no deals then None
+
+        Returns:
+            Union[float,None]: average deal net income
+        """
+        return self.__avg_net_profit
+    
+    @property
+    def avg_net_income(self)->float:
+        """Average success deal net profit. If no nuccess deals then 0
+
+        Returns:
+            Union[float,None]: average deal net income
+        """
+        return self.__avg_net_income
+    
+    @property
+    def avg_net_loss(self)->float:
+        """Average loss deal net profit. If no fail deals then 0
+
+        Returns:
+            Union[float,None]: average deal net loss
+        """
+        return self.__avg_net_loss
+
 
     @property
     def deal_count(self) -> int:
@@ -45,7 +94,10 @@ class DealMetric:
         return {
             DealMetric.DEAL_COUNT_F: self.deal_count,
             DealMetric.SUCCESS_DEAL_COUNT_F: self.success_deal,
-            DealMetric.FAIL_DEAL_COUNT_F: self.fail_deal
+            DealMetric.FAIL_DEAL_COUNT_F: self.fail_deal,
+            DealMetric.AVG_NET_PROFIT_F: self.avg_net_profit,
+            DealMetric.AVG_NET_INCOME_F: self.avg_net_income,
+            DealMetric.AVG_NET_LOSS_F: self.avg_net_loss
         }
 
     def __str__(self):

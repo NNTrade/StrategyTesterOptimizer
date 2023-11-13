@@ -58,3 +58,85 @@ class DealMetric_TestCase(unittest.TestCase):
         # Assert
         self.assertEqual(2, asserted_success_deal_count)
         self.assertEqual(1, asserted_loss_deal_count)
+
+class DealMetric_avg_net_profit_income_loss_TestCase(unittest.TestCase):
+
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
+                                                datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
+
+    def test_WHEN_no_deal_THEN_0(self):
+        # Array
+        deals = [
+        ]
+        asserted_rep = DealMetric(deals)
+
+        # Act
+        asserted_avg_net_profit = asserted_rep.avg_net_profit
+        asserted_avg_net_income = asserted_rep.avg_net_income
+        asserted_avg_net_loss = asserted_rep.avg_net_loss
+
+        # Assert
+        self.assertIsNone(asserted_avg_net_profit)
+        self.assertEqual(0, asserted_avg_net_income)
+        self.assertEqual(0, asserted_avg_net_loss)
+
+    def test_WHEN_pos_deals_THEN_correct(self):
+        # Array
+        deals = [
+            Deal(datetime(2023, 9, 1), 1, datetime(2023, 9, 2), 2, 3),  #+3
+            Deal(datetime(2023, 9, 2), 4, datetime(2023, 9, 3), 6, 3),  #+6
+            Deal(datetime(2023, 9, 2), 3, datetime(2023, 9, 3), 3, 3),  #0
+            Deal(datetime(2023, 9, 1), 2, None, 4, 3),                  #+6
+        ]
+        asserted_rep = DealMetric(deals)
+
+        # Act
+        asserted_avg_net_profit = asserted_rep.avg_net_profit
+        asserted_avg_net_income = asserted_rep.avg_net_income
+        asserted_avg_net_loss = asserted_rep.avg_net_loss
+
+        # Assert
+        self.assertEqual(15/4, asserted_avg_net_profit)        
+        self.assertEqual(5, asserted_avg_net_income)
+        self.assertEqual(0, asserted_avg_net_loss)
+
+    def test_WHEN_neg_deals_THEN_correct(self):
+        # Array
+        deals = [
+            Deal(datetime(2023, 9, 1), 2, datetime(2023, 9, 2), 1, 3),  #-3
+            Deal(datetime(2023, 9, 2), 6, datetime(2023, 9, 3), 4, 3),  #-6
+            Deal(datetime(2023, 9, 2), 3, datetime(2023, 9, 3), 3, 3),  #0
+            Deal(datetime(2023, 9, 1), 4, None, 2, 3),                  #-6
+        ]
+        asserted_rep = DealMetric(deals)
+
+        # Act
+        asserted_avg_net_profit = asserted_rep.avg_net_profit
+        asserted_avg_net_income = asserted_rep.avg_net_income
+        asserted_avg_net_loss = asserted_rep.avg_net_loss
+
+        # Assert
+        self.assertEqual(-15/4, asserted_avg_net_profit)
+        self.assertEqual(0, asserted_avg_net_income)
+        self.assertEqual(-5, asserted_avg_net_loss)
+
+    def test_WHEN_mixed_deals_THEN_correct(self):
+        # Array
+        deals = [
+            Deal(datetime(2023, 9, 1), 2, datetime(2023, 9, 2), 1, 3),  #-3
+            Deal(datetime(2023, 9, 2), 4, datetime(2023, 9, 3), 6, 3),  #+6
+            Deal(datetime(2023, 9, 2), 3, datetime(2023, 9, 3), 3, 3),  #0
+            Deal(datetime(2023, 9, 1), 2, None, 4, 3),                  #+6
+        ]
+        asserted_rep = DealMetric(deals)
+
+        # Act
+        asserted_avg_net_profit = asserted_rep.avg_net_profit
+        asserted_avg_net_income = asserted_rep.avg_net_income
+        asserted_avg_net_loss = asserted_rep.avg_net_loss
+
+        # Assert
+        self.assertEqual(9/4, asserted_avg_net_profit)
+        self.assertEqual(6, asserted_avg_net_income)
+        self.assertEqual(-3, asserted_avg_net_loss)
