@@ -25,7 +25,7 @@ class Factory_TestCase(unittest.TestCase):
             cur_d = market_cfg.from_date
             cap = 1
             self._deal.append(
-                Deal(cur_d, cap, cur_d+timedelta(days=2), cap+1, cap))
+                Deal(cur_d, cap, cur_d+timedelta(days=2), cap+1, cap,cap))
             while cur_d < market_cfg.untill_date:
                 self._capital_log[cur_d] = cap
                 cap = cap + 1
@@ -66,7 +66,7 @@ class Factory_TestCase(unittest.TestCase):
 
         expected_deals = [
             Deal(date(2020, 1, 1), 1, date(2020, 1, 1) +
-                 timedelta(days=2), 2, 1, 0, 0, 0)
+                 timedelta(days=2), 2, 1,1, 0, 0, 0)
         ]
         # Act
         asserted_rr = rrf.get(rc)

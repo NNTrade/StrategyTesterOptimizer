@@ -9,6 +9,7 @@ class Deal:
     CLOSE_DATE_F = "close_date"
     CLOSE_PRICE_F = "close_price"
     AMOUNT_F = "amount"
+    START_CAP_F = "start_capital"
     COMMISSION_OPEN_F = "commission_open"
     COMMISSION_CLOSE_F = "commission_close"
     COMMISSION_HOLDING_F = "commission_holding"
@@ -20,6 +21,7 @@ class Deal:
             self.close_date: datetime = None
             self.close_price: float = None
             self.amount: float = None
+            self.start_capital: float = None
             self.commission_open: float = 0
             self.commission_close: float = 0
             self.commission_holding: float = 0
@@ -44,6 +46,10 @@ class Deal:
         def set_amount(self, value) -> Deal.Builder:
             self.amount = value
             return self
+        
+        def set_start_capital(self, value)->Deal.Builder:
+            self.start_capital = value
+            return self
 
         def set_commission_open(self, value) -> Deal.Builder:
             self.commission_open = value
@@ -63,6 +69,7 @@ class Deal:
                         self.close_date,
                         self.close_price,
                         self.amount,
+                        self.start_capital,
                         self.commission_open,
                         self.commission_close,
                         self.commission_holding)
@@ -72,6 +79,7 @@ class Deal:
                  close_date: datetime,
                  close_price: float,
                  amount: float,
+                 start_capital: float,
                  commission_open: float = 0,
                  commission_close: float = 0,
                  commission_holding: float = 0):
@@ -86,12 +94,15 @@ class Deal:
             raise AttributeError("Deal must has amount != 0", name="amount")
         if commission_open > 0 or commission_close > 0 or commission_holding > 0:
             raise AttributeError("Commisison must be <= 0")
-
+        if start_capital == 0:
+            raise AttributeError("Start capital must has amount != 0", name="start_capital")
+        
         self.__open_date: datetime = open_date
         self.__open_price: float = open_price
         self.__close_date: datetime = close_date
         self.__close_price: float = close_price
         self.__amount: float = amount
+        self.__start_capital:float = start_capital
         self.__commission_open: float = commission_open
         self.__commission_close: float = commission_close
         self.__commission_holding: float = commission_holding
@@ -101,7 +112,12 @@ class Deal:
 
         self.__result = (self.close_price - self.open_price) * \
             self.amount + self.commission_total
+        self.__profit = self.__result / self.__start_capital
         self.__is_closed = self.__close_date is not None
+
+    @property
+    def start_capital(self)-> float:
+        return self.__start_capital
 
     @property
     def open_date(self) -> datetime:
@@ -144,6 +160,10 @@ class Deal:
         return self.__result
 
     @property
+    def profit(self) -> float:
+        return self.__profit
+
+    @property
     def is_closed(self) -> bool:
         return self.__is_closed
     def to_dict(self) -> Dict:
@@ -153,6 +173,7 @@ class Deal:
             self.CLOSE_DATE_F: self.close_date,
             self.CLOSE_PRICE_F: self.close_price,
             self.AMOUNT_F: self.amount,
+            self.START_CAP_F: self.start_capital,
             self.COMMISSION_OPEN_F: self.commission_open,
             self.COMMISSION_CLOSE_F: self.commission_close,
             self.COMMISSION_HOLDING_F: self.commission_holding,

@@ -22,17 +22,17 @@ class DealMetric:
         self.__fail_deal_count = len(fail_deals)
 
         if self.__deal_count > 0:
-            self.__avg_net_profit = float(np.mean([d.result for d in deal_list]))
+            self.__avg_net_profit = float(np.mean([d.profit for d in deal_list]))
         else:
             self.__avg_net_profit = None
 
         if self.__success_deal_count > 0:
-            self.__avg_net_income = float(np.mean([d.result for d in success_deals]))
+            self.__avg_net_income = float(np.mean([d.profit for d in success_deals]))
         else:
             self.__avg_net_income = 0
 
         if self.__fail_deal_count > 0:
-            self.__avg_net_loss = float(np.mean([d.result for d in fail_deals]))
+            self.__avg_net_loss = float(np.mean([d.profit for d in fail_deals]))
         else:
             self.__avg_net_loss = 0
         pass
