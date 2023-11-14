@@ -2,7 +2,7 @@ from __future__ import annotations
 from itertools import product
 from typing import Callable, Dict, List, MutableMapping
 from .strategy_config import StrategyConfig
-from .abs_base_config import absBaseConfigSet, absBaseBuilder
+from .abs_base_config import absBaseConfigSet, absBaseBuilder,IsValidChecker
 
 
 class StrategyConfigSet(MutableMapping, absBaseConfigSet):
@@ -11,7 +11,6 @@ class StrategyConfigSet(MutableMapping, absBaseConfigSet):
     class Builder(absBaseBuilder["StrategyConfigSet.Builder", StrategyConfig]):
         def __init__(self) -> None:
             self.data = {}
-            self.validation_func: Callable[[StrategyConfig], bool] = lambda config: True
             super().__init__()
 
         def add_set(self, parameterName, parameterSet: List) -> StrategyConfigSet.Builder:
@@ -19,11 +18,11 @@ class StrategyConfigSet(MutableMapping, absBaseConfigSet):
             return self
 
         def build(self) -> StrategyConfigSet:
-            return StrategyConfigSet(self.data, self.is_valid_func)
+            return StrategyConfigSet(self.data, self.is_valid_checker)
 
-    def __init__(self, data={}, is_valid_func: Callable[[StrategyConfig], bool] = None):
+    def __init__(self, data={}, is_valid_checker: IsValidChecker[StrategyConfig] = None):
         self.__data = data
-        super().__init__(is_valid_func)
+        super().__init__(is_valid_checker)
 
     def __getitem__(self, key):
         return self.__data[key]

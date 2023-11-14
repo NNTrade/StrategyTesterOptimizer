@@ -5,22 +5,36 @@ T = TypeVar('T')
 RT = TypeVar('RT')
 
 
+class IsValidChecker(ABC, Generic[T]):
+    
+    @abstractmethod
+    def is_valid(self, validation_object:T)->bool:
+        ...
+
+class DefaultChecker(IsValidChecker[T]):
+    def is_valid(self, validation_object:T) -> bool:
+        return True
+    
 class absBaseConfigSet(ABC, Generic[T]):
     class record_type(Enum):
         only_valid = 1
         only_invalid = -1
         all = 0
 
-    def __init__(self, is_valid_func: Callable[[T], bool] = None) -> None:
-        self.__is_valid_func = is_valid_func if is_valid_func is not None else lambda config: True
+    def __init__(self,is_valid_checker: IsValidChecker[T] = None) -> None:
+        self.__is_valid_checker = is_valid_checker if is_valid_checker is not None else DefaultChecker()
         super().__init__()
 
     def is_valid(self, config: T) -> bool:
-        return self.__is_valid_func(config)
+        return self.__is_valid_checker.is_valid(config)
 
     @property
+    def is_valid_checker(self)->IsValidChecker[T]:
+        return self.__is_valid_checker
+    
+    @property
     def is_valid_func(self) -> Callable[[T], bool]:
-        return self.__is_valid_func
+        return self.__is_valid_checker.is_valid
 
     @abstractmethod
     def _build_records(self) -> List[T]:
@@ -38,9 +52,9 @@ class absBaseConfigSet(ABC, Generic[T]):
 
 class absBaseBuilder(ABC, Generic[RT, T]):
     def __init__(self) -> None:
-        self.is_valid_func: Callable[[T], bool] = lambda config: True
+        self.is_valid_checker: IsValidChecker[T] = DefaultChecker[T]()
         super().__init__()
 
-    def add_is_valid_func(self, is_valid_func: Callable[[T], bool]) -> RT:
-        self.is_valid_func = is_valid_func
+    def add_is_valid_checker(self, is_valid_checker: IsValidChecker[T]) -> RT:
+        self.is_valid_checker = is_valid_checker
         return self

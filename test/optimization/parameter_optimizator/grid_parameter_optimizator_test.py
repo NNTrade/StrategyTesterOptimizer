@@ -2,16 +2,20 @@ import unittest
 import logging
 from src.optimization.parameter_optimizator import GridParameterOptimizator, StrategyConfigSet
 from src.strategy.run_config.strategy_config import StrategyConfig
+from src.strategy.run_config.abs_base_config import IsValidChecker
 
 class GridParameterOptimizator_TestCase(unittest.TestCase):
 
   logger = logging.getLogger(__name__)
   logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                       datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
-
+  class TestIsValidCherker(IsValidChecker[StrategyConfig]):
+    def is_valid(self, validation_object: StrategyConfig) -> bool:
+      return validation_object["A"] != validation_object["B"]
   def test_WHEN_call_THEN_work_correct(self):
     # Array
-    scs = StrategyConfigSet({"A":[1,2,3], "B":[1,2,3]}, lambda cfg: cfg["A"] != cfg["B"])
+    ivc = GridParameterOptimizator_TestCase.TestIsValidCherker()
+    scs = StrategyConfigSet({"A":[1,2,3], "B":[1,2,3]}, ivc)
     gpo = GridParameterOptimizator(scs, lambda rr1,rr2: hash(rr2) - hash(rr1))
     
     expected_cfgs = [
