@@ -7,5 +7,5 @@ class absStrategyFactory(ABC):
   """Factory for builing new strategy instance in each test
   """
 
-  def build(self, parameters: StrategyConfig,locks={}) -> absStrategy:
+  def build(self, parameters: StrategyConfig) -> absStrategy:
     ...

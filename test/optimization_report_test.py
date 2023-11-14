@@ -20,7 +20,7 @@ class OptimizationReport_TestCase(unittest.TestCase):
     def is_valid(self, validation_object: StrategyConfig) -> bool:
       return validation_object["P1"] != validation_object["P2"]
   class FakeRunReportFactory:
-      def get(self, run_config: rcl.RunConfig,locks={}) -> RunReport:
+      def get(self, run_config: rcl.RunConfig) -> RunReport:
         cap ={
           datetime.datetime(2020,1,1):1,
           datetime.datetime(2020,12,2):run_config.strategy_cfg["P1"]*run_config.strategy_cfg["P2"]
@@ -41,7 +41,8 @@ class OptimizationReport_TestCase(unittest.TestCase):
         sc_set)
 
     # Act
-    opt_rep = orf.get(rc,True)
+    opt_rep = orf.get(rc,False)
+
 
     # Assert
     self.assertEqual(6, opt_rep.forward_reports[0].metrics.capital.final_cap)
