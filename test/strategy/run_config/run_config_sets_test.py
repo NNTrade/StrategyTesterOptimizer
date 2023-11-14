@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.strategy.run_config import RunConfigSet, MarketConfigSet, StrategyConfigSet, date, StrategyId, StockConfig, TimeFrame
+from src.strategy.run_config import RunConfigSet, MarketConfigSet, StrategyConfigSet, date, StrategyId, StockConfig, TimeFrame, IsValidChecker,StrategyConfig
 
 
 class RunConfigSets_TestCase(unittest.TestCase):
@@ -9,6 +9,9 @@ class RunConfigSets_TestCase(unittest.TestCase):
     logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
+    class TestIsValidChecker(IsValidChecker[StrategyConfig]):
+        def is_valid(self, validation_object: StrategyConfig) -> bool:
+            return validation_object != {"A": 2, "B": 4}
     def test_WHEN_build_records_THEN_get_correct_list(self):
         # Array
         s1 = StockConfig("S1", TimeFrame.D)
@@ -19,8 +22,9 @@ class RunConfigSets_TestCase(unittest.TestCase):
             .add_stocks(["S1", "S2"], TimeFrame.D, date(2020, 1, 1), date(2021, 1, 1))\
             .add_stock("S3", TimeFrame.D, date(2022, 1, 1), date(2023, 1, 1))\
             .build()
+        ivc = RunConfigSets_TestCase.TestIsValidChecker()
         scs = StrategyConfigSet.Builder().add_set(
-            "A", [1, 2, 3]).add_set("B", [4, 5, 6]).add_is_valid_func(lambda rec: rec != {"A": 2, "B": 4}).build()
+            "A", [1, 2, 3]).add_set("B", [4, 5, 6]).add_is_valid_checker(ivc).build()
         rcs = RunConfigSet(si, mcs, scs)
 
         # Act

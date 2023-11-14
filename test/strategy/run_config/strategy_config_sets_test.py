@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.strategy.run_config.strategy_config_sets import StrategyConfigSet, StrategyConfig
+from src.strategy.run_config.strategy_config_sets import StrategyConfigSet, StrategyConfig, IsValidChecker
 
 
 class ParametersSets_TestCase(unittest.TestCase):
@@ -8,7 +8,10 @@ class ParametersSets_TestCase(unittest.TestCase):
   logger = logging.getLogger(__name__)
   logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                       datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
-
+  
+  class TestIsValidChecker(IsValidChecker[StrategyConfig]):
+    def is_valid(self, validation_object: StrategyConfig) -> bool:
+        return validation_object != {"A": 2, "B": 4}
   def test_WHEN_create_instance_THEN_work_like_dictionary(self):
     # Array
     ps = StrategyConfigSet.Builder().add_set(
@@ -37,8 +40,9 @@ class ParametersSets_TestCase(unittest.TestCase):
 
   def test_WHEN_add_validation_func_THEN_records_contained_only_valid(self):
       # Array
+      ivc = ParametersSets_TestCase.TestIsValidChecker()
       ps = StrategyConfigSet.Builder().add_set("A", [1, 2, 3]).add_set(
-          "B", [4, 5, 6]).add_is_valid_func(lambda rec: rec != {"A": 2, "B": 4}).build()
+          "B", [4, 5, 6]).add_is_valid_checker(ivc).build()
 
       # Act
 
