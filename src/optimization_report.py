@@ -8,7 +8,6 @@ from .optimization.market_config_splitter import absMarketConfigSplitter,Default
 import logging
 import concurrent.futures
 import multiprocessing
-import threading
 
 class OptimizationReport:
   class Factory:
@@ -61,7 +60,7 @@ class OptimizationReport:
       self.workerCount = None
       pass
 
-    def get(self, run_config_set: RunConfigSet)->OptimizationReport:
+    def get(self, run_config_set: RunConfigSet, multi_theads:bool= True)->OptimizationReport:
       if self.workerCount is None:
         self.workerCount = multiprocessing.cpu_count()
       assert self.workerCount > 0, "No workers"
@@ -82,11 +81,15 @@ class OptimizationReport:
         
         worker = OptimizationReport.Factory.Worker(self.__run_report_factory, self.__parametar_optimizator_factory, run_config_set, mc_set_arr_total, mc_logger)
         
-        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workerCount) as executor:
-          # Map the do function to the list of tasks
-          run_tpl = [(idx,mc_set) for idx,mc_set in enumerate(mc_set_arr)]
-          new_rr_list = list(executor.map(worker.do_args, run_tpl))
-        
+        run_tpl = [(idx,mc_set) for idx,mc_set in enumerate(mc_set_arr)]
+
+        if multi_theads:  
+          with concurrent.futures.ProcessPoolExecutor(max_workers=self.workerCount) as executor:
+            # Map the do function to the list of tasks
+            new_rr_list = list(executor.map(worker.do_args, run_tpl))
+        else:
+          new_rr_list = [worker.do_args(tpl) for tpl in run_tpl]
+              
         rr_list.extend(new_rr_list)
       return OptimizationReport(rr_list)
 
