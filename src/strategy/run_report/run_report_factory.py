@@ -19,7 +19,7 @@ class RunReportFactory:
         self.__report_storage: absRunReportStorage = report_storage
         pass
 
-    def get(self, run_config: RunConfig) -> RunReport:
+    def get(self, run_config: RunConfig,locks={}) -> RunReport:
         """get Strategy run report by run configuration
 
         Args:
@@ -33,7 +33,7 @@ class RunReportFactory:
             if rr is not None:
                 return rr
 
-        strategy = self.__strategy_factory.build(run_config.strategy_cfg)
-        strategy.run(run_config.market_cfg)
+        strategy = self.__strategy_factory.build(run_config.strategy_cfg,locks)
+        strategy.run(run_config.market_cfg,locks)
 
         return RunReport.build_from_strategy(run_config, strategy)

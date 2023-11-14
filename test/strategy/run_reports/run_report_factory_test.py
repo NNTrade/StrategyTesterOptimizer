@@ -21,7 +21,7 @@ class Factory_TestCase(unittest.TestCase):
             self._deal = []
             super().__init__()
 
-        def run(self, market_cfg: MarketConfig):
+        def run(self, market_cfg: MarketConfig,locks={}):
             cur_d = market_cfg.from_date
             cap = 1
             self._deal.append(
@@ -44,7 +44,7 @@ class Factory_TestCase(unittest.TestCase):
         def __init__(self) -> None:
             super().__init__()
 
-        def build(self, parameters: Dict) -> absStrategy:
+        def build(self, parameters: Dict,locks={}) -> absStrategy:
             return Factory_TestCase.FakeStr()
 
     def test_WHEN_request_report_THEN_get_correct_report(self):

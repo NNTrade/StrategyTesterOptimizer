@@ -2,7 +2,7 @@ from __future__ import annotations
 from .optimization.market_config_splitter.optimization_market_config_tuple import OptimizationMarketConfigTuple
 from .strategy.run_report import RunReportFactory,RunReport
 from .strategy.run_config import RunConfigSet,RunConfig
-from typing import List,Tuple
+from typing import List,Tuple,Dict
 from .optimization.parameter_optimizator import absParameterOptimizatorFactory
 from .optimization.market_config_splitter import absMarketConfigSplitter,DefaultMarketConfigSplitter
 import logging
@@ -28,9 +28,10 @@ class OptimizationReport:
       def do_args(self, args)->Tuple[RunReport,RunReport]:
         idx = args[0]
         mc_set = args[1]
-        return self.do(idx,mc_set)
+        locks:Dict = args[2] if len(args)>2 else {}
+        return self.do(idx,mc_set,locks)
       
-      def do(self,idx, mc_set:OptimizationMarketConfigTuple)->Tuple[RunReport,RunReport]:
+      def do(self,idx, mc_set:OptimizationMarketConfigTuple,locks={})->Tuple[RunReport,RunReport]:
         self.__logger.info("Start optimization tuple %i/%i",idx+1,self.__total)
 
           #Get new parameter optimizator of current optimization perido
@@ -43,7 +44,7 @@ class OptimizationReport:
           sc = pof.first()
           while sc is not None:
             opt_rc = RunConfig(self.__run_config_set.strategy_id, mc_set.optimization_config, sc)
-            opt_rr = self.__run_report_factory.get(opt_rc)
+            opt_rr = self.__run_report_factory.get(opt_rc,locks)
             sc = pof.next(opt_rr)
           
           best_opt_rr = pof.best()
@@ -60,7 +61,7 @@ class OptimizationReport:
       self.workerCount = None
       pass
 
-    def get(self, run_config_set: RunConfigSet, multi_theads:bool= True)->OptimizationReport:
+    def get(self, run_config_set: RunConfigSet, multi_theads:bool= True,locks:Dict={})->OptimizationReport:
       if self.workerCount is None:
         self.workerCount = multiprocessing.cpu_count()
       assert self.workerCount > 0, "No workers"
@@ -81,7 +82,7 @@ class OptimizationReport:
         
         worker = OptimizationReport.Factory.Worker(self.__run_report_factory, self.__parametar_optimizator_factory, run_config_set, mc_set_arr_total, mc_logger)
         
-        run_tpl = [(idx,mc_set) for idx,mc_set in enumerate(mc_set_arr)]
+        run_tpl = [(idx,mc_set,locks) for idx,mc_set in enumerate(mc_set_arr)]
 
         if multi_theads:  
           with concurrent.futures.ProcessPoolExecutor(max_workers=self.workerCount) as executor:

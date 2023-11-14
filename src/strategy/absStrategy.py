@@ -23,7 +23,7 @@ class absStrategy(ABC):
     def deal_list(self) -> List[Deal]:
         ...
 
-    def run(self, market_cfg: MarketConfig) -> absStrategy:
+    def run(self, market_cfg: MarketConfig,locks={}) -> absStrategy:
         """run strategy for maket list on period from_date untill_date
 
         Args:
