@@ -1,19 +1,12 @@
 from typing import Callable, Generic, TypeVar, List
 from enum import Enum
 from abc import ABC, abstractmethod
+from .is_valid_checker import IsValidChecker,DefaultChecker
 T = TypeVar('T')
 RT = TypeVar('RT')
 
 
-class IsValidChecker(ABC, Generic[T]):
-    
-    @abstractmethod
-    def is_valid(self, validation_object:T)->bool:
-        ...
 
-class DefaultChecker(IsValidChecker[T]):
-    def is_valid(self, validation_object:T) -> bool:
-        return True
     
 class absBaseConfigSet(ABC, Generic[T]):
     class record_type(Enum):

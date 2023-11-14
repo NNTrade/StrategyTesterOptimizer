@@ -6,6 +6,7 @@ from src.optimization_report import OptimizationReport,RunReportFactory,absParam
 from src.optimization.parameter_optimizator import GridParameterOptimizator
 from src.optimization.market_config_splitter import DefaultMarketConfigSplitter
 import src.strategy.run_config as rcl
+import src.strategy.run_config.is_valid_checker
 from src.strategy.run_config.strategy_config import StrategyConfig
 from src.strategy.run_report import RunReport
 from src.strategy.run_config.market_config import MarketConfig
@@ -15,7 +16,7 @@ class OptimizationReport_TestCase(unittest.TestCase):
   logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                       datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
-  class TestIsValidChecker(rcl.IsValidChecker[rcl.StrategyConfig]):
+  class TestIsValidChecker(src.strategy.run_config.is_valid_checker.IsValidChecker[rcl.StrategyConfig]):
     def is_valid(self, validation_object: StrategyConfig) -> bool:
       return validation_object["P1"] != validation_object["P2"]
   class FakeRunReportFactory:

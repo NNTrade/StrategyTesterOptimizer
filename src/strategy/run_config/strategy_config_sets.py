@@ -1,8 +1,10 @@
 from __future__ import annotations
 from itertools import product
 from typing import Callable, Dict, List, MutableMapping
+
+from .is_valid_checker import IsValidChecker
 from .strategy_config import StrategyConfig
-from .abs_base_config import absBaseConfigSet, absBaseBuilder,IsValidChecker
+from .abs_base_config import absBaseConfigSet, absBaseBuilder
 
 
 class StrategyConfigSet(MutableMapping, absBaseConfigSet):

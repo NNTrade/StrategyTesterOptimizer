@@ -2,7 +2,7 @@ import unittest
 import logging
 from src.optimization.parameter_optimizator import GridParameterOptimizator, StrategyConfigSet
 from src.strategy.run_config.strategy_config import StrategyConfig
-from src.strategy.run_config.abs_base_config import IsValidChecker
+from src.strategy.run_config.is_valid_checker import IsValidChecker
 
 class GridParameterOptimizator_TestCase(unittest.TestCase):
 

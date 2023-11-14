@@ -6,3 +6,4 @@ from .strategy_config import *
 from .strategy_config_sets import *
 from .stock_config import *
 from .strategy_id import *
+from .is_valid_checker import *

@@ -1,6 +1,7 @@
 import unittest
 import logging
-from src.strategy.run_config.strategy_config_sets import StrategyConfigSet, StrategyConfig, IsValidChecker
+from src.strategy.run_config.is_valid_checker import IsValidChecker
+from src.strategy.run_config.strategy_config_sets import StrategyConfigSet, StrategyConfig
 
 
 class ParametersSets_TestCase(unittest.TestCase):

@@ -1,6 +1,7 @@
 import unittest
 import logging
-from src.strategy.run_config import RunConfigSet, MarketConfigSet, StrategyConfigSet, date, StrategyId, StockConfig, TimeFrame, IsValidChecker,StrategyConfig
+from src.strategy.run_config import RunConfigSet, MarketConfigSet, StrategyConfigSet, date, StrategyId, StockConfig, TimeFrame, StrategyConfig
+from src.strategy.run_config.is_valid_checker import IsValidChecker
 
 
 class RunConfigSets_TestCase(unittest.TestCase):

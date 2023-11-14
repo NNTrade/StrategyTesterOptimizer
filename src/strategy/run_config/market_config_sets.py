@@ -1,10 +1,12 @@
 from __future__ import annotations
 from typing import Tuple, List, Callable
 from datetime import date
+
+from .is_valid_checker import IsValidChecker
 from .market_config import MarketConfig
 from NNTrade.common import TimeFrame
 from .stock_config import StockConfig
-from .abs_base_config import absBaseConfigSet, absBaseBuilder,IsValidChecker
+from .abs_base_config import absBaseConfigSet, absBaseBuilder
 
 
 class MarketConfigSet(absBaseConfigSet[MarketConfig]):
