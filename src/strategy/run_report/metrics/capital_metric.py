@@ -11,13 +11,13 @@ class CapitalMetric:
             raise AttributeError(
                 "No infarmation about capitol, must be at least one record", name="strategy.abs_capital_log")
 
-        start_cap = capital_log[min(capital_log.keys())]
-        last_cap = capital_log[max(
+        self.__start_cap = capital_log[min(capital_log.keys())]
+        self.__final_cap = capital_log[max(
             capital_log.keys())]
-        self.__strategy_yield = last_cap/start_cap - 1
-        self.__strategy_max_yield = max(capital_log.values())/start_cap - 1
+        self.__strategy_yield = self.__final_cap/self.__start_cap - 1
+        self.__strategy_max_yield = max(capital_log.values())/self.__start_cap - 1
 
-        self.__calc_max_loss(capital_log, start_cap)
+        self.__calc_max_loss(capital_log, self.__start_cap)
         self.__market_config: MarketConfig = market_config
         pass
 
@@ -30,7 +30,14 @@ class CapitalMetric:
             else:
                 max_fall = max((last_max - v)/last_max, max_fall)
         self.__max_fall = -max_fall
-
+    @property
+    def start_cap(self)->float:
+        return self.__start_cap
+    
+    @property
+    def final_cap(self)->float:
+        return self.__final_cap
+    
     @property
     def strategy_yield(self) -> float:
         """Result yeield: (Income - Loss - Commission)/start_cap - 1

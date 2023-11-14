@@ -22,7 +22,8 @@ class OptimizationReport_TestCase(unittest.TestCase):
   class FakeRunReportFactory:
       def get(self, run_config: rcl.RunConfig) -> RunReport:
         cap ={
-          datetime.datetime(2020,2,2):3.4
+          datetime.datetime(2020,1,1):1,
+          datetime.datetime(2020,12,2):run_config.strategy_cfg["P1"]*run_config.strategy_cfg["P2"]
         }
         return RunReport(run_config, cap,[])
       
@@ -34,11 +35,14 @@ class OptimizationReport_TestCase(unittest.TestCase):
     orf = OptimizationReport.Factory(rrf, pof, mcs) # type: ignore
     ivc = OptimizationReport_TestCase.TestIsValidChecker()
     si = rcl.StrategyId("test", "0.0.1")
-    sc_set = rcl.StrategyConfigSet({"P1": [1,2],"P2": [1,2]}, ivc)
+    sc_set = rcl.StrategyConfigSet({"P1": [1,2],"P2": [1,2,3]}, ivc)
     rc = RunConfigSet(si, rcl.MarketConfigSet.Builder().add_stocks_set(
         [["S1"], ["S2"]], rcl.TimeFrame.D, rcl.date(2020, 1, 1), rcl.date(2021, 1, 1)).build(),
         sc_set)
 
     # Act
-    orf.get(rc)
+    opt_rep = orf.get(rc,False)
+
+
     # Assert
+    self.assertEqual(6, opt_rep.forward_reports[0].metrics.capital.final_cap)
