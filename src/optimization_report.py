@@ -84,7 +84,7 @@ class OptimizationReport:
         run_tpl = [(idx,mc_set) for idx,mc_set in enumerate(mc_set_arr)]
 
         if multi_theads:  
-          with concurrent.futures.ThreadPoolExecutor(max_workers=self.workerCount) as executor:
+          with concurrent.futures.ProcessPoolExecutor(max_workers=self.workerCount) as executor:
             # Map the do function to the list of tasks
             futures = [executor.submit(worker.do_args, x) for x in run_tpl]
             concurrent.futures.wait(futures)
