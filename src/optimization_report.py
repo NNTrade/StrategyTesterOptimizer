@@ -72,7 +72,7 @@ class OptimizationReport:
       mcs_recs_total = len(mcs_recs)
 
       for idx, mc in enumerate(mcs_recs):
-        self.__logger.info("Start market config %i/%i",idx+1,mcs_recs_total)
+        self.__logger.info("Start market config %i/%i: %s",idx+1,mcs_recs_total, mc.to_dict())
         mc_logger = self.__logger.getChild(f"{idx+1}/{mcs_recs_total}")
 
         #Split all market config on optimization and forward chunks
