@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import date
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from .stock_config import StockConfig
 from NNTrade.common import TimeFrame
 from datetime import timedelta

@@ -26,7 +26,7 @@ class RunConfigSets_TestCase(unittest.TestCase):
         ivc = RunConfigSets_TestCase.TestIsValidChecker()
         scs = StrategyConfigSet.Builder().add_set(
             "A", [1, 2, 3]).add_set("B", [4, 5, 6]).add_is_valid_checker(ivc).build()
-        rcs = RunConfigSet(si, mcs, scs)
+        rcs = RunConfigSet(mcs, scs)
 
         # Act
         asserted_list = rcs.as_records()
@@ -35,7 +35,6 @@ class RunConfigSets_TestCase(unittest.TestCase):
         self.assertEqual(16, len(asserted_list))
 
         i = 0
-        self.assertEqual(si, asserted_list[i].strategy_id)
         self.assertEqual([s1, s2], asserted_list[i].market_cfg.stocks)
         self.assertEqual(date(2020, 1, 1),
                          asserted_list[i].market_cfg.from_date)
@@ -44,7 +43,6 @@ class RunConfigSets_TestCase(unittest.TestCase):
         self.assertEqual({"A": 1, "B": 4},  asserted_list[i].strategy_cfg)
 
         i = 8
-        self.assertEqual(si, asserted_list[i].strategy_id)
         self.assertEqual([s3], asserted_list[i].market_cfg.stocks)
         self.assertEqual(date(2022, 1, 1),
                          asserted_list[i].market_cfg.from_date)
@@ -54,10 +52,9 @@ class RunConfigSets_TestCase(unittest.TestCase):
 
     def test_WHEN_build_with_same_time_interval_THEN_get_correct_instance(self):
         # Array
-        si = StrategyId("test", "0.0.1")
         s1 = StockConfig("S1", TimeFrame.D)
         s2 = StockConfig("S2", TimeFrame.D)
-        rc = RunConfigSet(si, MarketConfigSet.Builder().add_stocks_set(
+        rc = RunConfigSet(MarketConfigSet.Builder().add_stocks_set(
             [["S1"], ["S2"]], TimeFrame.D, date(2020, 1, 1), date(2021, 1, 1)).build())
         # Act
         assertedConfig = rc.market_cfg_set.as_records()

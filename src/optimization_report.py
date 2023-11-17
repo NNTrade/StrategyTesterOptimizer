@@ -1,6 +1,6 @@
 from __future__ import annotations
 from .optimization.market_config_splitter.optimization_market_config_tuple import OptimizationMarketConfigTuple
-from .strategy.run_report import RunReportFactory,RunReport
+from .strategy.run_report import absRunReportFactory,RunReport
 from .strategy.run_config import RunConfigSet,RunConfig
 from typing import List,Tuple
 from .optimization.parameter_optimizator import absParameterOptimizatorFactory
@@ -12,7 +12,7 @@ import multiprocessing
 class OptimizationReport:
   class Factory:
     class Worker:
-      def __init__(self,run_report_factory: RunReportFactory,
+      def __init__(self,run_report_factory: absRunReportFactory,
                         parametar_optimizator_factory: absParameterOptimizatorFactory,
                         run_config_set: RunConfigSet, 
                         mc_chunks_arr_total:int, 
@@ -42,20 +42,20 @@ class OptimizationReport:
         while best_opt_rr is None:
           sc = pof.first()
           while sc is not None:
-            opt_rc = RunConfig(self.__run_config_set.strategy_id, mc_set.optimization_config, sc)
+            opt_rc = RunConfig(mc_set.optimization_config, sc)
             opt_rr = self.__run_report_factory.get(opt_rc)
             sc = pof.next(opt_rr)
           
           best_opt_rr = pof.best()
 
-        fwd_rc = RunConfig(self.__run_config_set.strategy_id, mc_set.forward_config, best_opt_rr.run_config.strategy_cfg)
+        fwd_rc = RunConfig(mc_set.forward_config, best_opt_rr.run_config.strategy_cfg)
         fwd_rr = self.__run_report_factory.get(fwd_rc)
         return (best_opt_rr,fwd_rr)
       
-    def __init__(self, run_report_factory: RunReportFactory, parametar_optimizator_factory: absParameterOptimizatorFactory, market_config_splitter: absMarketConfigSplitter = None) -> None:
+    def __init__(self, run_report_factory: absRunReportFactory, parametar_optimizator_factory: absParameterOptimizatorFactory, market_config_splitter: absMarketConfigSplitter = DefaultMarketConfigSplitter.default_tf_d()) -> None:
       self.__run_report_factory = run_report_factory
       self.__parametar_optimizator_factory = parametar_optimizator_factory
-      self.__market_config_splitter = DefaultMarketConfigSplitter.default_tf_d() if market_config_splitter is None else market_config_splitter
+      self.__market_config_splitter = market_config_splitter
       self.__logger = logging.getLogger("OptimizationReport")
       self.workerCount = None
       pass

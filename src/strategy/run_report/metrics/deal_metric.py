@@ -1,6 +1,6 @@
 from math import sqrt
-from ...absStrategy import Deal, List, Dict
-from typing import Union
+from ...deal import Deal
+from typing import Union,List,Dict
 import numpy as np
 
 class DealMetric:

@@ -1,12 +1,12 @@
 from __future__ import annotations
 import math
-from types import MappingProxyType
-
-from .metrics.metric_container import MetricContainer
-from ..absStrategy import absStrategy, Dict, datetime, Deal, List
-from ..run_config import RunConfig
+from .metrics.metric_container import MetricContainer,Dict,datetime
+from ..run_config import RunConfig,StrategyId
+from typing import List
+from .. import Deal
 
 class RunReport:
+    STRATEGY_ID_F = "strategy_id"
     RUN_CONFIG_F = "run_config"
     METRIC_F = "metric"
     ABS_CAP_LOG_F = "abs_cap_log"
@@ -31,11 +31,8 @@ class RunReport:
         """
         return self.__deal_list.copy()
 
-    @staticmethod
-    def build_from_strategy(run_config: RunConfig, strategy: absStrategy) -> RunReport:
-        return RunReport(run_config, strategy.abs_capital_log, strategy.deal_list)
 
-    def __init__(self, run_config: RunConfig, abs_capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
+    def __init__(self, strategy_id: StrategyId, run_config: RunConfig, abs_capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
         if len(abs_capital_log) == 0:
             raise AttributeError(
                 "No infarmation about capitol, must be at least one record", name="abs_capital_log")
@@ -52,7 +49,7 @@ class RunReport:
             if first_deal_dt < run_config.market_cfg.from_date:
                 raise AttributeError(f"Given deals log has deals started ({first_deal_dt}) out of border of market config {run_config.market_cfg.from_date}", name="deal_list")
             
-            last_deal_dt = max([first_deal_dt,*[d.close_date.date() for d in deal_list if d.is_closed]])
+            last_deal_dt = max([first_deal_dt,*[d.close_date.date() for d in deal_list if d.close_date is not None]])
             if last_deal_dt >= run_config.market_cfg.untill_date:
                 raise AttributeError(f"Given deals log has deals ended ({last_deal_dt}) out of border of market config {run_config.market_cfg.untill_date}", name="deal_list")
 
@@ -64,8 +61,13 @@ class RunReport:
         self.__metric_cnt = MetricContainer(run_config.market_cfg,
             self.__capital_log, self.__deal_list)
         self.__run_cfg = run_config
+        self.__str_id = strategy_id
         pass
 
+    @property
+    def strategy_id(self)->StrategyId:
+        return self.__str_id
+    
     @property
     def metrics(self) -> MetricContainer:
         return self.__metric_cnt
@@ -76,6 +78,7 @@ class RunReport:
 
     def to_dict(self) -> Dict:
         return {
+            RunReport.STRATEGY_ID_F: self.strategy_id.to_dict(),
             RunReport.RUN_CONFIG_F: self.run_config.to_dict(),
             RunReport.METRIC_F: self.metrics.to_dict(),
             RunReport.ABS_CAP_LOG_F: self.abs_capital_log,
@@ -90,7 +93,7 @@ class RunReport:
 
     def __hash__(self):
         # Create a hash based on a tuple of hashable attributes
-        return hash(self.run_config) * hash(self.metrics) * math.prod([hash(d) for d in self.deal_list]) * hash(frozenset(self.abs_capital_log))
+        return hash(self.strategy_id) * hash(self.run_config) * hash(self.metrics) * math.prod([hash(d) for d in self.deal_list]) * hash(frozenset(self.abs_capital_log))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, RunReport):

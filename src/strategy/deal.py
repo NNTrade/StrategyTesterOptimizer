@@ -16,12 +16,12 @@ class Deal:
 
     class Builder:
         def __init__(self) -> None:
-            self.open_date: datetime = None
-            self.open_price: float = None
+            self.open_date: Union[datetime,None] = None
+            self.open_price: Union[float,None] = None
             self.close_date: Union[datetime,None] = None
-            self.close_price: float = None
-            self.amount: float = None
-            self.start_capital: float = None
+            self.close_price: Union[float,None] = None
+            self.amount: Union[float,None] = None
+            self.start_capital: Union[float,None] = None
             self.commission_open: float = 0
             self.commission_close: float = 0
             self.commission_holding: float = 0
@@ -64,6 +64,12 @@ class Deal:
             return self
 
         def build(self) -> Deal:
+            assert self.open_date is not None
+            assert self.open_price is not None
+            assert self.close_price is not None
+            assert self.amount is not None
+            assert self.start_capital is not None
+            
             return Deal(self.open_date,
                         self.open_price,
                         self.close_date,
@@ -99,7 +105,7 @@ class Deal:
         
         self.__open_date: datetime = open_date
         self.__open_price: float = open_price
-        self.__close_date: datetime = close_date
+        self.__close_date: Union[datetime,None] = close_date
         self.__close_price: float = close_price
         self.__amount: float = amount
         self.__start_capital:float = start_capital
@@ -128,7 +134,7 @@ class Deal:
         return self.__open_price
 
     @property
-    def close_date(self) -> datetime:
+    def close_date(self) -> Union[datetime,None]:
         return self.__close_date
 
     @property
