@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Union
 from abc import ABC, abstractmethod
 from ..run_report import RunReport
-from ...run_config.run_config import RunConfig
+from ...run_config import RunConfig,StrategyId
 
 
 class absRunReportStorage(ABC):
@@ -12,7 +12,7 @@ class absRunReportStorage(ABC):
         ABC (_type_): _description_
     """
 
-    def __init__(self, sub_storage: absRunReportStorage = None) -> None:
+    def __init__(self, sub_storage: Union[absRunReportStorage,None] = None) -> None:
         self._sub_storage = sub_storage
         pass
 
@@ -28,7 +28,7 @@ class absRunReportStorage(ABC):
         """
         ...
 
-    def try_get(self, run_config: RunConfig) -> Union[RunReport, None]:
+    def try_get(self, strategy_id: StrategyId, run_config: RunConfig) -> Union[RunReport, None]:
         """Search does report for run config exist in storage
 
         Args:
@@ -42,15 +42,15 @@ class absRunReportStorage(ABC):
             return report
 
         if self._sub_storage is not None:
-            report = self._sub_storage.try_get(run_config)
+            report = self._sub_storage.try_get(strategy_id, run_config)
             if report is not None:
-                if not self.try_add(run_config, report):
+                if not self.try_add(strategy_id,run_config, report):
                     raise Exception(
                         "Cannot copy report from sub storage to current storage")
                 return report
         return None
 
-    def try_add(self, run_config: RunConfig, run_report: RunReport) -> bool:
+    def try_add(self, strategy_id:StrategyId, run_config: RunConfig, run_report: RunReport) -> bool:
         """add run report for run config
 
            raise exception if run report exist but has another report
@@ -59,14 +59,14 @@ class absRunReportStorage(ABC):
             run_config (RunConfig): run configuration
             run_report (RunReport): run report
         """
-        try_add_result = self._try_add(run_config, run_report)
+        try_add_result = self._try_add(strategy_id,run_config, run_report)
         if try_add_result:
             if self._sub_storage is not None:
-                self._sub_storage.try_add(run_config, run_report)
+                self._sub_storage.try_add(strategy_id,run_config, run_report)
         return try_add_result
 
     @abstractmethod
-    def _try_add(self, run_config: RunConfig, run_report: RunReport) -> bool:
+    def _try_add(self, strategy_id:StrategyId, run_config: RunConfig, run_report: RunReport) -> bool:
         """Logic of try_add
 
         Args:

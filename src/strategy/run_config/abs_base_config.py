@@ -1,4 +1,4 @@
-from typing import Callable, Generic, TypeVar, List
+from typing import Callable, Generic, TypeVar, List,Union
 from enum import Enum
 from abc import ABC, abstractmethod
 from .is_valid_checker import IsValidChecker,DefaultChecker
@@ -14,7 +14,7 @@ class absBaseConfigSet(ABC, Generic[T]):
         only_invalid = -1
         all = 0
 
-    def __init__(self,is_valid_checker: IsValidChecker[T] = None) -> None:
+    def __init__(self,is_valid_checker: Union[IsValidChecker[T],None] = None) -> None:
         self.__is_valid_checker = is_valid_checker if is_valid_checker is not None else DefaultChecker()
         super().__init__()
 
@@ -50,4 +50,4 @@ class absBaseBuilder(ABC, Generic[RT, T]):
 
     def add_is_valid_checker(self, is_valid_checker: IsValidChecker[T]) -> RT:
         self.is_valid_checker = is_valid_checker
-        return self
+        return self # type: ignore

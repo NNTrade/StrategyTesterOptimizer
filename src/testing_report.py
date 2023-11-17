@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Dict, List
 from .strategy.run_report import RunReport
 from .strategy import run_config as rcfg
-from .strategy.run_report import RunReportFactory
+from .strategy.run_report import absRunReportFactory
 from tqdm import tqdm
 import pandas as pd
 
@@ -11,7 +11,7 @@ class TestingReport:
     """
 
     class Factory:
-        def __init__(self, runReportFactory: RunReportFactory) -> None:
+        def __init__(self, runReportFactory: absRunReportFactory) -> None:
             self.__run_report_factory = runReportFactory
             pass
 
@@ -48,6 +48,9 @@ class TestingReport:
             return TestingReport(self.run_report_list)
 
     def __init__(self, run_report_list: List[RunReport]) -> None:
+        assert len(run_report_list) > 0
+        assert all(x == run_report_list[0].strategy_id for x in [rr.strategy_id for rr in run_report_list])
+        
         self.__run_report_list = run_report_list.copy()
         self.__as_df = None
         pass
@@ -67,6 +70,7 @@ class TestingReport:
 
     @staticmethod
     def build_df(testing_report:TestingReport)->pd.DataFrame:
+        
         level_cut = 3
         df_rec = []
         for rr in testing_report.run_report_list:

@@ -2,7 +2,7 @@ from __future__ import annotations
 import unittest
 import logging
 from datetime import datetime
-from src.strategy.run_report import RunReport, absStrategy, Dict, List, Deal
+from src.strategy.run_report import RunReport, Dict, List, Deal
 import src.strategy.run_config as cfg
 from parameterized import parameterized
 
@@ -12,56 +12,32 @@ class Report_TestCase(unittest.TestCase):
     logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
-    class FakeStr(absStrategy):
-        def __init__(self) -> None:
-            self.deals = []
-            self.cap = {}
-            super().__init__()
-
-        def set_deals(self, deals) -> Report_TestCase.FakeStr:
-            self.deals = deals
-            return self
-
-        def set_cap(self, cap) -> Report_TestCase.FakeStr:
-            self.cap = cap
-            return self
-
-        @property
-        def abs_capital_log(self) -> Dict[datetime, float]:
-            return self.cap
-
-        @property
-        def deal_list(self) -> List[Deal]:
-            return self.deals
-
     def test_WHEN_empty_cap_THEN_exception(self):
         # Array
-        used_str = Report_TestCase.FakeStr()
         si = cfg.StrategyId("test", "0.0.1")
         s1 = cfg.StockConfig("A", cfg.TimeFrame.D)
         s2 = cfg.StockConfig("B", cfg.TimeFrame.D)
-        rc = cfg.RunConfig(si, cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
+        rc = cfg.RunConfig(cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
                                                 cfg.date(2021, 1, 1)), cfg.StrategyConfig({"p1": 1, "p2": 2}))
         # Act
 
         # Assert
         with self.assertRaises(AttributeError) as context:
-            RunReport.build_from_strategy(rc, used_str)
+            RunReport(si,rc, {}, [])
 
     def test_WHEN_give_cap_in_wrong_order_THEN_correct_return_order(self):
         # Array
         si = cfg.StrategyId("test", "0.0.1")
         s1 = cfg.StockConfig("A", cfg.TimeFrame.D)
         s2 = cfg.StockConfig("B", cfg.TimeFrame.D)
-        rc = cfg.RunConfig(si, cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
+        rc = cfg.RunConfig(cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
                                                 cfg.date(2021, 1, 1)), cfg.StrategyConfig({"p1": 1, "p2": 2}))
         expected_cap = {
             datetime(2020, 9, 1): 10.5,
             datetime(2020, 9, 3): 12.2,
             datetime(2020, 9, 2): 15.7,
         }
-        used_str = Report_TestCase.FakeStr().set_cap(expected_cap)
-        asserted_rep = RunReport.build_from_strategy(rc, used_str)
+        asserted_rep = RunReport(si, rc, expected_cap,[])
 
         # Act
         asserted_cap_log = asserted_rep.abs_capital_log
@@ -89,51 +65,50 @@ class Report_TestCase(unittest.TestCase):
         si = cfg.StrategyId("test", "0.0.1")
         s1 = cfg.StockConfig("A", cfg.TimeFrame.D)
         s2 = cfg.StockConfig("B", cfg.TimeFrame.D)
-        rc = cfg.RunConfig(si, cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
+        rc = cfg.RunConfig(cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
                                                 cfg.date(2021, 1, 1)), cfg.StrategyConfig({"p1": 1, "p2": 2}))
-        expected_cap = {
+        used_cap = {
             datetime(2020, 9, 1): 10.5,
             datetime(2020, 9, 3): 12.2,
             datetime(2020, 9, 2): 15.7,
         }
-        used_str = Report_TestCase.FakeStr().set_cap(expected_cap).set_deals([Deal(from_dt,1,untill_dt,10,1,100)])
+        used_deal = [Deal(from_dt,1,untill_dt,10,1,100)]
 
         # Act
 
         # Assert
         with self.assertRaises(AttributeError) as context:
-            RunReport.build_from_strategy(rc, used_str)
+            RunReport(si, rc, used_cap, used_deal)
 
     def test_WHEN_give_cap_out_of_period_THEN_exception(self):
         # Array
         si = cfg.StrategyId("test", "0.0.1")
         s1 = cfg.StockConfig("A", cfg.TimeFrame.D)
         s2 = cfg.StockConfig("B", cfg.TimeFrame.D)
-        rc = cfg.RunConfig(si, cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
+        rc = cfg.RunConfig(cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
                                                 cfg.date(2021, 1, 1)), cfg.StrategyConfig({"p1": 1, "p2": 2}))
         expected_cap = {
             datetime(2023, 9, 1): 10.5,
             datetime(2023, 9, 3): 12.2,
             datetime(2023, 9, 2): 15.7,
         }
-        used_str = Report_TestCase.FakeStr().set_cap(expected_cap)
         
 
         # Act
 
         # Assert
         with self.assertRaises(AttributeError) as context:
-            RunReport.build_from_strategy(rc, used_str)
+            RunReport(si, rc, expected_cap, [])
 
     def test_WHEN_equals_or_hash_THEN_correct_return(self):
         # Array
         si = cfg.StrategyId("test", "0.0.1")
         s1 = cfg.StockConfig("A", cfg.TimeFrame.D)
         s2 = cfg.StockConfig("B", cfg.TimeFrame.D)
-        rc = cfg.RunConfig(si, cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
+        rc = cfg.RunConfig(cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
                                                 cfg.date(2021, 1, 1)), cfg.StrategyConfig({"p1": 1, "p2": 2}))
 
-        base_rr = RunReport(rc,
+        base_rr = RunReport(si, rc,
                             {datetime(2020, 9, 1): 10.5,
                              datetime(2020, 9, 3): 12.2,
                              datetime(2020, 9, 2): 15.7,
@@ -141,25 +116,25 @@ class Report_TestCase(unittest.TestCase):
                             [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1)])
 
         equal_rr_arr = [
-            RunReport(rc,
+            RunReport(si,rc,
                       {datetime(2020, 9, 1): 10.5,
                        datetime(2020, 9, 3): 12.2,
                        datetime(2020, 9, 2): 15.7,
                        },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1)]),
-            RunReport(rc,
+            RunReport(si,rc,
                       {datetime(2020, 9, 3): 12.2,
                        datetime(2020, 9, 1): 10.5,
                        datetime(2020, 9, 2): 15.7,
                        },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1)]),
-            RunReport(rc,
+            RunReport(si,rc,
                       {datetime(2020, 9, 1): 10.5,
                        datetime(2020, 9, 2): 15.7,
                        datetime(2020, 9, 3): 12.2,
                        },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1)]),
-            RunReport(rc,
+            RunReport(si,rc,
                       {datetime(2020, 9, 1): 10.5,
                        datetime(2020, 9, 3): 12.2,
                        datetime(2020, 9, 2): 15.7,
@@ -167,41 +142,41 @@ class Report_TestCase(unittest.TestCase):
                       [Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1), Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1)])
         ]
 
-        rc2 = cfg.RunConfig(si, cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
+        rc2 = cfg.RunConfig(cfg.MarketConfig([s1, s2], cfg.TimeFrame.D, cfg.date(2020, 1, 1),
                                                  cfg.date(2021, 1, 1)), cfg.StrategyConfig({"p1": 1, "p2": 3}))
         not_equal_rr_arr = [
-            RunReport(rc2,
+            RunReport(si,rc2,
                       {datetime(2020, 9, 1): 10.5,
                        datetime(2020, 9, 3): 12.2,
                        datetime(2020, 9, 2): 15.7,
                        },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1)]),
-            RunReport(rc, {datetime(2020, 9, 1): 10.1,
+            RunReport(si,rc, {datetime(2020, 9, 1): 10.1,
                            datetime(2020, 9, 3): 12.2,
                            datetime(2020, 9, 2): 15.7,
                            },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1)]),
-            RunReport(rc, {datetime(2020, 9, 1): 10.5,
+            RunReport(si,rc, {datetime(2020, 9, 1): 10.5,
                            datetime(2020, 9, 4): 12.2,
                            datetime(2020, 9, 2): 15.7,
                            },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3,1)]),
-            RunReport(rc, {datetime(2020, 9, 1): 10.5,
+            RunReport(si,rc, {datetime(2020, 9, 1): 10.5,
                            datetime(2020, 9, 3): 12.2,
                            datetime(2020, 9, 2): 15.7,
                            },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1)]),
-            RunReport(rc, {datetime(2020, 9, 1): 10.5,
+            RunReport(si,rc, {datetime(2020, 9, 1): 10.5,
                            datetime(2020, 9, 3): 12.2,
                            datetime(2020, 9, 2): 15.7,
                            },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 2, datetime(2020, 9, 3), 2, 3,1)]),
-            RunReport(rc, {datetime(2020, 9, 1): 10.5,
+            RunReport(si,rc, {datetime(2020, 9, 1): 10.5,
                            datetime(2020, 9, 3): 12.2,
                            datetime(2020, 9, 2): 15.7,
                            },
                       [Deal(datetime(2020, 9, 1), 1, datetime(2020, 9, 2), 2, 3,1), Deal(datetime(2020, 9, 2), 1, datetime(2020, 9, 3), 2, 3, 1,-1)]),
-            RunReport(rc, {datetime(2020, 9, 1): 10.5,
+            RunReport(si,rc, {datetime(2020, 9, 1): 10.5,
                            datetime(2020, 9, 3): 12.2,
                            datetime(2020, 9, 2): 15.7,
                            },

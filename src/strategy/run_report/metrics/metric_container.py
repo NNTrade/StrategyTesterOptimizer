@@ -1,10 +1,7 @@
-from typing import Dict
+from typing import Dict,List
 from datetime import datetime
-
 from .capital_metric import CapitalMetric,MarketConfig
-from .deal_metric import DealMetric
-from ...absStrategy import Deal, List
-
+from .deal_metric import DealMetric,Deal
 
 class MetricContainer:
     CAP_F = "capital"

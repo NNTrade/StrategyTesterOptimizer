@@ -2,9 +2,7 @@ from __future__ import annotations
 from typing import Dict, List, Union
 import unittest
 import logging
-from src.strategy.absStrategy import absStrategy
-from src.strategy.absStrategyFactory import absStrategyFactory
-from src.strategy.run_report import RunReport, RunConfig, Deal, RunReportFactory, absRunReportStorage
+from src.strategy.run_report import RunReport, RunConfig, Deal, absRunReportFactory, absRunReportStorage
 from src.strategy.run_config import MarketConfig, StrategyId, TimeFrame, StockConfig
 from datetime import date, datetime, timedelta
 
@@ -15,46 +13,32 @@ class Factory_TestCase(unittest.TestCase):
     logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
-    class FakeStr(absStrategy):
-        def __init__(self) -> None:
-            self._capital_log = {}
-            self._deal = []
-            super().__init__()
 
-        def run(self, market_cfg: MarketConfig):
-            cur_d = market_cfg.from_date
+    class FakeFactory(absRunReportFactory):
+        def __init__(self,report_storage: Union[absRunReportStorage,None] = None) -> None:
+            super().__init__(report_storage)  
+
+        def strategy_id(self)->StrategyId:
+            return StrategyId("test", "0.0.1")
+
+        def _run(self, run_config: RunConfig)->absRunReportFactory.RunResult:
+            cur_d = datetime(run_config.market_cfg.from_date.year, run_config.market_cfg.from_date.month,run_config.market_cfg.from_date.day)
             cap = 1
-            self._deal.append(
-                Deal(cur_d, cap, cur_d+timedelta(days=2), cap+1, cap,cap))
-            while cur_d < market_cfg.untill_date:
-                self._capital_log[cur_d] = cap
+            _capital_log = {}
+            _deal = []
+            _deal.append(Deal(cur_d, cap, cur_d+timedelta(days=2), cap+1, cap,cap))
+            while cur_d.date() < run_config.market_cfg.untill_date:
+                _capital_log[cur_d] = cap
                 cap = cap + 1
                 cur_d = cur_d + timedelta(days=1)
-            return self
-
-        @property
-        def abs_capital_log(self) -> Dict[datetime, float]:
-            return self._capital_log.copy()
-
-        @property
-        def deal_list(self) -> List[Deal]:
-            return self._deal.copy()
-
-    class FakeFactory(absStrategyFactory):
-        def __init__(self) -> None:
-            super().__init__()
-
-        def build(self, parameters: Dict) -> absStrategy:
-            return Factory_TestCase.FakeStr()
+            return absRunReportFactory.RunResult(_capital_log, _deal)
 
     def test_WHEN_request_report_THEN_get_correct_report(self):
         # Array
-        si = StrategyId("test", "0.0.1")
-        ff = Factory_TestCase.FakeFactory()
-        rrf = RunReportFactory(ff)
+        rrf = Factory_TestCase.FakeFactory()
         s1 = StockConfig("S1", TimeFrame.D)
         s2 = StockConfig("S2", TimeFrame.D)
-        rc = RunConfig(si, MarketConfig(
+        rc = RunConfig(MarketConfig(
             [s1, s2], TimeFrame.D, date(2020, 1, 1), date(2020, 1, 5)))
 
         expected_cap_log = {
@@ -65,7 +49,7 @@ class Factory_TestCase(unittest.TestCase):
         }
 
         expected_deals = [
-            Deal(date(2020, 1, 1), 1, date(2020, 1, 1) +
+            Deal(datetime(2020, 1, 1), 1, datetime(2020, 1, 1) +
                  timedelta(days=2), 2, 1,1, 0, 0, 0)
         ]
         # Act
@@ -74,7 +58,7 @@ class Factory_TestCase(unittest.TestCase):
         # Assert
         self.assertEqual(4, len(asserted_rr.abs_capital_log))
         for i in [1, 2, 3, 4]:
-            self.assertEqual(i, asserted_rr.abs_capital_log[date(2020, 1, i)])
+            self.assertEqual(i, asserted_rr.abs_capital_log[datetime(2020, 1, i)])
 
         self.assertEqual(1, len(asserted_rr.deal_list))
         self.assertEqual(expected_deals[0], asserted_rr.deal_list[0])
@@ -84,10 +68,9 @@ class Factory_TestCase(unittest.TestCase):
         si = StrategyId("test", "0.0.1")
         s1 = StockConfig("S1", TimeFrame.D)
         s2 = StockConfig("S2", TimeFrame.D)
-        rc = RunConfig(si, MarketConfig(
+        rc = RunConfig(MarketConfig(
             [s1, s2], TimeFrame.m1, date(2020, 1, 1), date(2020, 1, 5)))
-        expected_run_report = RunReport.build_from_strategy(rc,
-            Factory_TestCase.FakeStr().run(rc.market_cfg))
+        expected_run_report = RunReport(si, rc,{datetime(2020,1,2):12},[])
 
         class ReportStorage(absRunReportStorage):
             def _try_get(self, run_config: RunConfig) -> Union[RunReport, None]:
@@ -97,8 +80,7 @@ class Factory_TestCase(unittest.TestCase):
             def _try_add(self, run_config: RunConfig, run_report: RunReport) -> bool:
                 raise Exception("Unexpected")
         rs = ReportStorage()
-        ff = Factory_TestCase.FakeFactory()
-        rrf = RunReportFactory(ff, rs)
+        rrf = Factory_TestCase.FakeFactory(rs)
 
         # Act
         asserted_rr = rrf.get(rc)
