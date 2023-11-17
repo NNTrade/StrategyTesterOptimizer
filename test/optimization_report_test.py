@@ -22,8 +22,8 @@ class OptimizationReport_TestCase(unittest.TestCase):
   class FakeRunReportFactory:
       def get(self, run_config: rcl.RunConfig) -> RunReport:
         cap ={
-          datetime.datetime(2020,1,1):1,
-          datetime.datetime(2020,12,2):run_config.strategy_cfg["P1"]*run_config.strategy_cfg["P2"]
+          datetime.datetime(run_config.market_cfg.from_date.year,run_config.market_cfg.from_date.month,run_config.market_cfg.from_date.day):1,
+          datetime.datetime(run_config.market_cfg.from_date.year,run_config.market_cfg.from_date.month,run_config.market_cfg.from_date.day)+datetime.timedelta(days=10):run_config.strategy_cfg["P1"]*run_config.strategy_cfg["P2"]
         }
         return RunReport(run_config, cap,[])
       

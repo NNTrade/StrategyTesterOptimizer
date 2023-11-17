@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict
+from typing import Dict,Union
 from datetime import datetime
 
 
@@ -18,7 +18,7 @@ class Deal:
         def __init__(self) -> None:
             self.open_date: datetime = None
             self.open_price: float = None
-            self.close_date: datetime = None
+            self.close_date: Union[datetime,None] = None
             self.close_price: float = None
             self.amount: float = None
             self.start_capital: float = None
@@ -76,7 +76,7 @@ class Deal:
 
     def __init__(self, open_date: datetime,
                  open_price: float,
-                 close_date: datetime,
+                 close_date: Union[datetime,None],
                  close_price: float,
                  amount: float,
                  start_capital: float,

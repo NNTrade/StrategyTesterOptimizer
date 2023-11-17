@@ -36,11 +36,29 @@ class RunReport:
         return RunReport(run_config, strategy.abs_capital_log, strategy.deal_list)
 
     def __init__(self, run_config: RunConfig, abs_capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
+        if len(abs_capital_log) == 0:
+            raise AttributeError(
+                "No infarmation about capitol, must be at least one record", name="abs_capital_log")
+        
+        first_cap_log = min(abs_capital_log.keys()).date()
+        if first_cap_log < run_config.market_cfg.from_date:
+            raise AttributeError(f"Given capital log to run report starts ({first_cap_log}) out of border of market config {run_config.market_cfg.from_date}", name="abs_capital_log")
+        last_cap_log = max(abs_capital_log.keys()).date()
+        if last_cap_log >= run_config.market_cfg.untill_date:
+            raise AttributeError(f"Given capital log to run report ends ({last_cap_log}) out of border of market config {run_config.market_cfg.untill_date}", name="abs_capital_log")
+        
+        if len(deal_list) > 0 :
+            first_deal_dt = min([d.open_date for d in deal_list]).date()
+            if first_deal_dt < run_config.market_cfg.from_date:
+                raise AttributeError(f"Given deals log has deals started ({first_deal_dt}) out of border of market config {run_config.market_cfg.from_date}", name="deal_list")
+            
+            last_deal_dt = max([first_deal_dt,*[d.close_date.date() for d in deal_list if d.is_closed]])
+            if last_deal_dt >= run_config.market_cfg.untill_date:
+                raise AttributeError(f"Given deals log has deals ended ({last_deal_dt}) out of border of market config {run_config.market_cfg.untill_date}", name="deal_list")
+
         self.__capital_log = dict(sorted(abs_capital_log.items()))
 
-        if len(self.__capital_log) == 0:
-            raise AttributeError(
-                "No infarmation about capitol, must be at least one record", name="strategy.abs_capital_log")
+        
         self.__deal_list = sorted(deal_list.copy())
 
         self.__metric_cnt = MetricContainer(run_config.market_cfg,
