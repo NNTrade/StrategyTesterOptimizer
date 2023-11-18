@@ -78,13 +78,16 @@ class TestingReport:
             del rr_dict["abs_cap_log"]
             del rr_dict["deal_list"]
             flat_dict = TestingReport.flatten_dict(rr_dict)
-            cutted_flat_dict = TestingReport.cut_level(flat_dict, level_cut)
+
+            df_dict = {k:v for k,v in flat_dict.items() if k[0]!=RunReport.STRATEGY_ID_F}
+            
+            cutted_flat_dict = TestingReport.cut_level(df_dict, level_cut)
+
+            cutted_flat_dict = TestingReport.cut_level(df_dict, level_cut)
             df_rec.append(cutted_flat_dict)
         df = pd.DataFrame.from_records(df_rec)
         df.columns = pd.MultiIndex.from_tuples(df.columns)
 
-        # drop const values
-        df.drop([(RunReport.RUN_CONFIG_F, rcfg.RunConfig.STRATEGY_ID_F)],axis=1,inplace=True)
         # join ticker cols
         ticker_cols = [(RunReport.RUN_CONFIG_F, rcfg.RunConfig.MARKET_CFG_F, m) for m in  ["stocks_0_ticker",	"stocks_0_timeframe", rcfg.MarketConfig.STEP_TF_F]]
         df[(RunReport.RUN_CONFIG_F, rcfg.RunConfig.MARKET_CFG_F,"full_ticker")] = df[[(RunReport.RUN_CONFIG_F, rcfg.RunConfig.MARKET_CFG_F, m) for m in  ["stocks_0_ticker",	"stocks_0_timeframe",rcfg.MarketConfig.STEP_TF_F]]].apply(lambda row: ':'.join(map(str, row)), axis=1)
