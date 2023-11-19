@@ -84,47 +84,7 @@ class MarketConfig_TestCase(unittest.TestCase):
             rc = MarketConfig([s1, s2], TimeFrame.M, date(
                 2020, 1, 1), date(2021, 1, 1))
 
-    def test_WHEN_hash_or_equal_compare_THEN_compare_correctly(self):
-        # Array
-        s1 = StockConfig("A", TimeFrame.D)
-        s2 = StockConfig("B", TimeFrame.D)
-        mc1 = MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
-                           date(2021, 1, 1))
-        eq_mc_arr = [
-            MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
-                         date(2021, 1, 1)),
-            MarketConfig([s1, s2], TimeFrame.DAY, date(2020, 1, 1),
-                         date(2021, 1, 1)),
-            MarketConfig([s2, s1], TimeFrame.D, date(2020, 1, 1),
-                         date(2021, 1, 1))
-        ]
-
-        s3 = StockConfig("b", TimeFrame.D)
-        wrong_mc_arr = [
-            MarketConfig([s1, s3], TimeFrame.D, date(2020, 1, 1),
-                         date(2021, 1, 1)),
-            MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 2),
-                         date(2021, 1, 1)),
-            MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
-                         date(2021, 1, 2)),
-            MarketConfig([s1], TimeFrame.D, date(2020, 1, 1),
-                         date(2021, 1, 1)),
-            MarketConfig([s1, s2, s3], TimeFrame.D, date(2020, 1, 1),
-                         date(2021, 1, 1)),
-            MarketConfig([s1, s2], TimeFrame.m1, date(2020, 1, 1),
-                         date(2021, 1, 1))]
-        # Act
-
-        # Assert
-        for asserted_mc in eq_mc_arr:
-            self.assertEqual(hash(mc1), hash(asserted_mc),msg=asserted_mc)
-            self.assertEqual(mc1, asserted_mc,msg=asserted_mc)
-
-        for wrong_rc in wrong_mc_arr:
-            self.assertNotEqual(hash(mc1), hash(wrong_rc),
-                                msg=wrong_rc)
-            self.assertNotEqual(mc1, wrong_rc,
-                                msg=wrong_rc)
+    
 
     def test_WHEN_split_sharp_THEN_correct_splitting(self):
         # Array
@@ -176,6 +136,64 @@ class MarketConfig_TestCase(unittest.TestCase):
         for i in range(used_chuck_count):
             self.assertEqual(expected_list[i], asserted_list[i])
 
+class MarketConfig_TestCase(unittest.TestCase):
+
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
+                                            datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
 
-                                    
+    def test_WHEN_change_stock_config_order_THEN_equal(self):
+        # Array
+        s1 = StockConfig("A", TimeFrame.D)
+        s2 = StockConfig("B", TimeFrame.D)
+        mc1 = MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 1))
+        asserted_mc2 = MarketConfig([s2, s1], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 1))
+        # Act
+  
+        # Assert
+        self.assertEqual(hash(mc1), hash(asserted_mc2),msg=asserted_mc2)
+        self.assertEqual(mc1, asserted_mc2,msg=asserted_mc2)
+
+    def test_WHEN_hash_or_equal_compare_THEN_compare_correctly(self):
+        # Array
+        s1 = StockConfig("A", TimeFrame.D)
+        s2 = StockConfig("B", TimeFrame.D)
+        mc1 = MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 1))
+        eq_mc_arr = [
+            MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 1)),
+            MarketConfig([s1, s2], TimeFrame.DAY, date(2020, 1, 1),
+                        date(2021, 1, 1)),            
+        ]
+
+        s3 = StockConfig("b", TimeFrame.D)
+        wrong_mc_arr = [
+            MarketConfig([s1, s3], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 1)),
+            MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 2),
+                        date(2021, 1, 1)),
+            MarketConfig([s1, s2], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 2)),
+            MarketConfig([s1], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 1)),
+            MarketConfig([s1, s2, s3], TimeFrame.D, date(2020, 1, 1),
+                        date(2021, 1, 1)),
+            MarketConfig([s1, s2], TimeFrame.m1, date(2020, 1, 1),
+                        date(2021, 1, 1))]
+        # Act
+
+        # Assert
+        for asserted_mc in eq_mc_arr:
+            self.assertEqual(hash(mc1), hash(asserted_mc),msg=asserted_mc)
+            self.assertEqual(mc1, asserted_mc,msg=asserted_mc)
+
+        for wrong_rc in wrong_mc_arr:
+            self.assertNotEqual(hash(mc1), hash(wrong_rc),
+                                msg=wrong_rc)
+            self.assertNotEqual(mc1, wrong_rc,
+                                msg=wrong_rc)
+            
