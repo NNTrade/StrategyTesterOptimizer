@@ -21,6 +21,7 @@ class Analitic:
       "median(yield/year), %":round(str_yield_per_year_median*100,3),
       "std/median of (yield/year), %": std_median_rel
     }
+  
   @staticmethod
   def get_success_yield(name:str,df:pd.DataFrame)->Dict:
     return {

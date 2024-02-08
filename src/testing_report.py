@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Dict, List
 from .strategy.run_report import RunReport
 from .strategy import run_config as rcfg
-from .strategy.run_report import absRunReportFactory
+from .strategy.run_report import absTradingSimulationFactory
 from tqdm import tqdm
 import pandas as pd
 
@@ -11,7 +11,7 @@ class TestingReport:
     """
 
     class Factory:
-        def __init__(self, runReportFactory: absRunReportFactory) -> None:
+        def __init__(self, runReportFactory: absTradingSimulationFactory) -> None:
             self.__run_report_factory = runReportFactory
             pass
 

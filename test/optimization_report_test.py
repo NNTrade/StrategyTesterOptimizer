@@ -8,7 +8,7 @@ from src.optimization.market_config_splitter import DefaultMarketConfigSplitter
 import src.strategy.run_config as rcl
 import src.strategy.run_config.is_valid_checker
 from src.strategy.run_config.strategy_config import StrategyConfig
-from src.strategy.run_report import RunReport,absRunReportFactory
+from src.strategy.run_report import RunReport,absTradingSimulationFactory
 from src.strategy.run_config.market_config import MarketConfig
 class OptimizationReport_TestCase(unittest.TestCase):
 
@@ -19,17 +19,17 @@ class OptimizationReport_TestCase(unittest.TestCase):
   class TestIsValidChecker(src.strategy.run_config.is_valid_checker.IsValidChecker[rcl.StrategyConfig]):
     def is_valid(self, validation_object: StrategyConfig) -> bool:
       return validation_object["P1"] != validation_object["P2"]
-  class FakeRunReportFactory(absRunReportFactory):
+  class FakeRunReportFactory(absTradingSimulationFactory):
       def strategy_id(self)->rcl.StrategyId:
         return rcl.StrategyId("test", "0.0.1")
       
-      def _run(self, run_config: rcl.RunConfig)->absRunReportFactory.RunResult:
+      def _run(self, run_config: rcl.RunConfig)->absTradingSimulationFactory.RunResult:
         
         cap ={
           datetime.datetime(run_config.market_cfg.from_date.year,run_config.market_cfg.from_date.month,run_config.market_cfg.from_date.day):1,
           datetime.datetime(run_config.market_cfg.from_date.year,run_config.market_cfg.from_date.month,run_config.market_cfg.from_date.day)+datetime.timedelta(days=10):run_config.strategy_cfg["P1"]*run_config.strategy_cfg["P2"]
         }
-        return absRunReportFactory.RunResult(cap,[])
+        return absTradingSimulationFactory.RunResult(cap,[])
       
   def test_WHEN_run_THEN_ok(self):
     # Array

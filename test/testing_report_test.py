@@ -1,11 +1,11 @@
 import unittest
 import logging
 import src.strategy.run_config as cfg
-from src.strategy.run_report import  absRunReportFactory
-from src.strategy.run_report.run_report import RunReport
+from src.strategy.run_report import  absTradingSimulationFactory
+from src.simulation.simulation_report import SimulationReport
 from src.testing_report import TestingReport 
 from datetime import datetime
-from src.strategy.deal import Deal
+from src.simulation.deal import Deal
 
 class TestingReport_TestCase(unittest.TestCase):
 
@@ -30,7 +30,7 @@ class TestingReport_TestCase(unittest.TestCase):
       Deal(datetime(2020,1,1),100,datetime(2020,1,10),120,1,100),
       Deal(datetime(2020,1,10),120,None,90,-1,120)
     ]
-    rr = RunReport(si, rc1, cap1,deal_list1)
+    rr = SimulationReport(si, rc1, cap1,deal_list1)
     # Act
     asserted_r = TestingReport([rr])
 

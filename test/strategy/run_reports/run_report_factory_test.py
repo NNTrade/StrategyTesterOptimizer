@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Dict, List, Union
 import unittest
 import logging
-from src.strategy.run_report import RunReport, RunConfig, Deal, absRunReportFactory, absRunReportStorage
+from src.strategy.run_report import RunReport, RunConfig, Deal, absTradingSimulationFactory, absRunReportStorage
 from src.strategy.run_config import MarketConfig, StrategyId, TimeFrame, StockConfig
 from datetime import date, datetime, timedelta
 
@@ -14,14 +14,14 @@ class Factory_TestCase(unittest.TestCase):
                         datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
 
-    class FakeFactory(absRunReportFactory):
+    class FakeFactory(absTradingSimulationFactory):
         def __init__(self,report_storage: Union[absRunReportStorage,None] = None) -> None:
             super().__init__(report_storage)  
 
         def strategy_id(self)->StrategyId:
             return StrategyId("test", "0.0.1")
 
-        def _run(self, run_config: RunConfig)->absRunReportFactory.RunResult:
+        def _run(self, run_config: RunConfig)->absTradingSimulationFactory.RunResult:
             cur_d = datetime(run_config.market_cfg.from_date.year, run_config.market_cfg.from_date.month,run_config.market_cfg.from_date.day)
             cap = 1
             _capital_log = {}
@@ -31,7 +31,7 @@ class Factory_TestCase(unittest.TestCase):
                 _capital_log[cur_d] = cap
                 cap = cap + 1
                 cur_d = cur_d + timedelta(days=1)
-            return absRunReportFactory.RunResult(_capital_log, _deal)
+            return absTradingSimulationFactory.RunResult(_capital_log, _deal)
 
     def test_WHEN_request_report_THEN_get_correct_report(self):
         # Array
