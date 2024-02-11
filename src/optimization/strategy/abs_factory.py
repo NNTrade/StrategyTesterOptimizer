@@ -1,7 +1,7 @@
 from src.optimization.config import StrategyConfigSet
-from src.optimization.optimization_strategy.abs_strategy import absStrategy
-from src.optimization.optimization_strategy.comparers import by_strategy_yield_per_year_comparer
-from src.simulation.models.simulation_report import SimulationReport
+from src.optimization.strategy.abs_strategy import absStrategy
+from src.optimization.strategy.comparers import by_strategy_yield_per_year_comparer
+from src.simulation.report import SimulationReport
 
 
 from abc import ABC, abstractmethod

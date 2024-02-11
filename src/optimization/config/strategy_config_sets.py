@@ -5,7 +5,7 @@ from typing import Callable, Dict, List, MutableMapping, Generic, Union
 from ...simulation.config import StrategyConfig
 from typing import Generic, TypeVar
 
-T = TypeVar('T',StrategyConfig) # type: ignore
+T = TypeVar('T',bound=StrategyConfig) 
 
 class StrategyConfigSet(ABC, MutableMapping,Generic[T]):
     """Strategy parameters set

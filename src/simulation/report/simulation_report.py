@@ -1,5 +1,7 @@
 from __future__ import annotations
 import math
+
+from src.simulation.models.simulation_log import SimulationLog
 from .metrics.metric_container import MetricContainer,Dict,datetime
 from ..config import SimulationConfig,StrategyId
 from typing import List
@@ -32,7 +34,9 @@ class SimulationReport:
         return self.__deal_list.copy()
 
 
-    def __init__(self, strategy_id: StrategyId, run_config: SimulationConfig, abs_capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
+    def __init__(self, strategy_id: StrategyId, run_config: SimulationConfig, simulation_log: SimulationLog) -> None:
+        abs_capital_log: Dict[datetime, float] = simulation_log.capital_log
+        deal_list: List[Deal] = simulation_log.deal_list
         if len(abs_capital_log) == 0:
             raise AttributeError(
                 "No infarmation about capitol, must be at least one record", name="abs_capital_log")

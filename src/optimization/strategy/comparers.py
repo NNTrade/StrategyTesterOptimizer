@@ -1,4 +1,4 @@
-from ...simulation.models import SimulationReport
+from ...simulation.report import SimulationReport
 
 
 def by_strategy_yield_per_year_comparer(prev:SimulationReport, new: SimulationReport)->int:

@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Union
 from .models import SimulationLog
 
-class absTradingSimulationFactory(ABC):
+class absTradingSimulatior(ABC):
     """Abstract trading simulation factory
 
     Args:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
-from ...simulation.models.simulation_report import SimulationReport
+from ...simulation.report.simulation_report import SimulationReport
 from .comparers import by_strategy_yield_per_year_comparer
 from ..config import StrategyConfigSet, StrategyConfig
 from typing import Union, Callable
