@@ -16,15 +16,15 @@ class MarketConfig:
     MAX_RELATION = 1/4
 
     @staticmethod
-    def BuildForDict(stocks: Dict[str,StockConfig], step_timeframe: TimeFrame, from_date: date, untill_date: date) -> MarketConfig:
+    def BuildFromDict(stocks: Dict[str,StockConfig], step_timeframe: TimeFrame, from_date: date, untill_date: date) -> MarketConfig:
         return MarketConfig(stocks, step_timeframe, from_date,untill_date)
     
     @staticmethod
-    def BuildForList(stocks: List[StockConfig], step_timeframe: TimeFrame, from_date: date, untill_date: date) -> MarketConfig:
+    def BuildFromList(stocks: List[StockConfig], step_timeframe: TimeFrame, from_date: date, untill_date: date) -> MarketConfig:
         return MarketConfig({f"{i}":sc for i, sc in enumerate(stocks)}, step_timeframe, from_date,untill_date)
     
     @staticmethod
-    def BuildFor(stock: StockConfig, step_timeframe: TimeFrame, from_date: date, untill_date: date) -> MarketConfig:
+    def BuildFrom(stock: StockConfig, step_timeframe: TimeFrame, from_date: date, untill_date: date) -> MarketConfig:
         return MarketConfig({"default":stock}, step_timeframe, from_date,untill_date)
 
     def __init__(self, stocks: Dict[str,StockConfig], step_timeframe: TimeFrame, from_date: date, untill_date: date) -> None:
@@ -117,7 +117,7 @@ class MarketConfig:
 
     def __hash__(self):
         # Create a hash based on a tuple of hashable attributes
-        return hash((tuple(self.stocks), self.step_timeframe, self.from_date, self.untill_date))
+        return hash((frozenset(self.__stocks.items()), self.step_timeframe, self.from_date, self.untill_date))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, MarketConfig):

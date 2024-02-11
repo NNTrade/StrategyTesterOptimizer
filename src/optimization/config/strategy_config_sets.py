@@ -1,30 +1,40 @@
 from __future__ import annotations
+from abc import ABC
 from itertools import product
-from typing import Callable, Dict, List, MutableMapping
-
-from .is_valid_checker import IsValidChecker
+from typing import Callable, Dict, List, MutableMapping, Generic, Union
 from ...simulation.config import StrategyConfig
-from .abs_base_config import absBaseConfigSet, absBaseBuilder
+from typing import Generic, TypeVar
 
+T = TypeVar('T',StrategyConfig) # type: ignore
 
-class StrategyConfigSet(MutableMapping, absBaseConfigSet):
+class StrategyConfigSet(ABC, MutableMapping,Generic[T]):
     """Strategy parameters set
     """
-    class Builder(absBaseBuilder["StrategyConfigSet.Builder", StrategyConfig]):
+    class Builder: 
         def __init__(self) -> None:
-            self.data = {}
-            super().__init__()
+            self.data:Dict[str,List[Union[int,float,str]]] = {}
+            self.build_func = self.__no_build_func_raiser
 
-        def add_set(self, parameterName, parameterSet: List) -> StrategyConfigSet.Builder:
+        def __no_build_func_raiser(self, ds: Dict[str,Union[int,float,str]])->Union[T,None]:
+            raise Exception("build funciton not defined")
+        
+        def add_set(self, parameterName:str, parameterSet: List[Union[int,float,str]]) -> StrategyConfigSet.Builder:
             self.data[parameterName] = parameterSet
+            return self
+        
+        def set_build_func(self, build_func: Callable[[Dict[str,Union[int,float,str]]],Union[T,None]]) ->  StrategyConfigSet.Builder:
+            self.build_func:Callable[[Dict[str,Union[int,float,str]]],Union[T,None]] = build_func
             return self
 
         def build(self) -> StrategyConfigSet:
-            return StrategyConfigSet(self.data, self.is_valid_checker)
+            return StrategyConfigSet(self.build_func, self.data)
 
-    def __init__(self, data={}, is_valid_checker: IsValidChecker[StrategyConfig] = None):
+
+    def __init__(self, 
+                    build_func: Callable[[Dict[str,Union[int,float,str]]],Union[T,None]], 
+                    data:Dict[str,List[Union[int,float,str]]]={}):
         self.__data = data
-        super().__init__(is_valid_checker)
+        self.__build_func = build_func
 
     def __getitem__(self, key):
         return self.__data[key]
@@ -40,11 +50,12 @@ class StrategyConfigSet(MutableMapping, absBaseConfigSet):
 
     def __len__(self):
         return len(self.__data)
-
-    def _build_records(self) -> List:
-        if len(self.__data) == 0:
-            return []
-        ret_list = [StrategyConfig(dict(zip(self.__data.keys(), combo)))
-                    for combo in product(*self.__data.values())]
+    
+    def as_records(self) -> List[T]:
+        ret_list = []
+        for data_set in [dict(zip(self.__data.keys(), combo)) for combo in product(*self.__data.values())]:
+            str_cfg = self.__build_func(data_set)
+            if str_cfg is not None:
+                ret_list.append(str_cfg)
         return ret_list
     

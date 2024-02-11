@@ -1,130 +1,102 @@
 from __future__ import annotations
+from signal import raise_signal
+from tkinter.messagebox import NO
 from typing import Dict,Union
 from datetime import datetime
 
+from networkx import is_chordal
 
 class Deal:
+    
     OPEN_DATE_F = "open_date"
     OPEN_PRICE_F = "open_price"
-    CLOSE_DATE_F = "close_date"
-    CLOSE_PRICE_F = "close_price"
+    ASSET_F = "asset"
     AMOUNT_F = "amount"
-    START_CAP_F = "start_capital"
+    USING_CAP_F = "using_cap"
+    CLOSE_DATE_F = "close_date"
+    CLOSE_PRICE_F = "close_price"    
     COMMISSION_OPEN_F = "commission_open"
     COMMISSION_CLOSE_F = "commission_close"
     COMMISSION_HOLDING_F = "commission_holding"
+    IS_CLOSED = "is_closed"
 
-    class Builder:
-        def __init__(self) -> None:
-            self.open_date: Union[datetime,None] = None
-            self.open_price: Union[float,None] = None
-            self.close_date: Union[datetime,None] = None
-            self.close_price: Union[float,None] = None
-            self.amount: Union[float,None] = None
-            self.start_capital: Union[float,None] = None
-            self.commission_open: float = 0
-            self.commission_close: float = 0
-            self.commission_holding: float = 0
-            pass
-
-        def set_open_date(self, value) -> Deal.Builder:
-            self.open_date = value
-            return self
-
-        def set_open_price(self, value) -> Deal.Builder:
-            self.open_price = value
-            return self
-
-        def set_close_date(self, value) -> Deal.Builder:
-            self.close_date = value
-            return self
-
-        def set_close_price(self, value) -> Deal.Builder:
-            self.close_price = value
-            return self
-
-        def set_amount(self, value) -> Deal.Builder:
-            self.amount = value
-            return self
-        
-        def set_start_capital(self, value)->Deal.Builder:
-            self.start_capital = value
-            return self
-
-        def set_commission_open(self, value) -> Deal.Builder:
-            self.commission_open = value
-            return self
-
-        def set_commission_close(self, value) -> Deal.Builder:
-            self.commission_close = value
-            return self
-
-        def set_commission_holding(self, value) -> Deal.Builder:
-            self.commission_holding = value
-            return self
-
-        def build(self) -> Deal:
-            assert self.open_date is not None
-            assert self.open_price is not None
-            assert self.close_price is not None
-            assert self.amount is not None
-            assert self.start_capital is not None
-            
-            return Deal(self.open_date,
-                        self.open_price,
-                        self.close_date,
-                        self.close_price,
-                        self.amount,
-                        self.start_capital,
-                        self.commission_open,
-                        self.commission_close,
-                        self.commission_holding)
-
-    def __init__(self, open_date: datetime,
+    @staticmethod
+    def BuildFromCap(open_date: datetime,
+                    open_price: float,
+                    amount: float,
+                    asset: str,
+                    using_cap: float,
+                    commission_open: float = 0)->Deal:
+        return Deal(open_date, open_price, amount, asset, using_cap, commission_open)
+    
+    def __init__(self, 
+                 open_date: datetime,
                  open_price: float,
-                 close_date: Union[datetime,None],
-                 close_price: float,
                  amount: float,
-                 start_capital: float,
-                 commission_open: float = 0,
-                 commission_close: float = 0,
-                 commission_holding: float = 0):
+                 asset: str,
+                 using_cap: float,
+                 commission_open: float = 0):
+        self.__close_date: Union[datetime,None] = None
+        self.__close_price: Union[float,None] = None
+        self.__commission_close: float = 0
+        self.__commission_holding: float = 0
+        self.__result = None
+        self.__profit = None
+
         if open_price <= 0:
             raise AttributeError("Open price must be > 0", name="open_price")
-        if close_price <= 0:
-            raise AttributeError("Close price must be > 0", name="close_price")
-        if close_date is not None and open_date > close_date:
-            raise AttributeError(
-                "Close date must be > Open date", name="close_date")
+        
         if amount == 0:
             raise AttributeError("Deal must has amount != 0", name="amount")
-        if commission_open > 0 or commission_close > 0 or commission_holding > 0:
-            raise AttributeError("Commisison must be <= 0")
-        if start_capital == 0:
-            raise AttributeError("Start capital must has amount != 0", name="start_capital")
+        if commission_open > 0:
+            raise AttributeError("Commisison open must be <= 0")
+        if using_cap <= 0:
+            raise AttributeError("Using cap must me > 0")
         
         self.__open_date: datetime = open_date
         self.__open_price: float = open_price
-        self.__close_date: Union[datetime,None] = close_date
-        self.__close_price: float = close_price
+       
         self.__amount: float = amount
-        self.__start_capital:float = start_capital
         self.__commission_open: float = commission_open
-        self.__commission_close: float = commission_close
-        self.__commission_holding: float = commission_holding
 
-        self.__commission_total = self.commission_open + \
-            self.commission_close + self.commission_holding
+        self.__using_cap:float = using_cap
+        self.__asset:str= asset
+        
 
-        self.__result = (self.close_price - self.open_price) * \
+    def __start_cap(self)->float:
+        return self.amount * self.open_price / self.__using_cap
+    
+    def close_deal(self, date:datetime, price:float,commission_close:float = 0)->CloseDeal:
+        if date is None or price is None:
+            raise AttributeError("Close date and close price must be not none")
+        
+        if self.open_date >= date:
+            raise AttributeError(
+                "Close date must be > Open date", name="close_date")
+        if price <= 0:
+            raise AttributeError("Close price must be > 0", name="close_price")
+        
+        if self.__close_date is not None:
+            raise Exception("Cann't close closed deal")
+        
+        if commission_close >0:
+             raise AttributeError("Commisison close must be <= 0")
+        
+        self.__close_price = price
+        self.__close_date = date
+        self.__commission_close = commission_close
+
+        self.__result = (self.__close_price - self.open_price) * \
             self.amount + self.commission_total
-        self.__profit = self.__result / self.__start_capital
-        self.__is_closed = self.__close_date is not None
+        self.__profit = self.__result / self.__start_cap()
+        return self # type: ignore
 
-    @property
-    def start_capital(self)-> float:
-        return self.__start_capital
-
+    def add_commision_holding(self, commision:float)->Deal:
+        if self.is_closed:
+            raise Exception("Cann't add commision to clased deal")
+        self.__commission_holding = self.__commission_holding + commision
+        return self
+    
     @property
     def open_date(self) -> datetime:
         return self.__open_date
@@ -138,13 +110,21 @@ class Deal:
         return self.__close_date
 
     @property
-    def close_price(self) -> float:
+    def close_price(self) -> Union[float,None]:
         return self.__close_price
 
     @property
     def amount(self) -> float:
         return self.__amount
-
+    
+    @property
+    def asset(self)->str:
+        return self.__asset
+    
+    @property
+    def using_cap(self)->float:
+        return self.__using_cap
+    
     @property
     def commission_open(self) -> float:
         return self.__commission_open
@@ -159,35 +139,44 @@ class Deal:
 
     @property
     def commission_total(self) -> float:
-        return self.__commission_total
+        return self.commission_open + self.commission_close + self.commission_holding
 
     @property
-    def result(self) -> float:
+    def result(self) -> Union[float,None]:
         return self.__result
 
     @property
-    def profit(self) -> float:
+    def profit(self) -> Union[float,None]:
         return self.__profit
 
     @property
     def is_closed(self) -> bool:
-        return self.__is_closed
+        return self.__close_date is not None
+    
+    @property
+    def as_closed(self)->CloseDeal:
+        if not self.is_closed:
+            raise Exception("Cann't convert opened deal as closed deal")
+        return self # type: ignore
+    
     def to_dict(self) -> Dict:
         return {
             self.OPEN_DATE_F: self.open_date,
             self.OPEN_PRICE_F: self.open_price,
+            self.AMOUNT_F: self.amount,
+            self.ASSET_F: self.asset,
+            self.USING_CAP_F: self.using_cap,
             self.CLOSE_DATE_F: self.close_date,
             self.CLOSE_PRICE_F: self.close_price,
-            self.AMOUNT_F: self.amount,
-            self.START_CAP_F: self.start_capital,
-            self.COMMISSION_OPEN_F: self.commission_open,
-            self.COMMISSION_CLOSE_F: self.commission_close,
-            self.COMMISSION_HOLDING_F: self.commission_holding,
+            self.COMMISSION_OPEN_F: self.__commission_open,            
+            self.COMMISSION_HOLDING_F: self.__commission_holding,
+            self.COMMISSION_CLOSE_F: self.__commission_close,
+            self.IS_CLOSED: int(self.is_closed)
         }
 
     def __hash__(self):
         # Create a hash based on a tuple of hashable attributes
-        return hash(tuple(self.to_dict().values()))
+        return hash(tuple(self.to_dict().items()))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Deal):
@@ -211,3 +200,20 @@ class Deal:
 
     def __repr__(self):
         return self.__str__()
+
+class CloseDeal(Deal):
+    @property
+    def close_date(self) -> datetime:
+        return super().close_date# type: ignore
+
+    @property
+    def close_price(self) -> float:
+        return super().close_price# type: ignore
+    
+    @property
+    def result(self) -> float:
+        return super().result# type: ignore
+
+    @property
+    def profit(self) -> float:
+        return super().profit# type: ignore

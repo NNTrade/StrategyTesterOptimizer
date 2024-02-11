@@ -6,39 +6,23 @@
 - Get Simulation report for config [sequence](./AbstractTradingSimulationFactory.md)
 
 ## Class model
-![Simulation class model](simulation_class_model)
-
-## PlantUml
-```
+```plantuml
 @startuml
 namespace simulation {
   class absTradingSimulationFactory {
-    get(run_config: SimulationConfig) -> SimulationReport
+    get(run_config: SimulationConfig) -> SimulationLog
     strategy_id:StrategyId
   }
 }
 
 
 namespace simulation.models {
-  class SimulationReport {
-    strategy_id: StrategyId
-    capital_log: Dict[datetime, float]
+  class SimulationLog{
+    capital_log: Dict[datetime, float],
     deal_list: List[Deal]
-    metrics: MetricContainer
-    run_config: SimulationConfig
   }
 
   class Deal
-}
-
-namespace simulation.models.metrics {
-  class MetricContainer {
-    capital: CapitalMetric
-    deals: DealMetric
-  }
-  
-  class CapitalMetric
-  class DealMetric
 }
 
 namespace simulation.config {
@@ -65,9 +49,9 @@ namespace simulation.config {
 }
 
 namespace simulation.storage {
-  class absSimulationReportStorage {
-    try_get(strategy_id:StrategyId, run_config: SimulationConfig) -> Union[SimulationReport, None]:
-    try_add(strategy_id:StrategyId, run_config: SimulationConfig, run_report: SimulationReport) -> bool:
+  class absSimulationLogStorage {
+    try_get(strategy_id:StrategyId, run_config: SimulationConfig) -> Union[SimulationLog, None]:
+    try_add(strategy_id:StrategyId, run_config: SimulationConfig, run_report: SimulationLog) -> bool:
   }
 
   class InMemoryStorage
@@ -84,17 +68,11 @@ StockConfig *-- TimeFrame
 SimulationConfig *-- StrategyConfig
 
 absTradingSimulationFactory ..> SimulationConfig
-absTradingSimulationFactory ..> SimulationReport
-absTradingSimulationFactory ..> absSimulationReportStorage
+absTradingSimulationFactory ..> SimulationLog
+absTradingSimulationFactory ..> absSimulationLogStorage
 absTradingSimulationFactory ..> StrategyId
 
-absSimulationReportStorage <|-- InMemoryStorage 
-
-SimulationReport ..> Deal
-SimulationReport ..> SimulationConfig
-SimulationReport ..> StrategyId
-SimulationReport ..> MetricContainer
-MetricContainer ..> CapitalMetric
-MetricContainer ..> DealMetric
+absSimulationLogStorage <|-- InMemoryStorage 
+SimulationLog ..> Deal
 @enduml
 ```

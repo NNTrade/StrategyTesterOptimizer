@@ -1,11 +1,11 @@
 from __future__ import annotations
-from typing import Dict, MutableMapping
+from typing import Dict, MutableMapping, Union
 
 
 class StrategyConfig(MutableMapping):
     """Strategy parameters
     """
-    def __init__(self, data: Dict = {}):
+    def __init__(self, data: Dict[str,Union[int, float, str]] = {}):
         self.__data = data.copy()
 
     def __getitem__(self, key):

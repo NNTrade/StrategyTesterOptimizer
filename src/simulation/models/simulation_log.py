@@ -6,5 +6,5 @@ from .deal import Deal
 
 @dataclass
 class SimulationLog:
-    abs_capital_log: Dict[datetime, float]
+    capital_log: Dict[datetime, float]
     deal_list: List[Deal]

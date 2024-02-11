@@ -1,29 +1,28 @@
 # Abstract Trading Simulation Factory
 [class absTradingSimulationFactory](../../src/simulation/abs_trading_simulation_factory.py)
 
-## Methods
-### Get Simulation Report
-#### Sequence
-![absTradingSimulationFactory sequence](absTradingSimulationFactory.sequence.png)
+## Definition
+Offer function to simulate trading
 
-#### PlantUml
-```
+## Methods
+### Get Simulation Log
+#### Sequential
+```plantuml
 @startuml
 actor User as u
 participant absTradingSimulationFactory as TSF
-participant absSimulationReportStorage as SRS
+participant absSimulationLogStorage as SRS
 u -> TSF: get(run_config: SimulationConfig)
 activate TSF
-TSF -> SRS: try_get(strategy_id: StrategyId, run_config: RunConfig)\n-> Union[SimulationReport, None]
+TSF -> SRS: try_get(strategy_id: StrategyId, run_config: RunConfig)\n-> Union[SimulationLog, None]
 activate SRS
-SRS --> TSF: Union[SimulationReport, None]
+SRS --> TSF: Union[SimulationLog, None]
 deactivate SRS
 
-alt SimulationReport is none
+alt SimulationLog\ is none
 TSF->TSF: _run(run_config: SimulationConfig)->SimulationLog
-TSF->TSF: SimulationReport(\nstrategy_id: StrategyId, run_config: SimulationConfig,\nabs_capital_log: Dict[datetime, float], deal_list: List[Deal])
 end
-TSF --> u: SimulationReport
+TSF --> u: SimulationLog
 deactivate TSF
 @enduml
 ```
