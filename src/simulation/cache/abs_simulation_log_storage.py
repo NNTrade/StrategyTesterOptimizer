@@ -1,8 +1,6 @@
 from __future__ import annotations
 from typing import Union
 from abc import ABC, abstractmethod
-
-from src.simulation.config.simulation_config import SimulationConfig
 from ..models import SimulationLog
 from ..config import SimulationConfig,StrategyId
 

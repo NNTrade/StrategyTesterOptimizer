@@ -8,7 +8,7 @@ from src.optimization.config import StrategyConfigSet, StrategyConfig, Union,Dic
 from src.simulation.config import CandleConfig,TimeFrame
 from src.simulation import SimulationConfig, SimulationLog,StrategyId
 from src.simulation.models import Deal,datetime
-from src.simulation.storage.abs_simulation_log_storage import absSimulationLogStorage
+from src.simulation.cache.abs_simulation_log_storage import absSimulationLogStorage
 from src.common import DatePeriod, CandleDataSetConfig,date
 class Optimizer_TestCase(unittest.TestCase):
 
