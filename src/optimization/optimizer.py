@@ -9,13 +9,17 @@ from ..simulation.report import SimulationReport
 from ..simulation.abs_trading_simulatior import absTradingSimulatior
 
 class Optimizer:
-    def __init__(self, simulation_report_factory: absTradingSimulatior, optimization_strategy_factory: absFactory) -> None:
-      self.__run_report_factory = simulation_report_factory
+    def __init__(self, trading_simulator: absTradingSimulatior, optimization_strategy_factory: absFactory) -> None:
+      self.__trading_simulator = trading_simulator
       self.__parametar_optimizator_factory = optimization_strategy_factory
       self.__logger = logging.getLogger("OptimizationReport")
       self.workerCount = None
       pass
 
+    @property
+    def trading_simulator(self)->absTradingSimulatior:
+       return self.__trading_simulator
+    
     def optimize(self, optimization_config_set: OptimizationConfigSet)->SimulationReport:
         self.__logger.info("Start optimization")
 
@@ -24,9 +28,8 @@ class Optimizer:
 
         sc = pof.first()
         while sc is not None:
-          sc = SimulationConfig(optimization_config_set.market_cfg, sc)
-          sl = self.__run_report_factory.get(sc)
-          sr = SimulationReport(self.__run_report_factory.strategy_id, sc, sl)
+          sc = SimulationConfig(optimization_config_set.candle_ds_cfg, optimization_config_set.period, sc)
+          sr = self.__trading_simulator.get_report(sc)
           sc = pof.next(sr)
           
         best_opt_sr = pof.best()

@@ -1,15 +1,15 @@
 import imp
 from typing import Dict,List
 from datetime import datetime
-from .capital_metric import CapitalMetric
+from .capital_metric import CapitalMetric,DatePeriod
 from .deal_metric import DealMetric,Deal
-from ...config import MarketConfig
+
 
 class MetricContainer:
     CAP_F = "capital"
     DEALS_F = "deals"
-    def __init__(self, market_cfg: MarketConfig,capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
-        self.__capital_metric = CapitalMetric(market_cfg, capital_log)
+    def __init__(self, date_period_cfg: DatePeriod,capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
+        self.__capital_metric = CapitalMetric(date_period_cfg, capital_log)
         self.__deal_meatric = DealMetric(deal_list)
         pass
 

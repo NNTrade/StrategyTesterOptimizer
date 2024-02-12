@@ -42,27 +42,27 @@ class SimulationReport:
                 "No infarmation about capitol, must be at least one record", name="abs_capital_log")
         
         first_cap_log = min(abs_capital_log.keys()).date()
-        if first_cap_log < run_config.market_cfg.from_date:
-            raise AttributeError(f"Given capital log to run report starts ({first_cap_log}) out of border of market config {run_config.market_cfg.from_date}", name="abs_capital_log")
+        if first_cap_log < run_config.period.from_date:
+            raise AttributeError(f"Given capital log to run report starts ({first_cap_log}) out of border of market config {run_config.period.from_date}", name="abs_capital_log")
         last_cap_log = max(abs_capital_log.keys()).date()
-        if last_cap_log >= run_config.market_cfg.untill_date:
-            raise AttributeError(f"Given capital log to run report ends ({last_cap_log}) out of border of market config {run_config.market_cfg.untill_date}", name="abs_capital_log")
+        if last_cap_log >= run_config.period.untill_date:
+            raise AttributeError(f"Given capital log to run report ends ({last_cap_log}) out of border of market config {run_config.period.untill_date}", name="abs_capital_log")
         
         if len(deal_list) > 0 :
             first_deal_dt = min([d.open_date for d in deal_list]).date()
-            if first_deal_dt < run_config.market_cfg.from_date:
-                raise AttributeError(f"Given deals log has deals started ({first_deal_dt}) out of border of market config {run_config.market_cfg.from_date}", name="deal_list")
+            if first_deal_dt < run_config.period.from_date:
+                raise AttributeError(f"Given deals log has deals started ({first_deal_dt}) out of border of market config {run_config.period.from_date}", name="deal_list")
             
             last_deal_dt = max([first_deal_dt,*[d.close_date.date() for d in deal_list if d.close_date is not None]])
-            if last_deal_dt >= run_config.market_cfg.untill_date:
-                raise AttributeError(f"Given deals log has deals ended ({last_deal_dt}) out of border of market config {run_config.market_cfg.untill_date}", name="deal_list")
+            if last_deal_dt >= run_config.period.untill_date:
+                raise AttributeError(f"Given deals log has deals ended ({last_deal_dt}) out of border of market config {run_config.period.untill_date}", name="deal_list")
 
         self.__capital_log = dict(sorted(abs_capital_log.items()))
 
         
         self.__deal_list = sorted(deal_list.copy())
 
-        self.__metric_cnt = MetricContainer(run_config.market_cfg,
+        self.__metric_cnt = MetricContainer(run_config.period,
             self.__capital_log, self.__deal_list)
         self.__run_cfg = run_config
         self.__str_id = strategy_id

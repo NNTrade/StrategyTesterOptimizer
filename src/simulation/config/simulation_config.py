@@ -1,24 +1,41 @@
 from __future__ import annotations
-from typing import Dict
-from .market_config import MarketConfig
+from typing import Dict,List
 from .strategy_config import StrategyConfig
+from ...common import DatePeriod, CandleConfig, CandleDataSetConfig
 
 class SimulationConfig:
     """configuration of single strategy simulation
     """
-    MARKET_CFG_F = "market_cfg"
+    CDS_CFG_F = CandleDataSetConfig.CDS_CFG_F
+    PERIOD_F = "period"
     STRATEGY_CFG_F = "strategy_cfg"
 
-    def __init__(self, market_config: MarketConfig, strategy_cfg: StrategyConfig = StrategyConfig()):
+    def __init__(self, candle_data_set_cfg: CandleDataSetConfig,period: DatePeriod, strategy_cfg: StrategyConfig = StrategyConfig()):
         # Convert to a tuple to make it immutable
-        self._market_cfg = market_config
+        self.__cds_cfg = candle_data_set_cfg
+        self.__period = period
         self._strategy_cfg = strategy_cfg
 
     @property
-    def market_cfg(self) -> MarketConfig:
-        """Configuration of market data
+    def candle_data_set_config(self) -> CandleDataSetConfig:
+        """candle data set config
         """
-        return self._market_cfg
+        return self.__cds_cfg
+    
+    @property
+    def candle_ds_cfg(self) -> CandleDataSetConfig:
+        """candle data set config
+        """
+        return self.__cds_cfg
+
+    @property
+    def period(self) -> DatePeriod:
+        """using period
+        """
+        return self.__period    
+
+    def split(self, chunks_count: int) -> List[SimulationConfig]:        
+        return [SimulationConfig(self.candle_ds_cfg, p, self.strategy_cfg) for p in self.period.split(chunks_count)]
 
     @property
     def strategy_cfg(self) -> StrategyConfig:
@@ -28,7 +45,8 @@ class SimulationConfig:
 
     def to_dict(self) -> Dict:
         return {
-            SimulationConfig.MARKET_CFG_F: self.market_cfg.to_dict(),
+            SimulationConfig.CDS_CFG_F: self.candle_ds_cfg,
+            SimulationConfig.PERIOD_F: self.period,
             SimulationConfig.STRATEGY_CFG_F: dict(self.strategy_cfg),
         }
 
@@ -40,7 +58,7 @@ class SimulationConfig:
 
     def __hash__(self):
         # Create a hash based on a tuple of hashable attributes
-        return hash((self.market_cfg, self.strategy_cfg))
+        return hash((self.candle_ds_cfg, self.period, self.strategy_cfg))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SimulationConfig):

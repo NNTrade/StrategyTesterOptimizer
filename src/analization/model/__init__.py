@@ -1,0 +1,1 @@
+from .analization_report import AnalizationReport

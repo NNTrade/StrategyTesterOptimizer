@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.simulation.config import StockConfig, TimeFrame
+from src.simulation.config import CandleConfig, TimeFrame
 
 
 class StockConfig_TestCase(unittest.TestCase):
@@ -11,16 +11,16 @@ class StockConfig_TestCase(unittest.TestCase):
 
   def test_WHEN_equals_and_hash_THEN_correct(self):
     # Array
-    base_s = StockConfig("S1", TimeFrame.W)
+    base_s = CandleConfig("S1", TimeFrame.W)
 
     eq_stocks = [
-        StockConfig("S1", TimeFrame.W),
-        StockConfig("S1", TimeFrame.WEEK),
+        CandleConfig("S1", TimeFrame.W),
+        CandleConfig("S1", TimeFrame.WEEK),
     ]
 
     not_eq_stocks = [
-        StockConfig("S2", TimeFrame.W),
-        StockConfig("S1", TimeFrame.H),
+        CandleConfig("S2", TimeFrame.W),
+        CandleConfig("S1", TimeFrame.H),
     ]
     # Act
 

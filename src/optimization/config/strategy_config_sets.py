@@ -7,32 +7,34 @@ from typing import Generic, TypeVar
 
 T = TypeVar('T',bound=StrategyConfig) 
 
-class StrategyConfigSet(ABC, MutableMapping,Generic[T]):
+def default_build_func(dict:Dict[str,Union[int,float,str]])->Union[StrategyConfig,None]:
+    return StrategyConfig(dict)
+
+class StrategyConfigSet(MutableMapping):
+    STR_CFG_F = "strategy_cfg_set"
+
     """Strategy parameters set
     """
     class Builder: 
         def __init__(self) -> None:
             self.data:Dict[str,List[Union[int,float,str]]] = {}
-            self.build_func = self.__no_build_func_raiser
-
-        def __no_build_func_raiser(self, ds: Dict[str,Union[int,float,str]])->Union[T,None]:
-            raise Exception("build funciton not defined")
+            self.build_func = default_build_func
         
         def add_set(self, parameterName:str, parameterSet: List[Union[int,float,str]]) -> StrategyConfigSet.Builder:
             self.data[parameterName] = parameterSet
             return self
         
-        def set_build_func(self, build_func: Callable[[Dict[str,Union[int,float,str]]],Union[T,None]]) ->  StrategyConfigSet.Builder:
-            self.build_func:Callable[[Dict[str,Union[int,float,str]]],Union[T,None]] = build_func
+        def set_build_func(self, build_func: Callable[[Dict[str,Union[int,float,str]]],Union[StrategyConfig,None]]) ->  StrategyConfigSet.Builder:
+            self.build_func:Callable[[Dict[str,Union[int,float,str]]],Union[StrategyConfig,None]] = build_func
             return self
 
         def build(self) -> StrategyConfigSet:
-            return StrategyConfigSet(self.build_func, self.data)
+            return StrategyConfigSet(self.data,self.build_func)
 
-
+   
     def __init__(self, 
-                    build_func: Callable[[Dict[str,Union[int,float,str]]],Union[T,None]], 
-                    data:Dict[str,List[Union[int,float,str]]]={}):
+                    data:Dict[str,List[Union[int,float,str]]]={},
+                    build_func: Callable[[Dict[str,Union[int,float,str]]],Union[StrategyConfig,None]] = default_build_func):
         self.__data = data
         self.__build_func = build_func
 

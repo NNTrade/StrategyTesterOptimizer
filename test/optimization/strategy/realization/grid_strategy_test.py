@@ -18,7 +18,7 @@ class GridParameterOptimizator_TestCase(unittest.TestCase):
 
   def test_WHEN_call_THEN_work_correct(self):
     # Array
-    scs = StrategyConfigSet(GridParameterOptimizator_TestCase.buildCfg,{"A":[1,2,3], "B":[1,2,3]})
+    scs = StrategyConfigSet({"A":[1,2,3], "B":[1,2,3]},GridParameterOptimizator_TestCase.buildCfg)
     gpo = GridStrategy(scs, lambda rr1,rr2: hash(rr2) - hash(rr1))
     
     expected_cfgs = [

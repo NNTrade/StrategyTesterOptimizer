@@ -2,7 +2,7 @@ from NNTrade.common import TimeFrame
 from typing import Dict, Union
 
 
-class StockConfig:
+class CandleConfig:
     """Configuration of stock data
     """
     TICKER_F = "ticker"
@@ -26,8 +26,8 @@ class StockConfig:
 
     def to_dict(self) -> Dict:
         return {
-            StockConfig.TICKER_F: self.ticker,
-            StockConfig.TF_F: self.__timeframe.short_name() if self.__timeframe is not None else "",
+            CandleConfig.TICKER_F: self.ticker,
+            CandleConfig.TF_F: self.__timeframe.short_name() if self.__timeframe is not None else "",
         }
 
     def __str__(self):
@@ -41,7 +41,7 @@ class StockConfig:
         return hash((self.ticker, self.timeframe))
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, StockConfig):
+        if not isinstance(other, CandleConfig):
             return False
         return self.to_dict() == other.to_dict()
 

@@ -4,11 +4,12 @@ import unittest
 import logging
 from src.optimization.optimizer import Optimizer, absTradingSimulatior, absFactory,OptimizationConfigSet
 from src.optimization.strategy.realization.grid_strategy import GridStrategyFactory
-from src.optimization.config import MarketConfig, StrategyConfigSet, StrategyConfig, Union,Dict
-from src.simulation.config import StockConfig,TimeFrame,date
+from src.optimization.config import StrategyConfigSet, StrategyConfig, Union,Dict
+from src.simulation.config import CandleConfig,TimeFrame
 from src.simulation import SimulationConfig, SimulationLog,StrategyId
 from src.simulation.models import Deal,datetime
 from src.simulation.storage.abs_simulation_log_storage import absSimulationLogStorage
+from src.common import DatePeriod, CandleDataSetConfig,date
 class Optimizer_TestCase(unittest.TestCase):
 
   logger = logging.getLogger(__name__)
@@ -39,10 +40,11 @@ class Optimizer_TestCase(unittest.TestCase):
 
     opt = Optimizer(fs,osf)
 
-    mc = MarketConfig.BuildFrom(StockConfig("A", TimeFrame.D),TimeFrame.D, date(2020,1,1), date(2020,2,2))
-    scs = StrategyConfigSet(Optimizer_TestCase.buildCfg, {"A": [1,2,3], "B":[1,2,3]})
+    candle_ds_cfg = CandleDataSetConfig.BuildFrom(CandleConfig("A", TimeFrame.D),TimeFrame.D)
+    dp = DatePeriod(date(2020,1,1), date(2020,2,2))
+    scs = StrategyConfigSet({"A": [1,2,3], "B":[1,2,3]},Optimizer_TestCase.buildCfg)
     
-    ocs = OptimizationConfigSet(mc,scs)
+    ocs = OptimizationConfigSet(candle_ds_cfg, dp,scs)
 
     # Act
     sr = opt.optimize(ocs)

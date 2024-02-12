@@ -1,5 +1,7 @@
 from datetime import datetime
-from ...config import Dict, MarketConfig
+
+from ....common.date_period import DatePeriod
+from ...config import Dict
 
 class CapitalMetric:
     STR_YIELD_F = "yield"
@@ -7,7 +9,7 @@ class CapitalMetric:
     MAX_FALL_F = "max_fall"
     STR_YIELD_YEAR_F = "yield/year"
 
-    def __init__(self, market_config: MarketConfig, capital_log: Dict[datetime, float]) -> None:
+    def __init__(self, date_config: DatePeriod, capital_log: Dict[datetime, float]) -> None:
         if len(capital_log) == 0:
             raise AttributeError(
                 "No infarmation about capitol, must be at least one record", name="strategy.abs_capital_log")
@@ -19,7 +21,7 @@ class CapitalMetric:
         self.__strategy_max_yield = max(capital_log.values())/self.__start_cap - 1
 
         self.__calc_max_loss(capital_log, self.__start_cap)
-        self.__market_config: MarketConfig = market_config
+        self.__date_config: DatePeriod = date_config
         pass
 
     def __calc_max_loss(self, capital_log: Dict[datetime, float], start_cap):
@@ -74,7 +76,7 @@ class CapitalMetric:
         Returns:
             float: Strategy Yield per year
         """
-        return pow((self.strategy_yield + 1), 1/self.__market_config.period_in_years) - 1
+        return pow((self.strategy_yield + 1), 1/self.__date_config.period_in_years) - 1
 
     def to_dict(self) -> Dict:
         return {

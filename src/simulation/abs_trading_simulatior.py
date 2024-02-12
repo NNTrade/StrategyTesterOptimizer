@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from .report.simulation_report import SimulationReport
 from .config import SimulationConfig,StrategyId
 from .storage.abs_simulation_log_storage import absSimulationLogStorage
 from abc import ABC, abstractmethod
@@ -46,7 +48,7 @@ class absTradingSimulatior(ABC):
         """
         ...
 
-    def get(self, run_config: SimulationConfig) -> SimulationLog:
+    def get_log(self, run_config: SimulationConfig) -> SimulationLog:
         """get Strategy run report by run configuration
 
         Args:
@@ -66,3 +68,7 @@ class absTradingSimulatior(ABC):
           self.__log_storage.try_add(self.strategy_id, run_config,sl)  
         
         return sl
+    
+    def get_report(self, simulation_config: SimulationConfig) -> SimulationReport: 
+        sl = self.get_log(simulation_config)
+        return SimulationReport(self.strategy_id, simulation_config, sl)
