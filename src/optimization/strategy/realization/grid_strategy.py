@@ -1,4 +1,4 @@
-from ..abs_factory import absFactory
+from ..abs_strategy_factory import absStrategyFactory
 
 from ..comparers import by_strategy_yield_per_year_comparer
 from ..abs_strategy import absStrategy,StrategyConfigSet, StrategyConfig,SimulationReport, Union,Callable
@@ -6,7 +6,7 @@ from ..abs_strategy import absStrategy,StrategyConfigSet, StrategyConfig,Simulat
 
 """Factory for creating grid search strategy for parameter optimization
 """
-class GridStrategyFactory(absFactory):
+class GridStrategyFactory(absStrategyFactory):
   def __init__(self, run_report_comparer: Callable[[SimulationReport, SimulationReport], int] = by_strategy_yield_per_year_comparer) -> None:
     super().__init__(run_report_comparer)
 

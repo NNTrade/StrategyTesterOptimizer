@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from typing import Callable
 
 
-class absFactory(ABC):
+class absStrategyFactory(ABC):
    def __init__(self, run_report_comparer:Callable[[SimulationReport,SimulationReport],int] = by_strategy_yield_per_year_comparer) -> None:
      self._run_report_comparer = run_report_comparer
      super().__init__()

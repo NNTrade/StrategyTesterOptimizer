@@ -2,14 +2,14 @@ import logging
 from typing import Tuple
 
 from .config import OptimizationConfig
-from .strategy import absFactory
+from .strategy import absStrategyFactory
 
 from ..simulation.config import SimulationConfig
 from ..simulation.report import SimulationReport
 from ..simulation.abs_trading_simulatior import absTradingSimulatior
 
 class Optimizer:
-    def __init__(self, trading_simulator: absTradingSimulatior, optimization_strategy_factory: absFactory) -> None:
+    def __init__(self, trading_simulator: absTradingSimulatior, optimization_strategy_factory: absStrategyFactory) -> None:
       self.__trading_simulator = trading_simulator
       self.__parametar_optimizator_factory = optimization_strategy_factory
       self.__logger = logging.getLogger("OptimizationReport")

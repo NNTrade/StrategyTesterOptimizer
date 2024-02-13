@@ -1,6 +1,6 @@
 import unittest
 import logging
-from src.optimization_analyzation.period_splitter import *
+from src.optimization_analyzer.period_splitter import *
 from datetime import date
 
 class DefaultPeriodSplitter_TestCase(unittest.TestCase):

@@ -3,14 +3,15 @@ import multiprocessing
 
 from .config import AnalyzationConfig
 from .model import AnalyzationReport
-from ..optimization import absTradingSimulatior, absFactory, Optimizer, SimulationConfig
+from ..optimization import absTradingSimulatior, absStrategyFactory, Optimizer, SimulationConfig
 from ..optimization.config import OptimizationConfig,List
 from .period_splitter import absPeriodSplitter, DefaultPeriodSplitter, AnalyzationPeriod
+from ..optimization.strategy.realization import GridStrategyFactory
 
 class OptimizationAnalyzer:
     def __init__(self,
                  simulation_report_factory: absTradingSimulatior, 
-                 optimization_strategy_factory: absFactory, 
+                 optimization_strategy_factory: absStrategyFactory = GridStrategyFactory(), 
                  period_splitter: absPeriodSplitter =  DefaultPeriodSplitter.default_tf_d()) -> None:
         self.__optimizer = Optimizer(simulation_report_factory,optimization_strategy_factory)
         self.period_splitter = period_splitter

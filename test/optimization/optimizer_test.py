@@ -2,7 +2,7 @@ from __future__ import annotations
 import datetime
 import unittest
 import logging
-from src.optimization.optimizer import Optimizer, absTradingSimulatior, absFactory,OptimizationConfig
+from src.optimization.optimizer import Optimizer, absTradingSimulatior, absStrategyFactory,OptimizationConfig
 from src.optimization.strategy.realization.grid_strategy import GridStrategyFactory
 from src.optimization.config import StrategyConfigSet, StrategyConfig, Union,Dict
 from src.simulation.config import CandleConfig,TimeFrame
