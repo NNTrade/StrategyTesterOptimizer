@@ -1,7 +1,7 @@
 import logging
 from typing import Tuple
 
-from .config import OptimizationConfigSet
+from .config import OptimizationConfig
 from .strategy import absFactory
 
 from ..simulation.config import SimulationConfig
@@ -20,7 +20,7 @@ class Optimizer:
     def trading_simulator(self)->absTradingSimulatior:
        return self.__trading_simulator
     
-    def optimize(self, optimization_config_set: OptimizationConfigSet)->SimulationReport:
+    def optimize(self, optimization_config_set: OptimizationConfig)->SimulationReport:
         self.__logger.info("Start optimization")
 
         #Get new parameter optimizator of current optimization perido

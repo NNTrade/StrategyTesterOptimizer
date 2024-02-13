@@ -1,9 +1,8 @@
 from NNTrade.common import TimeFrame
 from typing import Dict, Union
 
-
 class CandleConfig:
-    """Configuration of stock data
+    """Configuration of stock candle. Name of ticker and timeframe of trading data in the one candle
     """
     TICKER_F = "ticker"
     TF_F = "timeframe"
@@ -20,7 +19,7 @@ class CandleConfig:
 
     @property
     def timeframe(self) -> Union[TimeFrame, None]:
-        """Timeframe of candle data
+        """Timeframe in one candle
         """
         return self.__timeframe
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 import datetime
 import unittest
 import logging
-from src.optimization.optimizer import Optimizer, absTradingSimulatior, absFactory,OptimizationConfigSet
+from src.optimization.optimizer import Optimizer, absTradingSimulatior, absFactory,OptimizationConfig
 from src.optimization.strategy.realization.grid_strategy import GridStrategyFactory
 from src.optimization.config import StrategyConfigSet, StrategyConfig, Union,Dict
 from src.simulation.config import CandleConfig,TimeFrame
@@ -44,7 +44,7 @@ class Optimizer_TestCase(unittest.TestCase):
     dp = DatePeriod(date(2020,1,1), date(2020,2,2))
     scs = StrategyConfigSet({"A": [1,2,3], "B":[1,2,3]},Optimizer_TestCase.buildCfg)
     
-    ocs = OptimizationConfigSet(candle_ds_cfg, dp,scs)
+    ocs = OptimizationConfig(candle_ds_cfg, dp,scs)
 
     # Act
     sr = opt.optimize(ocs)

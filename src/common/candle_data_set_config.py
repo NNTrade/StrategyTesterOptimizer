@@ -4,6 +4,8 @@ from NNTrade.common import TimeFrame
 from .candle_config import CandleConfig
 
 class CandleDataSetConfig:
+    """Configuration of stock candle data set.
+    """
     CDS_CFG_F = "candle_data_set"
     STOCKS_F = "stocks"
     STEP_TF_F = "step_timeframe"
@@ -39,7 +41,7 @@ class CandleDataSetConfig:
 
     @property
     def step_timeframe(self) -> TimeFrame:
-        """Timeframe of bar step
+        """Timeframe shift in one row. If step_timeframe < stocks.timeframe than several rows in dataset represent changing of one candle in time
         """
         return self.__step_timeframe
                                  

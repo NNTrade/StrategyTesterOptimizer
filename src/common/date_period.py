@@ -3,6 +3,8 @@ from datetime import date,timedelta
 from typing import Dict,List
 
 class DatePeriod:
+    """Represent date interval
+    """
     FROM_F = "from"
     UNTILL_F = "untill"
 

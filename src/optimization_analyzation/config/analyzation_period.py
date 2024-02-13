@@ -1,7 +1,7 @@
 from ...common import DatePeriod
 from typing import Dict
 
-class AnalizationPeriod:
+class AnalyzationPeriod:
     OPT_P_F = "optimization"
     FWD_P_F = "forward"
 
@@ -43,8 +43,8 @@ class AnalizationPeriod:
     
     def to_dict(self) -> Dict:
         return {
-            AnalizationPeriod.OPT_P_F: self.optimization_period,
-            AnalizationPeriod.FWD_P_F: self.forward_period,
+            AnalyzationPeriod.OPT_P_F: self.optimization_period,
+            AnalyzationPeriod.FWD_P_F: self.forward_period,
         }
 
     def __str__(self):
