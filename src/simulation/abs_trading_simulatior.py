@@ -1,6 +1,5 @@
 from __future__ import annotations
 import logging
-
 from .report.simulation_report import SimulationReport
 from .config import SimulationConfig,StrategyId
 from .cache.abs_simulation_log_storage import absSimulationLogStorage
