@@ -6,9 +6,8 @@ services:
 
     volumes:
       - ../..:/workspaces:cached
-      
+    
+    command: sleep infinity
+
   plantuml:
     image: plantuml/plantuml-server:tomcat
-
-#volumes:
-#  postgres-data:
