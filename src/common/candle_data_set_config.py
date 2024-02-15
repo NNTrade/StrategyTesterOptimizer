@@ -27,9 +27,10 @@ class CandleDataSetConfig:
             raise AttributeError(
                 "You must set at least one stock", name="stocks")
         for key, stock in stocks.items():
-            if stock.timeframe < step_timeframe:
-                raise AttributeError("Timeframe of ticker must be LT step timeframe",
-                                     name="step_timeframe", obj=step_timeframe)
+            if stock.timeframe is not None:
+                if stock.timeframe < step_timeframe:
+                    raise AttributeError("Timeframe of ticker must be LT step timeframe",
+                                        name="step_timeframe", obj=step_timeframe)
         self.__stocks = stocks.copy()
         self.__step_timeframe = step_timeframe
 

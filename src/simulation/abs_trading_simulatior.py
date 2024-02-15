@@ -3,7 +3,7 @@ import logging
 from .report.simulation_report import SimulationReport
 from .config import SimulationConfig,StrategyId
 from .cache.abs_simulation_log_storage import absSimulationLogStorage
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 from typing import Union
 from .models import SimulationLog
 
@@ -27,8 +27,7 @@ class absTradingSimulatior(ABC):
         self.__logger = logging.getLogger(f"absTradingSimulatior[{self.strategy_id}]")
         pass
     
-    @property
-    @abstractmethod
+    @abstractproperty
     def strategy_id(self)->StrategyId:
         """Strategy id which work in this factory
 

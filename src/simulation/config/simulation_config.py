@@ -10,7 +10,7 @@ class SimulationConfig:
     PERIOD_F = "period"
     STRATEGY_CFG_F = "strategy_cfg"
 
-    def __init__(self, candle_data_set_cfg: CandleDataSetConfig,period: DatePeriod, strategy_cfg: StrategyConfig = StrategyConfig()):
+    def __init__(self, candle_data_set_cfg: CandleDataSetConfig, period: DatePeriod, strategy_cfg: StrategyConfig = StrategyConfig()):
         # Convert to a tuple to make it immutable
         self.__cds_cfg = candle_data_set_cfg
         self.__period = period

@@ -1,12 +1,14 @@
 from __future__ import annotations
 from datetime import date,timedelta
 from typing import Dict,List
+import pandas as pd
 
 class DatePeriod:
     """Represent date interval
     """
     FROM_F = "from"
     UNTILL_F = "untill"
+    DATE_COL_NAME = "Date"
 
     def __init__(self, from_date:date, untill_date:date):
         if from_date >= untill_date:
@@ -44,6 +46,9 @@ class DatePeriod:
         """
         return self.period_in_days/365
     
+    def filter_df(self, df:pd.DataFrame,date_col = DATE_COL_NAME)-> pd.DataFrame:
+        return df[(df[date_col]>=self.__from_date.strftime("%Y-%m-%d")) & (df[date_col]<self.__untill_date.strftime("%Y-%m-%d"))]
+
     def split(self, chunks_count: int) -> List[DatePeriod]:
         ts = self.untill_date - self.from_date
         step_ts = timedelta(days=int(ts.days/chunks_count))
