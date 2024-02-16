@@ -2,6 +2,7 @@ from __future__ import annotations
 from datetime import date,timedelta
 from typing import Dict,List
 import pandas as pd
+import pprint
 
 class DatePeriod:
     """Represent date interval
@@ -70,7 +71,7 @@ class DatePeriod:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return f"{self.from_date} - {self.untill_date}"
 
     def __repr__(self):
         return self.__str__()

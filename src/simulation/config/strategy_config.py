@@ -1,4 +1,5 @@
 from __future__ import annotations
+import pprint
 from typing import Dict, MutableMapping, Union
 
 
@@ -22,6 +23,16 @@ class StrategyConfig(MutableMapping):
 
     def __len__(self):
         return len(self.__data)
+    
     def __hash__(self):
         # Implement a hash value based on the content of your object
         return hash(frozenset(self.__data.items()))
+    
+    def to_dict(self) -> Dict:
+        return self.__data
+
+    def __str__(self):
+        return pprint.pformat(self.to_dict())
+
+    def __repr__(self):
+        return self.__str__()

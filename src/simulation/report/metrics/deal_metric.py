@@ -1,4 +1,5 @@
 from math import sqrt
+import pprint
 from ...models.deal import CloseDeal, Deal
 from typing import Union,List,Dict
 import numpy as np
@@ -122,7 +123,7 @@ class DealMetric:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return pprint.pformat(self.to_dict())
 
     def __repr__(self):
         return self.__str__()

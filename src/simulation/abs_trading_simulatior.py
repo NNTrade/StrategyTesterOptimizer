@@ -6,6 +6,7 @@ from .cache.abs_simulation_log_storage import absSimulationLogStorage
 from abc import ABC, abstractmethod, abstractproperty
 from typing import Union
 from .models import SimulationLog
+import pprint
 
 class absTradingSimulatior(ABC):
     """Abstract trading simulation factory
@@ -17,7 +18,7 @@ class absTradingSimulatior(ABC):
         _type_: _description_
     """
     
-    def __init__(self, report_storage: Union[absSimulationLogStorage,None] = None) -> None:
+    def __init__(self, report_storage: Union[absSimulationLogStorage,None] = None, trading_sim_name:Union[str,None]= None) -> None:
         """Constructor
 
         Args:
@@ -25,6 +26,7 @@ class absTradingSimulatior(ABC):
         """
         self.__log_cache: Union[absSimulationLogStorage,None] = report_storage
         self.__logger = logging.getLogger(f"absTradingSimulatior[{self.strategy_id}]")
+        self._logger = self.__logger if trading_sim_name is None else self.__logger.getChild(trading_sim_name)
         pass
     
     @abstractproperty
@@ -57,7 +59,7 @@ class absTradingSimulatior(ABC):
         Returns:
             StrategyReport: Strategy run report
         """
-        self.__logger.info(f"Getting log of {run_config}")
+        self.__logger.info(f"Getting log of:\n{run_config}")
 
         if self.__log_cache is not None:
             self.__logger.info("Try find log in store")
@@ -75,8 +77,10 @@ class absTradingSimulatior(ABC):
         return sl
     
     def get_report(self, simulation_config: SimulationConfig) -> SimulationReport: 
-        self.__logger.info(f"Getting report of {simulation_config}")
+        self.__logger.info(f"Getting report of\n{simulation_config}")
         sl = self.get_log(simulation_config)
 
         self.__logger.info("Convert log into report")
-        return SimulationReport(self.strategy_id, simulation_config, sl)
+        report = SimulationReport(self.strategy_id, simulation_config, sl)
+        self.__logger.info(f"Simulation report metric:\n{report.metrics}")
+        return report

@@ -1,17 +1,18 @@
 import logging
-from typing import Tuple
+from typing import Tuple, Union
 
 from .config import OptimizationConfig
 from .strategy import absStrategyFactory
+from .strategy.realization import GridStrategyFactory
 
 from ..simulation.config import SimulationConfig
 from ..simulation.report import SimulationReport
 from ..simulation.abs_trading_simulatior import absTradingSimulatior
 
 class Optimizer:
-    def __init__(self, trading_simulator: absTradingSimulatior, optimization_strategy_factory: absStrategyFactory) -> None:
+    def __init__(self, trading_simulator: absTradingSimulatior, optimization_strategy_factory: Union[absStrategyFactory,None] = None) -> None:
       self.__trading_simulator = trading_simulator
-      self.__parametar_optimizator_factory = optimization_strategy_factory
+      self.__parametar_optimizator_factory = optimization_strategy_factory if optimization_strategy_factory is not None else GridStrategyFactory()
       self.__logger = logging.getLogger("OptimizationReport")
       self.workerCount = None
       pass

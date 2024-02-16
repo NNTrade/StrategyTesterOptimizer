@@ -1,6 +1,5 @@
 from src.optimization.config import StrategyConfigSet
-from src.optimization.strategy.abs_strategy import absStrategy
-from src.optimization.strategy.comparers import by_strategy_yield_per_year_comparer
+from src.optimization.strategy.abs_strategy import absStrategy,Union,absReportComparer
 from src.simulation.report import SimulationReport
 
 
@@ -9,7 +8,7 @@ from typing import Callable
 
 
 class absStrategyFactory(ABC):
-   def __init__(self, run_report_comparer:Callable[[SimulationReport,SimulationReport],int] = by_strategy_yield_per_year_comparer) -> None:
+   def __init__(self, run_report_comparer:Union[absReportComparer,None] = None) -> None:
      self._run_report_comparer = run_report_comparer
      super().__init__()
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Dict,List
 from .strategy_config import StrategyConfig
 from ...common import DatePeriod, CandleConfig, CandleDataSetConfig
+import pprint
 
 class SimulationConfig:
     """configuration of single strategy simulation
@@ -51,7 +52,7 @@ class SimulationConfig:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return pprint.pformat(self.to_dict())
 
     def __repr__(self):
         return self.__str__()

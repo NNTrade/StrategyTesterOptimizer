@@ -1,4 +1,5 @@
 from __future__ import annotations
+import pprint
 from typing import Dict,List
 from NNTrade.common import TimeFrame
 from .candle_config import CandleConfig
@@ -53,7 +54,7 @@ class CandleDataSetConfig:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return  pprint.pformat(self.to_dict(), sort_dicts=False)
 
     def __repr__(self):
         return self.__str__()
