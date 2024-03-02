@@ -47,8 +47,16 @@ class DatePeriod:
         """
         return self.period_in_days/365
     
-    def filter_df(self, df:pd.DataFrame,date_col = DATE_COL_NAME)-> pd.DataFrame:
-        return df[(df[date_col]>=self.__from_date.strftime("%Y-%m-%d")) & (df[date_col]<self.__untill_date.strftime("%Y-%m-%d"))]
+    
+    def filter_df(self, df:pd.DataFrame,date_col:str|None = None)-> pd.DataFrame:
+        if date_col is None:
+            from_date = pd.to_datetime(self.__from_date)
+            until_date = pd.to_datetime(self.__untill_date)
+
+            # Filter the DataFrame based on the date range
+            return df[(df.index >= from_date) & (df.index < until_date)]
+        else:
+            return df[(df[date_col]>=self.__from_date.strftime("%Y-%m-%d")) & (df[date_col]<self.__untill_date.strftime("%Y-%m-%d"))]
 
     def split(self, chunks_count: int) -> List[DatePeriod]:
         ts = self.untill_date - self.from_date

@@ -1,12 +1,14 @@
 from __future__ import annotations
+import imp
 import logging
+
+from pandas import DataFrame
 from .report.simulation_report import SimulationReport
 from .config import SimulationConfig,StrategyId
 from .cache.abs_simulation_log_storage import absSimulationLogStorage
 from abc import ABC, abstractmethod, abstractproperty
-from typing import Union
+from typing import Union, Dict
 from .models import SimulationLog
-import pprint
 
 class absTradingSimulatior(ABC):
     """Abstract trading simulation factory
@@ -18,15 +20,18 @@ class absTradingSimulatior(ABC):
         _type_: _description_
     """
     
-    def __init__(self, report_storage: Union[absSimulationLogStorage,None] = None, trading_sim_name:Union[str,None]= None) -> None:
+    def __init__(self, data_source: Dict[str, DataFrame], report_storage: Union[absSimulationLogStorage,None] = None, trading_sim_name:Union[str,None]= None) -> None:
         """Constructor
 
         Args:
-            report_storage (Storage, optional): Run report storage. Defaults to None.
+            data_source (Dict[str, DataFrame]): Dictionary with DataFrames mapped by aliase keys
+            report_storage (Union[absSimulationLogStorage,None], optional): Storage for cashed reports. Defaults to None.
+            trading_sim_name (Union[str,None], optional): Name of simu;lation for logging process. Defaults to None.
         """
         self.__log_cache: Union[absSimulationLogStorage,None] = report_storage
         self.__logger = logging.getLogger(f"absTradingSimulatior[{self.strategy_id}]")
         self._logger = self.__logger if trading_sim_name is None else self.__logger.getChild(trading_sim_name)
+        self._data_source = data_source
         pass
     
     @abstractproperty
@@ -39,11 +44,12 @@ class absTradingSimulatior(ABC):
         ...
     
     @abstractmethod
-    def _run(self, run_config: SimulationConfig)->SimulationLog:
+    def _run(self, run_config: SimulationConfig, alias_data:Dict[str,DataFrame])->SimulationLog:
         """Logic which get result of strategy for run config
 
         Args:
-            run_config (RunConfig): run configuration
+            run_config (SimulationConfig): run configuration
+            alias_data (Dict[str,DataFrame): data of quotes by aliase key
 
         Returns:
             absRunReportFactory.RunResult: strategy run result
@@ -67,8 +73,15 @@ class absTradingSimulatior(ABC):
             if sl is not None:
                 return sl
         
+        self.__logger.info("Get quotes for simulations")
+        alias_data:Dict[str,DataFrame] = {}
+        for alias, stock_cfg in run_config.candle_data_set_config.stocks.items():
+            df = self._data_source[alias]
+            alias_data[alias] = run_config.period.filter_df(df)
+        
+
         self.__logger.info(f"No cache source or chache not found. Star simulation")
-        sl = self._run(run_config)
+        sl = self._run(run_config,alias_data)
 
         if self.__log_cache is not None:
           self.__logger.info("Add log to store")

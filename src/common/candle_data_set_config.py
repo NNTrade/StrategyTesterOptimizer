@@ -20,8 +20,8 @@ class CandleDataSetConfig:
         return CandleDataSetConfig({f"{i}":sc for i, sc in enumerate(stocks)}, step_timeframe)
     
     @staticmethod
-    def BuildFrom(stock: CandleConfig, step_timeframe: TimeFrame) -> CandleDataSetConfig:
-        return CandleDataSetConfig({"default":stock}, step_timeframe)
+    def BuildFrom(stock: CandleConfig, step_timeframe: TimeFrame, alise_name:str="default") -> CandleDataSetConfig:
+        return CandleDataSetConfig({alise_name:stock}, step_timeframe)
     
     def __init__(self, stocks: Dict[str,CandleConfig], step_timeframe: TimeFrame):
         if len(stocks) < 1:
@@ -37,7 +37,7 @@ class CandleDataSetConfig:
 
     @property
     def stocks(self) -> Dict[str,CandleConfig]:
-        """List of using stock configuration
+        """Dictionary alias in strategy and Stock config for this alias in strategy
         """
         return self.__stocks.copy()
 
