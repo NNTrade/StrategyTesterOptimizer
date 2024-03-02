@@ -33,11 +33,9 @@ class Deal:
                  using_cap: float,
                  commission_open: float = 0):
         self.__close_date: Union[datetime,None] = None
-        self.__close_price: Union[float,None] = None
+        self.__last_price: float = open_price
         self.__commission_close: float = 0
         self.__commission_holding: float = 0
-        self.__result = None
-        self.__profit = None
 
         if open_price <= 0:
             raise AttributeError("Open price must be > 0", name="open_price")
@@ -57,11 +55,20 @@ class Deal:
 
         self.__using_cap:float = using_cap
         self.__asset:str= asset
-        
+        self.__update_result_and_profit()
 
     def __start_cap(self)->float:
         return self.amount * self.open_price / self.__using_cap
     
+
+    def set_last_price(self, price:float)->Deal:
+        if self.is_closed:
+            raise Exception("Cann't set last price for closed deal")
+        
+        self.__last_price = price
+        self.__update_result_and_profit()
+        return self
+
     def close_deal(self, date:datetime, price:float,commission_close:float = 0)->CloseDeal:
         if date is None or price is None:
             raise AttributeError("Close date and close price must be not none")
@@ -69,23 +76,27 @@ class Deal:
         if self.open_date >= date:
             raise AttributeError(
                 "Close date must be > Open date", name="close_date")
+        
         if price <= 0:
             raise AttributeError("Close price must be > 0", name="close_price")
         
-        if self.__close_date is not None:
+        if self.is_closed:
             raise Exception("Cann't close closed deal")
         
         if commission_close >0:
              raise AttributeError("Commisison close must be <= 0")
         
-        self.__close_price = price
+        self.__last_price = price
         self.__close_date = date
         self.__commission_close = commission_close
 
-        self.__result = (self.__close_price - self.open_price) * \
+        self.__update_result_and_profit()
+        return self  # type: ignore
+
+    def __update_result_and_profit(self):
+        self.__result = (self.__last_price - self.open_price) * \
             self.amount + self.commission_total
-        self.__profit = self.__result / self.__start_cap()
-        return self # type: ignore
+        self.__profit = self.__result / self.__start_cap()# type: ignore
 
     def add_commision_holding(self, commision:float)->Deal:
         if self.is_closed:
@@ -107,7 +118,7 @@ class Deal:
 
     @property
     def close_price(self) -> Union[float,None]:
-        return self.__close_price
+        return self.__last_price
 
     @property
     def amount(self) -> float:
@@ -138,11 +149,11 @@ class Deal:
         return self.commission_open + self.commission_close + self.commission_holding
 
     @property
-    def result(self) -> Union[float,None]:
+    def result(self) -> float:
         return self.__result
 
     @property
-    def profit(self) -> Union[float,None]:
+    def profit(self) -> float:
         return self.__profit
 
     @property

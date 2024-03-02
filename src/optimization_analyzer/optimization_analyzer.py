@@ -2,7 +2,7 @@ import logging
 import multiprocessing
 import pprint
 from .config import AnalyzationConfig
-from .model import AnalyzationReport
+from .model import OptimizationAnalyzReport
 from ..optimization import absTradingSimulatior, absStrategyFactory, Optimizer, SimulationConfig
 from ..optimization.config import OptimizationConfig,List
 from .period_splitter import absPeriodSplitter, DefaultPeriodSplitter, AnalyzationPeriod
@@ -18,7 +18,7 @@ class OptimizationAnalyzer:
         self.__logger = logging.getLogger(f"OptimizationAnalyzer")
         pass
 
-    def analys_single_optimization(self, config: AnalyzationConfig)->AnalyzationReport:
+    def analys_single_optimization(self, config: AnalyzationConfig)->OptimizationAnalyzReport:
         self.__logger.info(f"Start analisation of:\n{config}")
 
         self.__logger.info("Begin optimization")
@@ -30,9 +30,9 @@ class OptimizationAnalyzer:
         fwd_sim_rep = self.__optimizer.trading_simulator.get_report(fwd_cfg)
 
         self.__logger.info("Prepare AnalizationReport")
-        return AnalyzationReport(opt_sim_rep, fwd_sim_rep)
+        return OptimizationAnalyzReport(opt_sim_rep, fwd_sim_rep)
     
-    def analis_optimization_flow(self, analyzation_config:OptimizationConfig,use_muiltiprocess:bool = True)->List[AnalyzationReport]:
+    def analis_optimization_flow(self, analyzation_config:OptimizationConfig,use_muiltiprocess:bool = False)->List[OptimizationAnalyzReport]:
         self.__logger.info(f"Define analization rounds intervals")
         list_of_analis_periods = self.period_splitter.split(analyzation_config.period)
 

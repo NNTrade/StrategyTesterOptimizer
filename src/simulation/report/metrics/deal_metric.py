@@ -16,16 +16,14 @@ class DealMetric:
     def __init__(self, deal_list: List[Deal]) -> None:
         self.__deal_count = len(deal_list)
 
-        close_deals:List[CloseDeal] = [d.as_closed for d in deal_list if d.is_closed]
-
-        success_deals = [d for d in close_deals if d.result > 0]
+        success_deals = [d for d in deal_list if d.result > 0]
         self.__success_deal_count = len(success_deals)
         
-        fail_deals = [d for d in close_deals if d.result < 0]
+        fail_deals = [d for d in deal_list if d.result < 0]
         self.__fail_deal_count = len(fail_deals)
 
         if self.__deal_count > 0:
-            self.__avg_net_profit = float(np.mean([d.profit for d in close_deals]))
+            self.__avg_net_profit = float(np.mean([d.profit for d in deal_list]))
         else:
             self.__avg_net_profit = None
 

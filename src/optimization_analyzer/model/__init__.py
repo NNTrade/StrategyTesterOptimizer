@@ -1,1 +1,1 @@
-from .analyzation_report import AnalyzationReport
+from .optimization_analyz_report import OptimizationAnalyzReport

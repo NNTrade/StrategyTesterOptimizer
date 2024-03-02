@@ -3,15 +3,17 @@ import logging
 from .abs_period_splitter import absPeriodSplitter, DatePeriod, AnalyzationPeriod
 from datetime import timedelta
 from typing import List
-import pprint
 
 class DefaultPeriodSplitter(absPeriodSplitter):
-
+  @staticmethod
+  def from_days(optimization_days:int, forward_days:int, forced_split:bool = False, cut_tail:bool = True)->DefaultPeriodSplitter:
+    return DefaultPeriodSplitter(timedelta(optimization_days), timedelta(forward_days),forced_split,cut_tail)
+  
   @staticmethod
   def default_tf_d()->DefaultPeriodSplitter:
-     return DefaultPeriodSplitter(timedelta(180), timedelta(30), cut_tail=True)
+     return DefaultPeriodSplitter.from_days(360, 60)
 
-  def __init__(self, optimization_td:timedelta, forward_td:timedelta, forced_split:bool = False, cut_tail:bool = False):
+  def __init__(self, optimization_td:timedelta, forward_td:timedelta, forced_split:bool = False, cut_tail:bool = True):
     """_summary_
 
     Args:
