@@ -1,6 +1,5 @@
 from datetime import datetime
 import pprint
-
 from ....common.date_period import DatePeriod
 from ...config import Dict
 
@@ -44,7 +43,7 @@ class CapitalMetric:
     
     @property
     def strategy_yield(self) -> float:
-        """Result yeield: (Income - Loss - Commission)/start_cap - 1
+        """Result yield: (Income - Loss - Commission)/start_cap - 1
 
         Returns:
             float: Strategy Yield

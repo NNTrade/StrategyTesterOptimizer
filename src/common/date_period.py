@@ -2,7 +2,6 @@ from __future__ import annotations
 from datetime import date,timedelta
 from typing import Dict,List
 import pandas as pd
-import pprint
 
 class DatePeriod:
     """Represent date interval

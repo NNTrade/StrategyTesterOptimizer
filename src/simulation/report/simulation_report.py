@@ -1,12 +1,12 @@
 from __future__ import annotations
 import math
 import pprint
-
-from src.simulation.models.simulation_log import SimulationLog
+from ..models.simulation_log import SimulationLog
 from .metrics.metric_container import MetricContainer,Dict,datetime
 from ..config import SimulationConfig,StrategyId
 from typing import List
 from ..models.deal import Deal
+import pandas as pd
 
 class SimulationReport:
     STRATEGY_ID_F = "strategy_id"
@@ -104,3 +104,5 @@ class SimulationReport:
         if not isinstance(other, SimulationReport):
             return False
         return self.to_dict() == other.to_dict()
+
+
