@@ -3,6 +3,7 @@ import logging
 from .abs_period_splitter import absPeriodSplitter, DatePeriod, AnalyzationPeriod
 from datetime import timedelta
 from typing import List
+import pprint
 
 class DefaultPeriodSplitter(absPeriodSplitter):
 
@@ -31,7 +32,7 @@ class DefaultPeriodSplitter(absPeriodSplitter):
   def split(self, date_period:DatePeriod)->List[AnalyzationPeriod]:
     """splitt date period to list of optimization and forward analization periods
     """
-    self.__logger.info(f"Splitting {date_period} on optmization and forward intervals")
+    self.__logger.info(f"Splitting {date_period} on optmization ({self.optimization_td}) and forward  ({self.forward_td}) intervals")
     return_intervals = []
     cur_dt = date_period.from_date
     forward_interval = (cur_dt,cur_dt)
@@ -50,7 +51,8 @@ class DefaultPeriodSplitter(absPeriodSplitter):
               DatePeriod(opt_interval[0], opt_interval[1]),
               DatePeriod(fwd_interval[0], fwd_interval[1])) 
             for opt_interval, fwd_interval in return_intervals]
-    self.__logger.info(f"Splitted on {_return}")
+    pretty_dicts = '\n'.join(f"{d}" for d in _return)
+    self.__logger.info(f"Splitted on:\n{pretty_dicts}")
 
     return _return
       

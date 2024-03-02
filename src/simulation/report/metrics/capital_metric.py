@@ -1,4 +1,5 @@
 from datetime import datetime
+import pprint
 
 from ....common.date_period import DatePeriod
 from ...config import Dict
@@ -87,7 +88,7 @@ class CapitalMetric:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return pprint.pformat(self.to_dict())
 
     def __repr__(self):
         return self.__str__()

@@ -7,7 +7,7 @@ class CandleConfig:
     TICKER_F = "ticker"
     TF_F = "timeframe"
 
-    def __init__(self, ticker: str, timeframe: Union[TimeFrame, None] = None):
+    def __init__(self, ticker: str, timeframe: TimeFrame):
         self.__ticker = ticker
         self.__timeframe = timeframe
 
@@ -18,7 +18,7 @@ class CandleConfig:
         return self.__ticker
 
     @property
-    def timeframe(self) -> Union[TimeFrame, None]:
+    def timeframe(self) -> TimeFrame:
         """Timeframe in one candle
         """
         return self.__timeframe

@@ -1,1 +1,6 @@
 parameterized
+pyalgotrade
+yfinance
+pandas
+ipywidgets
+ipykernel

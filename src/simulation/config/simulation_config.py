@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Dict,List
 from .strategy_config import StrategyConfig
 from ...common import DatePeriod, CandleConfig, CandleDataSetConfig
+import pprint
 
 class SimulationConfig:
     """configuration of single strategy simulation
@@ -10,7 +11,7 @@ class SimulationConfig:
     PERIOD_F = "period"
     STRATEGY_CFG_F = "strategy_cfg"
 
-    def __init__(self, candle_data_set_cfg: CandleDataSetConfig,period: DatePeriod, strategy_cfg: StrategyConfig = StrategyConfig()):
+    def __init__(self, candle_data_set_cfg: CandleDataSetConfig, period: DatePeriod, strategy_cfg: StrategyConfig = StrategyConfig()):
         # Convert to a tuple to make it immutable
         self.__cds_cfg = candle_data_set_cfg
         self.__period = period
@@ -51,7 +52,7 @@ class SimulationConfig:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return pprint.pformat(self.to_dict())
 
     def __repr__(self):
         return self.__str__()

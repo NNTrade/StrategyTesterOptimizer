@@ -1,4 +1,5 @@
 from __future__ import annotations
+import pprint
 from typing import Dict,List
 from NNTrade.common import TimeFrame
 from .candle_config import CandleConfig
@@ -19,23 +20,24 @@ class CandleDataSetConfig:
         return CandleDataSetConfig({f"{i}":sc for i, sc in enumerate(stocks)}, step_timeframe)
     
     @staticmethod
-    def BuildFrom(stock: CandleConfig, step_timeframe: TimeFrame) -> CandleDataSetConfig:
-        return CandleDataSetConfig({"default":stock}, step_timeframe)
+    def BuildFrom(stock: CandleConfig, step_timeframe: TimeFrame, alise_name:str="default") -> CandleDataSetConfig:
+        return CandleDataSetConfig({alise_name:stock}, step_timeframe)
     
     def __init__(self, stocks: Dict[str,CandleConfig], step_timeframe: TimeFrame):
         if len(stocks) < 1:
             raise AttributeError(
                 "You must set at least one stock", name="stocks")
         for key, stock in stocks.items():
-            if stock.timeframe < step_timeframe:
-                raise AttributeError("Timeframe of ticker must be LT step timeframe",
-                                     name="step_timeframe", obj=step_timeframe)
+            if stock.timeframe is not None:
+                if stock.timeframe < step_timeframe:
+                    raise AttributeError("Timeframe of ticker must be LT step timeframe",
+                                        name="step_timeframe", obj=step_timeframe)
         self.__stocks = stocks.copy()
         self.__step_timeframe = step_timeframe
 
     @property
     def stocks(self) -> Dict[str,CandleConfig]:
-        """List of using stock configuration
+        """Dictionary alias in strategy and Stock config for this alias in strategy
         """
         return self.__stocks.copy()
 
@@ -52,7 +54,7 @@ class CandleDataSetConfig:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return  pprint.pformat(self.to_dict(), sort_dicts=False)
 
     def __repr__(self):
         return self.__str__()

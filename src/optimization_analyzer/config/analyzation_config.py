@@ -1,3 +1,4 @@
+import pprint
 from .analyzation_period import AnalyzationPeriod
 from ...optimization.config import StrategyConfigSet,OptimizationConfig
 from ...common import CandleDataSetConfig
@@ -39,7 +40,7 @@ class AnalyzationConfig:
         }
 
     def __str__(self):
-        return f"{self.to_dict()}"
+        return pprint.pformat(self.to_dict(), sort_dicts=False)
 
     def __repr__(self):
         return self.__str__()

@@ -4,6 +4,7 @@ from itertools import product
 from typing import Callable, Dict, List, MutableMapping, Generic, Union
 from ...simulation.config import StrategyConfig
 from typing import Generic, TypeVar
+import pprint
 
 T = TypeVar('T',bound=StrategyConfig) 
 
@@ -52,6 +53,15 @@ class StrategyConfigSet(MutableMapping):
 
     def __len__(self):
         return len(self.__data)
+    
+    def to_dict(self) -> Dict:
+        return self.__data
+
+    def __str__(self):
+        return pprint.pformat(self.to_dict())
+
+    def __repr__(self):
+        return self.__str__()
     
     def as_records(self) -> List[T]:
         ret_list = []
