@@ -4,3 +4,6 @@ yfinance
 pandas
 ipywidgets
 ipykernel
+tradingview-ta
+tvdatafeed @ git+https://github.com/rongardF/tvdatafeed.git
+NNTrade.indicators @ git+https://git@github.com/NNTrade/indicators.git#egg=NNTrade.indicators

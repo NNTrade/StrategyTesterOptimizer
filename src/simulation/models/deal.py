@@ -3,7 +3,7 @@ from typing import Dict,Union
 from datetime import datetime
 
 class Deal:
-    
+    G_COUNTER = 0
     OPEN_DATE_F = "open_date"
     OPEN_PRICE_F = "open_price"
     ASSET_F = "asset"
@@ -32,6 +32,8 @@ class Deal:
                  asset: str,
                  using_cap: float,
                  commission_open: float = 0):
+        Deal.G_COUNTER = Deal.G_COUNTER + 1
+        self.__id = Deal.G_COUNTER
         self.__close_date: Union[datetime,None] = None
         self.__last_price: float = open_price
         self.__commission_close: float = 0
@@ -56,6 +58,10 @@ class Deal:
         self.__using_cap:float = using_cap
         self.__asset:str= asset
         self.__update_result_and_profit()
+
+    @property
+    def id(self)->int:
+        return self.__id
 
     def __start_cap(self)->float:
         return self.amount * self.open_price / self.__using_cap
@@ -104,6 +110,22 @@ class Deal:
         self.__commission_holding = self.__commission_holding + commision
         return self
     
+    @property
+    def is_long(self)->bool:
+        return self.amount > 0
+    
+    @property
+    def is_short(self)->bool:
+        return self.amount < 0
+    
+    @property
+    def direction(self)->str:
+        return "LONG" if self.is_long else "SHORT"
+
+    @property
+    def direction_mult(self)->int:
+        return 1 if self.is_long else -1
+
     @property
     def open_date(self) -> datetime:
         return self.__open_date
@@ -166,6 +188,14 @@ class Deal:
             raise Exception("Cann't convert opened deal as closed deal")
         return self # type: ignore
     
+    #@staticmethod
+    #def build_from_dict(parse_dict:Dict[str,str])->Deal:
+    #    Deal(datetime.strptime(parse_dict[Deal.OPEN_DATE_F]), float(parse_dict[Deal.OPEN_PRICE_F]),
+    #         float(parse_dict[Deal.AMOUNT_F]),
+    #         parse_dict[Deal.ASSET_F],
+    #         float(parse_dict[Deal.USING_CAP_F]),
+    #         )
+
     def to_dict(self) -> Dict:
         return {
             self.OPEN_DATE_F: self.open_date,

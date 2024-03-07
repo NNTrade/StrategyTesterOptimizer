@@ -54,7 +54,7 @@ class DefaultPeriodSplitter(absPeriodSplitter):
               DatePeriod(fwd_interval[0], fwd_interval[1])) 
             for opt_interval, fwd_interval in return_intervals]
     pretty_dicts = '\n'.join(f"{d}" for d in _return)
-    self.__logger.info(f"Splitted on:\n{pretty_dicts}")
+    self.__logger.debug(f"Splitted on:\n{pretty_dicts}")
 
     return _return
       

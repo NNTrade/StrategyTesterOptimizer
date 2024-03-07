@@ -37,7 +37,7 @@ class StrategyId:
       }
 
   def __str__(self):
-      return f"{self.to_dict()}"
+      return f"{self.name}.{self.version}"
 
   def __repr__(self):
       return self.__str__()

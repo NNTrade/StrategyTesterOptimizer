@@ -40,7 +40,7 @@ class SimulationReport:
         deal_list: List[Deal] = simulation_log.deal_list
         if len(abs_capital_log) == 0:
             raise AttributeError(
-                "No infarmation about capitol, must be at least one record", name="abs_capital_log")
+                "No information about capitol, must be at least one record", name="abs_capital_log")
         
         first_cap_log = min(abs_capital_log.keys()).date()
         if first_cap_log < run_config.period.from_date:
