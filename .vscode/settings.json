@@ -2,13 +2,12 @@
   "python.testing.unittestArgs": [
     "-v",
     "-s",
-    "./test",
+    ".",
     "-p",
     "*_test.py"
   ],
   "python.testing.pytestEnabled": false,
   "python.testing.unittestEnabled": true,
   "python.analysis.autoImportCompletions": true,
-  "python.analysis.typeCheckingMode": "basic",
-  "markdown-preview-enhanced.plantumlServer": "http://plantuml:8080/svg"
+  "python.analysis.typeCheckingMode": "basic"
 }

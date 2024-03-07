@@ -40,7 +40,7 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_request_result_or_profit_THEN_correct(self):
         # Array
-        used_d = Deal(datetime(2020, 1, 1), 10, 100, "A", 0.5, -1).add_commision_holding(3).close_deal(datetime(2020,2,2), 11, -2)
+        used_d = Deal(datetime(2020, 1, 1), 10, 100, "A", 0.5, -1).add_commision_holding(2).add_commision_holding(1).close_deal(datetime(2020,2,2), 11, -2)
        
         # Act
         asserted_result = used_d.result
@@ -49,3 +49,45 @@ class Deal_TestCase(unittest.TestCase):
         # Assert    
         self.assertEqual((11 - 10)*100 - 1 + 3 - 2, asserted_result)
         self.assertEqual(100 / (10*100/0.5), asserted_profit)
+
+    def test_WHEN_serialization_and_deserialization_THEN_equals(self):
+        # Array        
+        expected_cfg = Deal(datetime(2020,1,2,10,12,3), 1.2, 10,"A",0.2, -1.2)
+
+        # Act
+        json_str = expected_cfg.to_json()
+
+        # Parse the JSON back into a DTO
+        asserted_cfg = Deal.from_json(json_str)
+        
+        # Assert
+        self.assertEqual(expected_cfg, asserted_cfg)
+
+    def test_WHEN_open_with_commision_serialization_and_deserialization_THEN_equals(self):
+        # Array        
+        expected_cfg = Deal(datetime(2020,1,2,10,12,3), 1.2, 10,"A",0.2, -1.2)
+        expected_cfg.add_commision_holding(10)
+
+        # Act
+        json_str = expected_cfg.to_json()
+
+        # Parse the JSON back into a DTO
+        asserted_cfg = Deal.from_json(json_str)
+        
+        # Assert
+        self.assertEqual(expected_cfg, asserted_cfg)
+
+    def test_WHEN_closed_serialization_and_deserialization_THEN_equals(self):
+        # Array        
+        expected_cfg = Deal(datetime(2020,1,2,10,12,3), 1.2, 10,"A",0.2, -1.2)
+        expected_cfg.add_commision_holding(10)
+        expected_cfg.close_deal(datetime(2020,1,3,10,12,3),2,-0.8)
+
+        # Act
+        json_str = expected_cfg.to_json()
+
+        # Parse the JSON back into a DTO
+        asserted_cfg = Deal.from_json(json_str)
+        
+        # Assert
+        self.assertEqual(expected_cfg, asserted_cfg)

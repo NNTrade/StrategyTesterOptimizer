@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Dict,Union
 from datetime import datetime
-
+import json
 class Deal:
     G_COUNTER = 0
     OPEN_DATE_F = "open_date"
@@ -237,6 +237,43 @@ class Deal:
 
     def __repr__(self):
         return self.__str__()
+    
+    def to_json(self):
+        json_dic = {
+            Deal.OPEN_DATE_F: self.open_date.isoformat(),
+            Deal.OPEN_PRICE_F: self.open_price,
+            Deal.AMOUNT_F: self.amount,
+            Deal.ASSET_F: self.asset,
+            Deal.USING_CAP_F: self.using_cap,
+            Deal.COMMISSION_OPEN_F: self.commission_open,
+            Deal.COMMISSION_HOLDING_F: self.commission_holding,
+            Deal.IS_CLOSED : int(self.is_closed)
+        }
+        if self.is_closed:
+            closed_self = self.as_closed            
+            json_dic[Deal.CLOSE_DATE_F] = closed_self.close_date.isoformat()
+            json_dic[Deal.CLOSE_PRICE_F] = closed_self.close_price            
+            json_dic[Deal.COMMISSION_CLOSE_F] = closed_self.commission_close
+        return json.dumps(json_dic)
+
+    @classmethod
+    def from_json(cls, json_str):
+        data = json.loads(json_str)
+        deal = Deal(datetime.fromisoformat(data[Deal.OPEN_DATE_F]), 
+                    data[Deal.OPEN_PRICE_F], 
+                    data[Deal.AMOUNT_F], 
+                    data[Deal.ASSET_F],
+                    data[Deal.USING_CAP_F],
+                    data[Deal.COMMISSION_OPEN_F])
+        
+        deal.add_commision_holding(data[Deal.COMMISSION_HOLDING_F])
+        
+        if data[Deal.IS_CLOSED] == 1:
+            deal.close_deal(
+                datetime.fromisoformat(data[Deal.CLOSE_DATE_F]),
+                data[Deal.CLOSE_PRICE_F],
+                data[Deal.COMMISSION_CLOSE_F])
+        return deal
 
 class CloseDeal(Deal):
     @property
