@@ -99,4 +99,18 @@ class CandleDataSetConfig_TestCase(unittest.TestCase):
                                 msg=wrong_rc)
             self.assertNotEqual(mc1, wrong_rc,
                                 msg=wrong_rc)
-            
+    
+    def test_WHEN_serialize_and_desetrialize_by_json_THEN_equal(self):
+        # Array
+        s1 = CandleConfig("S1", TimeFrame.D)
+        s2 = CandleConfig("S2", TimeFrame.D)
+        expected_cfg = CandleDataSetConfig.BuildFromDict({"A":s1,"B":s2}, TimeFrame.D)
+
+        # Act
+        json_str = expected_cfg.to_json()
+
+        # Parse the JSON back into a DTO
+        asserted_cfg = CandleDataSetConfig.from_json(json_str)
+        
+        # Assert
+        self.assertEqual(expected_cfg, asserted_cfg)

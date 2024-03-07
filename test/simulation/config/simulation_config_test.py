@@ -139,3 +139,20 @@ class SimulationConfig_TestCase(unittest.TestCase):
         self.assertEqual(used_chuck_count, len(asserted_list))
         for i in range(used_chuck_count):
             self.assertEqual(expected_list[i], asserted_list[i])
+
+    def test_WHEN_serialization_and_deserialization_THEN_equals(self):
+        # Array
+        s1 = CandleConfig("A", TimeFrame.D)
+        s2 = CandleConfig("B", TimeFrame.D)
+        c_ds_cfg = CandleDataSetConfig.BuildFromDict({"A":s1, "B":s2}, TimeFrame.D)
+        dp = DatePeriod(date(2020, 1, 1), date(2021, 1, 1))        
+        expected_cfg = SimulationConfig(c_ds_cfg, dp, StrategyConfig({"p1": 1, "p2": 2.2, "p3":"1q2w3e"}))
+
+        # Act
+        json_str = expected_cfg.to_json()
+
+        # Parse the JSON back into a DTO
+        asserted_cfg = SimulationConfig.from_json(json_str)
+        
+        # Assert
+        self.assertEqual(expected_cfg, asserted_cfg)

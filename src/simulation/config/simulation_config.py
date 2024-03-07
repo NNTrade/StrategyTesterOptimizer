@@ -3,6 +3,7 @@ from typing import Dict,List
 from .strategy_config import StrategyConfig
 from ...common import DatePeriod, CandleConfig, CandleDataSetConfig
 import pprint
+import json
 
 class SimulationConfig:
     """configuration of single strategy simulation
@@ -65,3 +66,18 @@ class SimulationConfig:
         if not isinstance(other, SimulationConfig):
             return False
         return self.to_dict() == other.to_dict()
+
+    def to_json(self):
+        return json.dumps({
+            SimulationConfig.CDS_CFG_F: self.candle_ds_cfg.to_json(),
+            SimulationConfig.PERIOD_F: self.period.to_json(),
+            SimulationConfig.STRATEGY_CFG_F: self.strategy_cfg.to_json()
+        })
+
+    @classmethod
+    def from_json(cls, json_str):
+        data = json.loads(json_str)
+        candle_ds_cfg = CandleDataSetConfig.from_json(data[SimulationConfig.CDS_CFG_F])
+        period = DatePeriod.from_json(data[SimulationConfig.PERIOD_F])
+        strategy_cfg = StrategyConfig.from_json(data[SimulationConfig.STRATEGY_CFG_F])
+        return cls(candle_ds_cfg, period, strategy_cfg)

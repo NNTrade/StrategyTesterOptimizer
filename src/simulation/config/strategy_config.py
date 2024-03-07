@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pprint
 from typing import Dict, MutableMapping, Union
-
+import json
 
 class StrategyConfig(MutableMapping):
     """Strategy parameters
@@ -36,3 +36,10 @@ class StrategyConfig(MutableMapping):
 
     def __repr__(self):
         return self.__str__()
+    
+    def to_json(self):
+        return json.dumps(self.__data)
+
+    @classmethod
+    def from_json(cls, json_str):
+        return cls(json.loads(json_str))

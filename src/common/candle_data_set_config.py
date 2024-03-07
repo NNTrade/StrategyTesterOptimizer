@@ -3,6 +3,7 @@ import pprint
 from typing import Dict,List
 from NNTrade.common import TimeFrame
 from .candle_config import CandleConfig
+import json
 
 class CandleDataSetConfig:
     """Configuration of stock candle data set.
@@ -67,3 +68,13 @@ class CandleDataSetConfig:
         if not isinstance(other, CandleDataSetConfig):
             return False
         return self.to_dict() == other.to_dict()
+    
+    def to_json(self):
+        stocks_json = {key: value.to_json() for key, value in self.__stocks.items()}
+        return json.dumps({CandleDataSetConfig.STOCKS_F: stocks_json, CandleDataSetConfig.STEP_TF_F: self.step_timeframe.short_name()})
+
+    @classmethod
+    def from_json(cls, json_str):
+        data = json.loads(json_str)
+        stocks = {key: CandleConfig.from_json(value_json) for key, value_json in data[CandleDataSetConfig.STOCKS_F].items()}
+        return cls(stocks, TimeFrame.parse(data[CandleDataSetConfig.STEP_TF_F]))

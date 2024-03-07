@@ -2,6 +2,7 @@ from __future__ import annotations
 from datetime import date,timedelta
 from typing import Dict,List
 import pandas as pd
+import json
 
 class DatePeriod:
     """Represent date interval
@@ -101,3 +102,12 @@ class DatePeriod:
             if getattr(self, key) != getattr(other, key):
                 return getattr(self, key) > getattr(other, key)
         return False
+    
+    def to_json(self):
+        return json.dumps({DatePeriod.FROM_F: self.from_date.isoformat(),
+                           DatePeriod.UNTILL_F: self.untill_date.isoformat(),})
+
+    @classmethod
+    def from_json(cls, json_str):
+        data = json.loads(json_str)
+        return cls(date.fromisoformat(data[DatePeriod.FROM_F]), date.fromisoformat(data[DatePeriod.UNTILL_F]))

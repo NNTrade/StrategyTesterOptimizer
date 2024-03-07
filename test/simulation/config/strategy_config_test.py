@@ -28,3 +28,16 @@ class StrategyConfig_TestCase(unittest.TestCase):
             self.assertNotEqual(hash(sc1), hash(wrong_rc),
                                 msg=wrong_rc)
             self.assertNotEqual(sc1, wrong_rc)
+
+    def test_WHEN_serialize_and_desetrialize_by_json_THEN_equal(self):
+        # Array
+        expected_cfg = StrategyConfig({"p1": 1, "p2": 2.2, "p3":"A"})
+
+        # Act
+        json_str = expected_cfg.to_json()
+
+        # Parse the JSON back into a DTO
+        asserted_cfg = StrategyConfig.from_json(json_str)
+        
+        # Assert
+        self.assertEqual(expected_cfg, asserted_cfg)

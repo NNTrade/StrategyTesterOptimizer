@@ -1,5 +1,6 @@
 from NNTrade.common import TimeFrame
 from typing import Dict, Union
+import json
 
 class CandleConfig:
     """Configuration of stock candle. Name of ticker and timeframe of trading data in the one candle
@@ -53,3 +54,11 @@ class CandleConfig:
             if getattr(self, key) != getattr(other, key):
                 return getattr(self, key) > getattr(other, key)
         return False
+
+    def to_json(self):
+        return json.dumps({CandleConfig.TICKER_F: self.ticker, CandleConfig.TF_F: self.__timeframe.short_name()})
+
+    @classmethod
+    def from_json(cls, json_str):
+        data = json.loads(json_str)
+        return cls(data[CandleConfig.TICKER_F], TimeFrame.parse(data[CandleConfig.TF_F]))
