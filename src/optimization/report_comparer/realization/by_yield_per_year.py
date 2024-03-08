@@ -25,7 +25,7 @@ class ByYieldPerYear(absReportComparer):
         
         raise Exception("Unexpected get type")
 
-    def comparer(self,prev_sim_reps:List[SimulationReport], new_sim_reps:List[SimulationReport])->int:
+    def comparer(self,prev_sim_reps:List[SimulationReport], new_sim_reps:List[SimulationReport])->float:
         new_str_yield_per_year = self._get(new_sim_reps)
         prev_str_yield_per_year = self._get(prev_sim_reps)
         compare_result = int((new_str_yield_per_year - prev_str_yield_per_year)*self.__mult)

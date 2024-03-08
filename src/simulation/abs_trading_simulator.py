@@ -2,6 +2,8 @@ from __future__ import annotations
 import logging
 from re import S
 from pandas import DataFrame
+
+from src.common.date_period import DatePeriod
 from .report.simulation_report import SimulationReport
 from .config import SimulationConfig,StrategyId
 from .cache.abs_simulation_log_storage import absSimulationLogStorage
@@ -9,7 +11,7 @@ from abc import ABC, abstractmethod, abstractproperty
 from typing import Union, Dict
 from .models import SimulationLog
 
-class absTradingSimulatior(ABC):
+class absTradingSimulator(ABC):
     """Abstract trading simulation factory
 
     Args:
@@ -23,7 +25,7 @@ class absTradingSimulatior(ABC):
         """Constructor
 
         Args:
-            data_source (Dict[str, DataFrame]): Dictionary with DataFrames mapped by aliase keys
+            data_source (Dict[str, DataFrame]): Dictionary with DataFrames mapped by ticker keys
             report_storage (Union[absSimulationLogStorage,None], optional): Storage for cashed reports. Defaults to None.
             trading_sim_name (Union[str,None], optional): Name of simu;lation for logging process. Defaults to None.
         """
@@ -32,7 +34,21 @@ class absTradingSimulatior(ABC):
         self._logger = self.__logger if trading_sim_name is None else self.__logger.getChild(trading_sim_name)
         self._data_source = data_source
         pass
+    
+    @abstractmethod
+    def _get_fitted_simulator(self,fitted_data_source: Dict[str, DataFrame])->absTradingSimulator:
+        ...
 
+    def get_fitted_simulator(self, date_period:DatePeriod)->absTradingSimulator:
+        fitted_data_source = {}
+        for ticker, stock_df in self._data_source.items():
+            fitted_stock_df = date_period.filter_df(stock_df)
+            fitted_data_source[ticker] = fitted_stock_df
+        
+        simulator = self._get_fitted_simulator(fitted_data_source)
+        return simulator
+        
+    
     @abstractmethod
     def _run(self, strategy_id:StrategyId,run_config: SimulationConfig, alias_data:Dict[str,DataFrame])->SimulationLog:
         """Logic which get result of strategy for run config
@@ -46,7 +62,7 @@ class absTradingSimulatior(ABC):
         """
         ...
 
-    def get_log(self, strategy_id:StrategyId, run_config: SimulationConfig) -> SimulationLog:
+    def get_log(self, strategy_id:StrategyId, run_config: SimulationConfig, ignore_period:bool = False) -> SimulationLog:
         """get Strategy run report by run configuration
 
         Args:
@@ -66,11 +82,13 @@ class absTradingSimulatior(ABC):
         
         self.__logger.debug("Get quotes for simulations")
         alias_data:Dict[str,DataFrame] = {}
-        for alias, stock_cfg in run_config.candle_data_set_config.stocks.items():
-            df = self._data_source[alias]
-            alias_data[alias] = run_config.period.filter_df(df)
+        for alias,stock_cfg in run_config.candle_data_set_config.stocks.items():
+            df = self._data_source[stock_cfg.ticker]
+            if ignore_period:
+                alias_data[alias] = df
+            else:
+                alias_data[alias] = run_config.period.filter_df(df)
         
-
         self.__logger.debug(f"No cache source or chache not found. Star simulation")
         sl = self._run(strategy_id, run_config,alias_data)
 
@@ -84,9 +102,9 @@ class absTradingSimulatior(ABC):
 
         return sl
     
-    def get_report(self, strategy_id:StrategyId,simulation_config: SimulationConfig) -> SimulationReport: 
+    def get_report(self, strategy_id:StrategyId,simulation_config: SimulationConfig, ignore_period:bool = False) -> SimulationReport: 
         self.__logger.info(f"Getting report of\n{simulation_config}")
-        sl = self.get_log(strategy_id, simulation_config)
+        sl = self.get_log(strategy_id, simulation_config, ignore_period)
 
         self.__logger.debug("Convert log into report")
         report = SimulationReport(strategy_id, simulation_config, sl)

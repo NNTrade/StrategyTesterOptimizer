@@ -1,4 +1,4 @@
-from ..abs_optimizer import AbsOptimizer, absTradingSimulatior, absStrategyFactory, StrategyId, OptimizationConfig, SimulationReport,Tuple
+from ..abs_optimizer import AbsOptimizer, absTradingSimulator, absStrategyFactory, StrategyId, OptimizationConfig, SimulationReport,Tuple
 from typing import List
 import numpy as np
 from datetime import timedelta
@@ -7,7 +7,12 @@ from ....simulation.config import SimulationConfig
 
 
 class SimpleOptimizer(AbsOptimizer):
-    def __init__(self, trading_simulator: absTradingSimulatior, optimization_strategy_factory: absStrategyFactory | None = None) -> None:
+    """Simple optimizer. Search best result in period.
+
+    Args:
+        AbsOptimizer (_type_): _description_
+    """
+    def __init__(self, trading_simulator: absTradingSimulator, optimization_strategy_factory: absStrategyFactory | None = None) -> None:
         super().__init__(SimpleOptimizer, trading_simulator, optimization_strategy_factory)
         pass
 

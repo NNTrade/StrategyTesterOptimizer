@@ -33,6 +33,10 @@ class SimulationLog:
     @classmethod
     def from_json(cls, json_str):
         data = json.loads(json_str)
+        return cls.from_dict(data)
+
+    @classmethod
+    def from_dict(cls, data):
         cap_log = {datetime.fromisoformat(key): value_json for key, value_json in data[SimulationLog.CAPITAL_LOG_F].items()}
         deal_log = [Deal.from_json(d) for d in data[SimulationLog.DEAL_LIST_F]]
         return cls(cap_log, deal_log)

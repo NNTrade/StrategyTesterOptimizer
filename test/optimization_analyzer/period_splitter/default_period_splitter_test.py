@@ -76,7 +76,7 @@ class DefaultPeriodSplitter_TestCase(unittest.TestCase):
         # Act
         # Assert
         with self.assertRaises(AttributeError) as context:
-            DefaultPeriodSplitter(timedelta(8),timedelta(2)).split(mc1)
+            DefaultPeriodSplitter(timedelta(8),timedelta(2), cut_tail=False).split(mc1)
 
     def test_WHEN_split_with_cut_tail_THEN_raise_error(self):
         # Array

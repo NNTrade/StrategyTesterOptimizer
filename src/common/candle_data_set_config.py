@@ -33,9 +33,14 @@ class CandleDataSetConfig:
                 if stock.timeframe < step_timeframe:
                     raise AttributeError("Timeframe of ticker must be LT step timeframe",
                                         name="step_timeframe", obj=step_timeframe)
+        self.__aliases = list(stocks.keys())
         self.__stocks = stocks.copy()
         self.__step_timeframe = step_timeframe
 
+    @property
+    def aliases(self)->List[str]:
+        return self.__aliases.copy()
+    
     @property
     def stocks(self) -> Dict[str,CandleConfig]:
         """Dictionary alias in strategy and Stock config for this alias in strategy
@@ -70,11 +75,15 @@ class CandleDataSetConfig:
         return self.to_dict() == other.to_dict()
     
     def to_json(self):
-        stocks_json = {key: value.to_json() for key, value in self.__stocks.items()}
+        stocks_json = {key: value.to_dict() for key, value in self.__stocks.items()}
         return json.dumps({CandleDataSetConfig.STOCKS_F: stocks_json, CandleDataSetConfig.STEP_TF_F: self.step_timeframe.short_name()})
 
     @classmethod
     def from_json(cls, json_str):
         data = json.loads(json_str)
-        stocks = {key: CandleConfig.from_json(value_json) for key, value_json in data[CandleDataSetConfig.STOCKS_F].items()}
+        return cls.from_dict(data)
+
+    @classmethod
+    def from_dict(cls, data):
+        stocks = {key: CandleConfig.from_dict(value_json) for key, value_json in data[CandleDataSetConfig.STOCKS_F].items()}
         return cls(stocks, TimeFrame.parse(data[CandleDataSetConfig.STEP_TF_F]))

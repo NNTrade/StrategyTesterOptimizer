@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ...simulation import absTradingSimulatior, StrategyId, SimulationReport
+from ...simulation import absTradingSimulator, StrategyId, SimulationReport
 from ..config import OptimizationConfig,SimulationConfig
 from ..strategy import absStrategyFactory
 from ..strategy.realization import GridStrategyFactory
@@ -8,7 +8,7 @@ import logging
 
 
 class AbsOptimizer(ABC):
-    def __init__(self, realization: str|type, trading_simulator: absTradingSimulatior, optimization_strategy_factory: absStrategyFactory | None = None) -> None:
+    def __init__(self, realization: str|type, trading_simulator: absTradingSimulator, optimization_strategy_factory: absStrategyFactory | None = None) -> None:
         self.__trading_simulator = trading_simulator
         self._parametar_optimizator_factory = optimization_strategy_factory if optimization_strategy_factory is not None else GridStrategyFactory()
         self.__logger = logging.getLogger("AbsOptimizer")
@@ -24,7 +24,7 @@ class AbsOptimizer(ABC):
         pass
 
     @property
-    def trading_simulator(self) -> absTradingSimulatior:
+    def trading_simulator(self) -> absTradingSimulator:
         return self.__trading_simulator
     
     @abstractmethod

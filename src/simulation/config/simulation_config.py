@@ -69,15 +69,19 @@ class SimulationConfig:
 
     def to_json(self):
         return json.dumps({
-            SimulationConfig.CDS_CFG_F: self.candle_ds_cfg.to_json(),
-            SimulationConfig.PERIOD_F: self.period.to_json(),
-            SimulationConfig.STRATEGY_CFG_F: self.strategy_cfg.to_json()
+            SimulationConfig.CDS_CFG_F: self.candle_ds_cfg.to_dict(),
+            SimulationConfig.PERIOD_F: self.period.to_dict(True),
+            SimulationConfig.STRATEGY_CFG_F: self.strategy_cfg.to_dict()
         })
 
     @classmethod
     def from_json(cls, json_str):
         data = json.loads(json_str)
-        candle_ds_cfg = CandleDataSetConfig.from_json(data[SimulationConfig.CDS_CFG_F])
-        period = DatePeriod.from_json(data[SimulationConfig.PERIOD_F])
-        strategy_cfg = StrategyConfig.from_json(data[SimulationConfig.STRATEGY_CFG_F])
+        return cls.from_dict(data)
+
+    @classmethod
+    def from_dict(cls, data):
+        candle_ds_cfg = CandleDataSetConfig.from_dict(data[SimulationConfig.CDS_CFG_F])
+        period = DatePeriod.from_dict(data[SimulationConfig.PERIOD_F])
+        strategy_cfg = StrategyConfig.from_dict(data[SimulationConfig.STRATEGY_CFG_F])
         return cls(candle_ds_cfg, period, strategy_cfg)

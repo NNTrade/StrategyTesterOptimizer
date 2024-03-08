@@ -20,7 +20,7 @@ class OptimizationAnalyzReport:
     def flow_to_dataframe(flow:List[OptimizationAnalyzReport])->pd.DataFrame:
         anal_rep_df = pd.DataFrame([anal_rep.to_series() for anal_rep in flow])
         anal_rep_df.set_index([(step, SimulationConfig.PERIOD_F, col) for step in [OptimizationAnalyzReport.OPTIMIZATION_F, OptimizationAnalyzReport.FORWARD_F] for col in [DatePeriod.FROM_F,DatePeriod.UNTILL_F]], inplace=True)
-        anal_rep_df = anal_rep_df.swaplevel(0, 2, axis=1).swaplevel(0, 1)
+        anal_rep_df = anal_rep_df.swaplevel(0, 2, axis=1).swaplevel(0, 1, axis=1)
         anal_rep_df.sort_index(axis=1,inplace=True)
         return anal_rep_df
 

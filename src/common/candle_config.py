@@ -61,4 +61,8 @@ class CandleConfig:
     @classmethod
     def from_json(cls, json_str):
         data = json.loads(json_str)
+        return cls.from_dict(data)
+    
+    @classmethod
+    def from_dict(cls, data):
         return cls(data[CandleConfig.TICKER_F], TimeFrame.parse(data[CandleConfig.TF_F]))

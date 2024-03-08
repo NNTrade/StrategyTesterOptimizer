@@ -72,10 +72,10 @@ class DatePeriod:
         ret_cfg.append(DatePeriod(cur_dt, self.untill_date))
         return ret_cfg
     
-    def to_dict(self) -> Dict:
+    def to_dict(self, as_str:bool=False) -> Dict:
         return {
-            DatePeriod.FROM_F: self.from_date,
-            DatePeriod.UNTILL_F: self.untill_date,
+            DatePeriod.FROM_F: self.from_date.isoformat() if as_str else self.from_date,
+            DatePeriod.UNTILL_F: self.untill_date.isoformat() if as_str else self.untill_date,
         }
 
     def __str__(self):
@@ -110,4 +110,8 @@ class DatePeriod:
     @classmethod
     def from_json(cls, json_str):
         data = json.loads(json_str)
+        return cls.from_dict(data)
+
+    @classmethod
+    def from_dict(cls, data):
         return cls(date.fromisoformat(data[DatePeriod.FROM_F]), date.fromisoformat(data[DatePeriod.UNTILL_F]))

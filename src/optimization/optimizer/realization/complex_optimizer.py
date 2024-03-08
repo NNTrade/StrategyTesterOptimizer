@@ -1,4 +1,5 @@
-from ..abs_optimizer import AbsOptimizer, absTradingSimulatior, absStrategyFactory, StrategyId, OptimizationConfig, SimulationReport, Tuple
+from re import S
+from ..abs_optimizer import AbsOptimizer, absTradingSimulator, absStrategyFactory, StrategyId, OptimizationConfig, SimulationReport, Tuple
 from typing import List
 import numpy as np
 from datetime import timedelta
@@ -7,7 +8,12 @@ from ....simulation.config import SimulationConfig
 
 
 class ComplexOptimizer(AbsOptimizer):
-    def __init__(self, trading_simulator: absTradingSimulatior, optimization_strategy_factory: absStrategyFactory | None = None, proportions: List[int] = [1, 1, 1]) -> None:
+    """Complex Optimizer. Split given period on set of periods, seach parameters which give best result in periods set
+
+    Args:
+        AbsOptimizer (_type_): _description_
+    """
+    def __init__(self, trading_simulator: absTradingSimulator, optimization_strategy_factory: absStrategyFactory | None = None, proportions: List[int] = [1, 1, 1]) -> None:
         super().__init__(ComplexOptimizer, trading_simulator, optimization_strategy_factory)
         self.__proportions: List[int] = proportions
         pass
@@ -42,6 +48,7 @@ class ComplexOptimizer(AbsOptimizer):
         self._logger.info("Start optimization")
 
         periods = self._split_period(optimization_config_set.period)
+        period_trade_sims = {period: self.trading_simulator.get_fitted_simulator(period) for period in periods}
 
         # Get new parameter optimizator of current optimization perido
         pof = self._parametar_optimizator_factory.build(
@@ -50,11 +57,10 @@ class ComplexOptimizer(AbsOptimizer):
         sc = pof.first()
         while sc is not None:
             sim_reports = []
-            for period in periods:
+            for period,trade_sim in period_trade_sims.items():
                 sim_cfg = SimulationConfig(
                     optimization_config_set.candle_ds_cfg, period, sc)
-                sim_rep = self.trading_simulator.get_report(
-                    strategy_id, sim_cfg)
+                sim_rep = trade_sim.get_report(strategy_id, sim_cfg, True)
                 sim_reports.append(sim_rep)
 
             sc = pof.next(sim_reports)

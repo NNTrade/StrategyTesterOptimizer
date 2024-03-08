@@ -2,7 +2,7 @@ from __future__ import annotations
 import datetime
 import unittest
 import logging
-from src.optimization.optimizer import Optimizer, absTradingSimulatior, absStrategyFactory,OptimizationConfig
+from src.optimization.optimizer import  absTradingSimulator,OptimizationConfig
 from src.optimization.strategy.realization.grid_strategy import GridStrategyFactory
 from src.optimization.config import StrategyConfigSet, StrategyConfig, Union,Dict
 from src.simulation.config import CandleConfig,TimeFrame
@@ -23,7 +23,7 @@ class Optimizer_TestCase(unittest.TestCase):
     else:
       return None
       
-  class FakeSimulator(absTradingSimulatior):
+  class FakeSimulator(absTradingSimulator):
     def __init__(self, report_storage: absSimulationLogStorage | None = None) -> None:
       super().__init__(report_storage)
     def strategy_id(self)->StrategyId:

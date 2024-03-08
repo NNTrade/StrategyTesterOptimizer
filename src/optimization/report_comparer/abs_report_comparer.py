@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 import logging
 from typing import List
 
@@ -18,6 +18,7 @@ class absReportComparer(ABC):
             
             self._logger = self._logger.getChild(comparer_name)
         super().__init__()
-
-    def comparer(self,prev_sim_reps:List[SimulationReport], new_sim_reps:List[SimulationReport])->int:
+    
+    @abstractmethod
+    def comparer(self,prev_sim_reps:List[SimulationReport], new_sim_reps:List[SimulationReport])->float:
         ...

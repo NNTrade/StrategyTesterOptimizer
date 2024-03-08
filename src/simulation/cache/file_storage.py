@@ -4,52 +4,88 @@ from ..models import SimulationLog
 import os
 from typing import Dict
 import json
+import uuid
 
-class InMemoryStorage(absSimulationLogStorage):
+class FileStorageCache(absSimulationLogStorage):
     def __init__(self, folder_path:str, sub_storage: Union[absSimulationLogStorage,None] = None) -> None:
         super().__init__(sub_storage)
         self.__folder_path = folder_path
+        self.__str_sim_cfg_dict: Dict[StrategyId, Dict[SimulationConfig, str]] = {}
+        self.refresh_config_list()
 
-    def build_str_folder(self, strategy_id:StrategyId)->str:
+    def refresh_config_list(self):
+        self.__str_sim_cfg_dict = {}
+        for str_folder in os.listdir(self.__folder_path):
+            str_id = StrategyId.from_str(str_folder)
+            sim_cfg_dict = self.__str_sim_cfg_dict.get(str_id,{})
+            str_folder_path = self._config_folder(str_id)
+            
+            for filename in os.listdir(str_folder_path):
+                if filename.endswith(".json"):
+                    file_path = os.path.join(str_folder_path, filename)
+                    with open(file_path, "r") as file:
+                        # Load JSON from file
+                        json_str = file.read()
+                        # Convert JSON string to MyClass instance
+                        sim_cfg = SimulationConfig.from_json(json_str)
+                        # Now you can work with the MyClass instance
+                        sim_cfg_dict[sim_cfg] = filename
+            self.__str_sim_cfg_dict[str_id] = sim_cfg_dict
+
+    def _build_str_folder(self, strategy_id:StrategyId)->str:
         return os.path.join(self.__folder_path, str(strategy_id))
-    def _try_get(self,  strategy_id:StrategyId, simulation_config: SimulationConfig) -> Union[SimulationLog, None]:
-        
-        file_path = self.get_full_path(strategy_id, simulation_config)
 
-        if not os.path.exists(file_path):
+    def _config_folder(self, strategy_id:StrategyId)->str:
+        str_folder = self._build_str_folder(strategy_id)
+        return os.path.join(str_folder,"configs")
+    
+    def _logs_folder(self, strategy_id:StrategyId)->str:
+        str_folder = self._build_str_folder(strategy_id)
+        return os.path.join(str_folder,"logs")
+    
+    def _load_log(self, strategy_id:StrategyId, log_id:str)->SimulationLog:
+        logs_path = self._logs_folder(strategy_id)
+        log_path = os.path.join(logs_path, log_id)
+        with open(log_path, "r") as file:
+            json_str = file.read()
+            return SimulationLog.from_json(json_str)
+        
+    def _try_get(self,  strategy_id:StrategyId, simulation_config: SimulationConfig) -> Union[SimulationLog, None]:
+        sim_cfg_dict = self.__str_sim_cfg_dict.get(strategy_id,{})
+
+        if len(sim_cfg_dict) == 0:
+            return None
+
+        sim_id =  sim_cfg_dict.get(simulation_config,None)
+        if sim_id is None:
             return None
         
-        with open(file_path, 'r') as f:
-            loaded_dict = json.load(f)
+        return self._load_log(strategy_id, sim_id)
 
-        
-    def parse_dict(self, cur_path:str, parse_dict:Dict)->str:
-        sorted_keys = sorted(parse_dict.keys())
-
-        for key in sorted_keys:
-            value = parse_dict[key]
-            cur_path = os.path.join(cur_path, key)
-            if isinstance(value, dict):
-                cur_path = self.parse_dict(cur_path, value)
-            elif isinstance(value, list) or isinstance(value, tuple):
-                cur_path = os.path.join(cur_path, "__".join(value))
-            else:
-                cur_path = os.path.join(cur_path, value)
-        return cur_path
-
-    def get_full_path(self, strategy_id:StrategyId,simulation_config: SimulationConfig)->str:
-        str_folder =self.build_str_folder(strategy_id)
-        cfg_dict = simulation_config.to_dict()        
-        full_path = self.parse_dict(str_folder, cfg_dict)
-        return os.path.join(full_path, 'SimulationLog.json')
     def _try_add(self, strategy_id:StrategyId,simulation_config: SimulationConfig, simulation_log: SimulationLog) -> bool:
-        file_path = self.get_full_path(strategy_id, simulation_config)
-        
-        if os.path.exists(file_path):
+        sim_cfg_dict = self.__str_sim_cfg_dict.get(strategy_id,{})
+
+        sim_id = sim_cfg_dict.get(simulation_config,None)
+        if sim_id is not None:
             return False
         
-        simulation_log_dict = simulation_log.to_dict()
-        with open(file_path, 'w') as f:
-            json.dump(simulation_log_dict, f)   
+        logs_path = self._logs_folder(strategy_id)
+        os.makedirs(logs_path, exist_ok=True)
+        configs_path = self._config_folder(strategy_id)
+        os.makedirs(configs_path, exist_ok=True)
 
+        new_guid = uuid.uuid4()
+        file_name = f"{new_guid}.json"
+
+        log_path = os.path.join(logs_path, file_name)
+        config_path = os.path.join(configs_path, file_name)
+
+        with open(log_path, "w") as json_file:
+            json_file.write(simulation_log.to_json())
+
+        with open(config_path, "w") as json_file:
+            json_file.write(simulation_config.to_json())
+
+        sim_cfg_dict[simulation_config] = file_name
+        self.__str_sim_cfg_dict[strategy_id] = sim_cfg_dict
         return True

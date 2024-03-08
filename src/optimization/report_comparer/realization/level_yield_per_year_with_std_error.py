@@ -34,7 +34,7 @@ class LevelYieldPerYearWithStdError(absReportComparer):
         
         return np.sum(ypy_arr)/len(ypy_arr)*self.__mult
 
-    def comparer(self,prev_sim_reps:List[SimulationReport], new_sim_reps:List[SimulationReport])->int:
+    def comparer(self,prev_sim_reps:List[SimulationReport], new_sim_reps:List[SimulationReport])->float:
         prev_ypy = [sr.metrics.capital.strategy_yield_per_year for sr in prev_sim_reps]
         new_ypy = [sr.metrics.capital.strategy_yield_per_year for sr in new_sim_reps]
         avg_prev_str_yield_per_year = self._get_avg(prev_ypy)
