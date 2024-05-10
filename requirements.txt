@@ -1,3 +1,4 @@
 NNTrade.common @ git+https://git@github.com/NNTrade/common.git#egg=NNTrade.common
 NNTrade.source.market @ git+https://git@github.com/NNTrade/market-source-lib.git#egg=NNTrade.source.market
 tqdm
+pyalgotrade
