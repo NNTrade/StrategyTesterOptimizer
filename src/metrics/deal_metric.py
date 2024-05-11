@@ -11,9 +11,12 @@ class DealMetric:
     AVG_NET_PROFIT_BY_SUCCESS_F = "avg_net_profit_by_success"
     AVG_NET_PROFIT_BY_LOSS_F = "avg_net_profit_by_loss"
     AVG_NET_PROFIT_F = "avg_net_profit"
-    AVG_INTEREST_BY_SUCCESS_F = "avg_interest_by_success"
-    AVG_INTEREST_BY_LOSS_F = "avg_interest_by_loss"
-    AVG_INTEREST_F = "avg_interest"
+    AVG_INTEREST_TO_ACC_BY_SUCCESS_F = "avg_interest_to_account_by_success"
+    AVG_INTEREST_TO_ACC_BY_LOSS_F = "avg_interest_to_account_by_loss"
+    AVG_INTEREST_TO_ACC_F = "avg_interest_to_account"
+    AVG_INTEREST_TO_POS_BY_SUCCESS_F = "avg_interest_to_position_by_success"
+    AVG_INTEREST_TO_POS_BY_LOSS_F = "avg_interest_to_position_by_loss"
+    AVG_INTEREST_TO_POS_F = "avg_interest_to_position"
 
     PROM_F = "PROM"
 
@@ -28,24 +31,30 @@ class DealMetric:
 
         if self.__deal_count > 0:
             self.__avg_profit_all = float(np.mean([d.profit for d in deal_list]))
-            self.__avg_interest = float(np.mean([d.interest for d in deal_list]))
+            self.__avg_interest_to_pos = float(np.mean([d.interest_to_position for d in deal_list]))
+            self.__avg_interest_to_acc = float(np.mean([d.interest_to_account for d in deal_list]))
         else:
             self.__avg_profit_all = None
-            self.__avg_interest = None
+            self.__avg_interest_to_pos = None
+            self.__avg_interest_to_acc = None
 
         if self.__success_deal_count > 0:
             self.__avg_profit_by_success = float(np.mean([d.profit for d in success_deals]))
-            self.__avg_interest_by_success = float(np.mean([d.interest for d in success_deals]))
+            self.__avg_interest_to_pos_by_success = float(np.mean([d.interest_to_position for d in success_deals]))
+            self.__avg_interest_to_acc_by_success = float(np.mean([d.interest_to_account for d in success_deals]))
         else:
             self.__avg_profit_by_success = 0
-            self.__avg_interest_by_success = 0
+            self.__avg_interest_to_pos_by_success =0
+            self.__avg_interest_to_acc_by_success = 0
 
         if self.__fail_deal_count > 0:
             self.__avg_profit_by_loss = float(np.mean([d.profit for d in fail_deals]))
-            self.__avg_interest_by_loss = float(np.mean([d.interest for d in fail_deals]))
+            self.__avg_interest_to_pos_by_loss = float(np.mean([d.interest_to_position for d in fail_deals]))
+            self.__avg_interest_to_acc_by_loss = float(np.mean([d.interest_to_account for d in fail_deals]))
         else:
             self.__avg_profit_by_loss = 0
-            self.__avg_interest_by_loss = 0
+            self.__avg_interest_to_pos_by_loss = 0
+            self.__avg_interest_to_acc_by_loss = 0
         pass
 
     @property
@@ -94,31 +103,58 @@ class DealMetric:
         return self.__avg_profit_by_loss
 
     @property
-    def avg_interest_all(self)->Union[float, None]:
-        """Average deal interest. If no deals then None
+    def avg_interest_to_account_all(self)->Union[float, None]:
+        """Average deal interest relative to account capital. If no deals then None
 
         Returns:
             Union[float,None]: average deal net income
         """
-        return self.__avg_interest
+        return self.__avg_interest_to_acc
     
     @property
-    def avg_interest_by_success(self)->float:
-        """Average interest per success deal. If no nuccess deals then 0
+    def avg_interest_to_position_all(self)->Union[float, None]:
+        """Average deal interest relative to position open size (open price * amount). If no deals then None
+
+        Returns:
+            Union[float,None]: average deal net income
+        """
+        return self.__avg_interest_to_pos
+    
+    @property
+    def avg_interest_to_account_by_success(self)->float:
+        """Average interest per success deal relative to account capital. If no nuccess deals then 0
 
         Returns:
             Union[float,None]: average deal net income >= 0
         """
-        return self.__avg_interest_by_success
+        return self.__avg_interest_to_acc_by_success
     
     @property
-    def avg_interest_by_loss(self)->float:
-        """Average interest per loss deal. If no fail deals then 0
+    def avg_interest_to_position_by_success(self)->float:
+        """Average interest per success deal relative to position open size (open price * amount). If no nuccess deals then 0
+
+        Returns:
+            Union[float,None]: average deal net income >= 0
+        """
+        return self.__avg_interest_to_pos_by_success
+    
+    @property
+    def avg_interest_to_account_by_loss(self)->float:
+        """Average interest per loss deal relative to account capital. If no fail deals then 0
 
         Returns:
             Union[float,None]: average deal net loss <=0
         """
-        return self.__avg_interest_by_loss
+        return self.__avg_interest_to_acc_by_loss
+    
+    @property
+    def avg_interest_to_position_by_loss(self)->float:
+        """Average interest per loss deal relative to position open size (open price * amount). If no fail deals then 0
+
+        Returns:
+            Union[float,None]: average deal net loss <=0
+        """
+        return self.__avg_interest_to_pos_by_loss
     
     @property
     def deal_count(self) -> int:
@@ -155,9 +191,12 @@ class DealMetric:
             DealMetric.AVG_NET_PROFIT_F: self.avg_profit_all,
             DealMetric.AVG_NET_PROFIT_BY_SUCCESS_F: self.avg_profit_by_success,
             DealMetric.AVG_NET_PROFIT_BY_LOSS_F: self.avg_profit_by_loss,
-            DealMetric.AVG_INTEREST_BY_SUCCESS_F:self.avg_interest_by_success,
-            DealMetric.AVG_INTEREST_BY_LOSS_F:self.avg_interest_by_loss,
-            DealMetric.AVG_INTEREST_F:self.avg_interest_all,
+            DealMetric.AVG_INTEREST_TO_POS_BY_SUCCESS_F:self.avg_interest_to_position_by_success,
+            DealMetric.AVG_INTEREST_TO_POS_BY_LOSS_F:self.avg_interest_to_position_by_loss, 
+            DealMetric.AVG_INTEREST_TO_POS_F:self.avg_interest_to_position_all,
+            DealMetric.AVG_INTEREST_TO_ACC_BY_SUCCESS_F:self.avg_interest_to_account_by_success,
+            DealMetric.AVG_INTEREST_TO_ACC_BY_LOSS_F:self.avg_interest_to_account_by_loss, 
+            DealMetric.AVG_INTEREST_TO_ACC_F:self.avg_interest_to_account_all,
             DealMetric.PROM_F: self.PROM
         }
 
