@@ -20,7 +20,7 @@ class StockConfig_TestCase(unittest.TestCase):
 
     not_eq_stocks = [
         CandleConfig("S2", TimeFrame.W),
-        CandleConfig("S1", TimeFrame.H),
+        CandleConfig("S1", TimeFrame.H1),
     ]
     # Act
 

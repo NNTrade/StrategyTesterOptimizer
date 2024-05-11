@@ -3,6 +3,7 @@ import logging
 from .abs_period_splitter import absPeriodSplitter, DatePeriod, AnalyzationPeriod
 from datetime import timedelta
 from typing import List
+from ...splitter import DatePeriodSplitter
 
 class DefaultPeriodSplitter(absPeriodSplitter):
   @staticmethod
@@ -26,33 +27,21 @@ class DefaultPeriodSplitter(absPeriodSplitter):
         AttributeError: Wrong relation between optimization interval (optimization_td) and forward interval (forward_td).
         AttributeError: Cannot split interval on round parts
     """
-    self.cut_tail = cut_tail
     self.__logger = logging.getLogger(f"DefaultPeriodSplitter")
+    self.__splitter = DatePeriodSplitter([optimization_td,forward_td], shift=forward_td,cut_tail=cut_tail)
     super().__init__(optimization_td,forward_td,forced_split)
     
 
   def split(self, date_period:DatePeriod)->List[AnalyzationPeriod]:
     """splitt date period to list of optimization and forward analization periods
     """
-    self.__logger.info(f"Splitting {date_period} on optmization ({self.optimization_td}) and forward  ({self.forward_td}) intervals")
-    return_intervals = []
-    cur_dt = date_period.from_date
-    forward_interval = (cur_dt,cur_dt)
-    while forward_interval[1] < date_period.untill_date:
-        optimization_interval = (cur_dt, cur_dt + self.optimization_td)
-        forward_interval = (optimization_interval[1],optimization_interval[1]+self.forward_td)
-        if forward_interval[1] <= date_period.untill_date:
-            return_intervals.append((optimization_interval, forward_interval))
-        elif forward_interval[1] > date_period.untill_date:
-            if not self.cut_tail:
-                raise AttributeError("Cannot split interval on round parts")
-        cur_dt = cur_dt + self.forward_td
-    
-    
+    self.__logger.info(f"Splitting {date_period} on optmization ({self._optimization_td}) and forward  ({self._forward_td}) intervals")
+    splitted_arr = self.__splitter.split(date_period)
+
     _return = [AnalyzationPeriod(
-              DatePeriod(opt_interval[0], opt_interval[1]),
-              DatePeriod(fwd_interval[0], fwd_interval[1])) 
-            for opt_interval, fwd_interval in return_intervals]
+              sub_interval[0],
+              sub_interval[1]) 
+            for sub_interval in splitted_arr]
     pretty_dicts = '\n'.join(f"{d}" for d in _return)
     self.__logger.debug(f"Splitted on:\n{pretty_dicts}")
 

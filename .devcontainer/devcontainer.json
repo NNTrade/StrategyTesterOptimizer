@@ -38,5 +38,6 @@
 	  "ms-toolsai.jupyter",
 	  "shd101wyy.markdown-preview-enhanced",
 	  "Percy.vscode-numpy-viewer",
+	  "ms-python.autopep8" //python formater
 	],
 }
