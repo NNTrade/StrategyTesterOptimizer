@@ -1,7 +1,6 @@
 from datetime import datetime
 import pprint
-from ....common.date_period import DatePeriod
-from ...config import Dict
+from ..common.date_period import DatePeriod,Dict
 
 class CapitalMetric:
     STR_YIELD_F = "yield"
