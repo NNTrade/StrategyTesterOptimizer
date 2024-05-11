@@ -68,7 +68,7 @@ class Deal:
         self.__logger = logging.getLogger(f"Deal({asset})_{open_date.strftime('%Y%m%d%H%M%S')}")
         
         if W_001 and using_capital > open_price * amount:
-            self.__logger.warning("using_capital > open_price * amount")
+            self.__logger.warning("using_capital (%f) > open_price (%f) * amount (%f)", using_capital,open_price,amount )
 
     @property
     def id(self) -> int:
