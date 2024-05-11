@@ -1,5 +1,3 @@
-from tkinter import NO
-from src import simulation
 from .abs_simulation_log_storage import absSimulationLogStorage, SimulationConfig, Union, StrategyId
 from ..models import SimulationLog
 
