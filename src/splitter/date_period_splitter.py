@@ -47,14 +47,10 @@ class DatePeriodSplitter:
 
         Args:
         proportions (List[timedelta]): proportions of dateperiod split
-        cut_tail (bool, optional): remove check that if current time interval doesn't cutted sharped. Defaults to False.
-
-        Raises:
-            AttributeError: Wrong relation between optimization interval (optimization_td) and forward interval (forward_td).
-            AttributeError: Cannot split interval on round parts
+        cut_tail (bool, optional): remove check that if current time interval doesn't cutted sharped. Defaults to True.
         """
         self.cut_tail = cut_tail
-        self.__logger = logging.getLogger(f"DefaultPeriodSplitter")
+        self.__logger = logging.getLogger(type(DatePeriodSplitter).__name__)
         self.__proportions: List[timedelta] = proportions
 
     @property
