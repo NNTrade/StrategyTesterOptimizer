@@ -56,7 +56,7 @@ class Deal:
         self.__cap: float = capital
         self.__asset: str = asset
         self.__update_profit_and_interest()
-        self.__logger = logging.getLogger(f"Deal({asset})_{open_date.strftime('%Y%m%d%H%M%S')}")
+        self.__logger = logging.getLogger(f"Deal#{self.__id}({asset})_{open_date.strftime('%Y%m%d%H%M%S')}")
         
         
 

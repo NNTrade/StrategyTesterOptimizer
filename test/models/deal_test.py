@@ -11,7 +11,8 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_long_deal_is_opened_THEN_properties_is_correct(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=2, asset="A", capital=10, commission_open=-3)
         # Act
 
         # Assert
@@ -39,16 +40,17 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_short_deal_is_opened_THEN_properties_is_correct(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=-2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=-2, asset="A", capital=10, commission_open=-3)
         # Act
 
         # Assert
-        self.assertEqual(asserted_deal.open_date,datetime(2020,1,1))
+        self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
 
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, -2)
-        
+
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.last_price, 123)
         self.assertIsNone(asserted_deal.close_price)
@@ -72,10 +74,10 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.interest_to_account, -3/10)
         self.assertEqual(asserted_deal.interest_to_position, -3/(123*2))
 
-
     def test_WHEN_add_commission_THEN_commission_is_changed(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=2, asset="A", capital=10, commission_open=-3)
 
         # Act
         asserted_deal.add_commision_holding(-5)
@@ -103,11 +105,12 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_update_last_price_THEN_commission_is_changed(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=2, asset="A", capital=10, commission_open=-3)
 
         # Act
         asserted_deal.set_last_price(130)
-        
+
         # Assert
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.last_price, 130)
@@ -122,7 +125,7 @@ class Deal_TestCase(unittest.TestCase):
 
         # Act
         asserted_deal.set_last_price(124)
-        
+
         # Assert
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.last_price, 124)
@@ -137,11 +140,12 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_long_deal_is_closed_with_gain_THEN_properties_is_correct(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=2, asset="A", capital=10, commission_open=-3)
 
         # Act
         asserted_deal.add_commision_holding(-5)
-        asserted_deal.close_deal(datetime(2020,1,3),130, -4)
+        asserted_deal.close_deal(datetime(2020, 1, 3), 130, -4)
 
         # Assert
         self.assertEqual(asserted_deal.open_price, 123)
@@ -161,11 +165,12 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_long_deal_is_closed_with_loss_THEN_properties_is_correct(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=2, asset="A", capital=10, commission_open=-3)
 
         # Act
         asserted_deal.add_commision_holding(-5)
-        asserted_deal.close_deal(datetime(2020,1,3),120, -4)
+        asserted_deal.close_deal(datetime(2020, 1, 3), 120, -4)
 
         # Assert
         self.assertEqual(asserted_deal.open_price, 123)
@@ -185,11 +190,12 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_short_deal_is_closed_with_gain_THEN_properties_is_correct(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=-2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=-2, asset="A", capital=10, commission_open=-3)
 
         # Act
         asserted_deal.add_commision_holding(-5)
-        asserted_deal.close_deal(datetime(2020,1,3),110, -4)
+        asserted_deal.close_deal(datetime(2020, 1, 3), 110, -4)
 
         # Assert
         self.assertEqual(asserted_deal.open_price, 123)
@@ -209,11 +215,12 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_short_deal_is_closed_with_loss_THEN_properties_is_correct(self):
         # Array
-        asserted_deal = Deal(datetime(2020,1,1), open_price=123, amount=-2,asset="A", capital=10,commission_open=-3)
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=-2, asset="A", capital=10, commission_open=-3)
 
         # Act
         asserted_deal.add_commision_holding(-5)
-        asserted_deal.close_deal(datetime(2020,1,3),126, -4)
+        asserted_deal.close_deal(datetime(2020, 1, 3), 126, -4)
 
         # Assert
         self.assertEqual(asserted_deal.open_price, 123)
@@ -236,6 +243,39 @@ class Deal_TestCase(unittest.TestCase):
         base_d = Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
         eq_d_arr = [
             Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+        ]
+        not_eq_d_arr = [
+            Deal(datetime(2020, 1, 1), 10, 100, "A",
+                 0.3, -1).add_commision_holding(3),
+            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -
+                 1).close_deal(datetime(2020, 1, 2), 3),
+            Deal(datetime(2020, 1, 2), 10, 100, "A", 0.3, -1),
+            Deal(datetime(2020, 1, 1), 11, 100, "A", 0.3, -1),
+            Deal(datetime(2020, 1, 1), 10, 101, "A", 0.3, -1),
+            Deal(datetime(2020, 1, 1), 10, 100, "B", 0.3, -1),
+            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.4, -1),
+            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -3),
+        ]
+        # Act
+
+        # Assert
+        print(base_d)
+
+        for d in eq_d_arr:
+            self.assertEqual(hash(base_d), hash(d), msg=d)
+            self.assertEqual(base_d, d, msg=d)
+
+        for d in not_eq_d_arr:
+            self.assertNotEqual(hash(base_d), hash(d), msg=d)
+            self.assertNotEqual(base_d, d, msg=d)
+
+    def test_WHEN_compare_commision_closed_THEN_correct_result(self):
+        # Array
+        base_d = Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -
+                      1).set_last_price(14).close_deal(datetime(2020, 1, 3), 18)
+        eq_d_arr = [
+            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -
+                 1).set_last_price(14).close_deal(datetime(2020, 1, 3), 18)
         ]
         not_eq_d_arr = [
             Deal(datetime(2020, 1, 1), 10, 100, "A",
