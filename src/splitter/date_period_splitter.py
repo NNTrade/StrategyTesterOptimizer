@@ -10,8 +10,10 @@ from typing import List, Tuple
 
 class DatePeriodSplitter:
     @staticmethod
-    def from_days(proportions_in_days: List[int], cut_tail: bool = True) -> DatePeriodSplitter:
-        return DatePeriodSplitter([timedelta(proportion_in_days) for proportion_in_days in proportions_in_days], cut_tail)
+    def from_days(proportions_in_days: List[int], shift: int | None = None, cut_tail: bool = True) -> DatePeriodSplitter:
+        if shift is None:
+            shift = sum(proportions_in_days)
+        return DatePeriodSplitter([timedelta(proportion_in_days) for proportion_in_days in proportions_in_days], timedelta(shift), cut_tail)
 
     @staticmethod
     def default_tf_d() -> DatePeriodSplitter:
@@ -42,7 +44,7 @@ class DatePeriodSplitter:
                 raise AttributeError(
                     "Wrong type of proportion %s", type(proportion))
         if isinstance(shift, int):
-            shift = timedelta(shift)            
+            shift = timedelta(shift)
         return DatePeriodSplitter(using_proportions, shift, cut_tail).split(date_period)
 
     def __init__(self, proportions: List[timedelta], shift: timedelta | None = None, cut_tail: bool = True):
@@ -55,7 +57,8 @@ class DatePeriodSplitter:
         self.cut_tail = cut_tail
         self.__logger = logging.getLogger(type(DatePeriodSplitter).__name__)
         self.__proportions: List[timedelta] = proportions
-        self.__shift = sum(proportions, timedelta()) if shift is None else shift
+        self.__shift = sum(proportions, timedelta()
+                           ) if shift is None else shift
 
     @property
     def proportions(self) -> List[timedelta]:
@@ -73,7 +76,7 @@ class DatePeriodSplitter:
         while cur_dt < date_period.untill_date:
             start_sub_interval = cur_dt
             end_sub_interval = start_sub_interval
-            
+
             sub_set = []
             for porportion in self.__proportions:
                 end_sub_interval = start_sub_interval + porportion
