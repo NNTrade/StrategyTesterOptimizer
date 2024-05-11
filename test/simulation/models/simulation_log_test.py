@@ -2,7 +2,7 @@ from datetime import datetime
 import unittest
 import logging
 from src.simulation.models import SimulationLog
-from src.simulation.models.deal import Deal
+from src.models.deal import Deal
 class Simulation_Log_TestCase(unittest.TestCase):
 
   logger = logging.getLogger(__name__)

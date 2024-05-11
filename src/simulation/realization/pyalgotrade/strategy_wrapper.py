@@ -116,7 +116,7 @@ class StrategyWrapper(strategy.BaseStrategy):
         execInfo: OrderExecutionInfo = order.getExecutionInfo() # type: ignore
         deal = self.__open_deal_dict.pop(position)
         deal.close_deal(execInfo.getDateTime(), execInfo.getPrice())
-        self.info(f"Close Deal: #{deal.id} direction {deal.direction} at {deal.close_price}. Result {deal.result}")
+        self.info(f"Close Deal: #{deal.id} direction {deal.direction} at {deal.close_price}. Result {deal.profit}")
         
     def setUseAdjustedValues(self, useAdjusted):
         self.getFeed().setUseAdjustedValues(useAdjusted)
