@@ -106,7 +106,7 @@ class StrategyWrapper(strategy.BaseStrategy):
         execInfo: OrderExecutionInfo = order.getExecutionInfo() # type: ignore
         
         
-        deal = Deal.BuildFromCap(execInfo.getDateTime(), execInfo.getPrice(), execInfo.getQuantity(), order.getInstrument(), self._get_cur_equity())
+        deal = Deal(execInfo.getDateTime(), execInfo.getPrice(), execInfo.getQuantity(), order.getInstrument(), self._get_cur_equity())
         self.__deal_list.append(deal)
         self.__open_deal_dict[position] = deal
         self.info(f"Open Deal: #{deal.id} direction {deal.direction} at {deal.open_price}")

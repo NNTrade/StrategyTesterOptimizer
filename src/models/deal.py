@@ -1,11 +1,11 @@
 from __future__ import annotations
+from turtle import position
 from typing import Dict, Union
 from datetime import datetime
 import json
 from ..common.exceptions import ClosedDealException
 import logging
 
-W_001 = True # using_cap > open_price * amount
 W_002 = True # close_date == open_date
 E_002 = False # close_date == open_date
 
@@ -15,29 +15,20 @@ class Deal:
     OPEN_PRICE_F = "open_price"
     ASSET_F = "asset"
     AMOUNT_F = "amount"
-    USING_CAP_F = "using_cap"
+    OPENED_CAPITAL_F = "opened_capital"
     CLOSE_DATE_F = "close_date"
-    CLOSE_PRICE_F = "close_price"
+    LAST_PRICE_F = "last_price"
     COMMISSION_OPEN_F = "commission_open"
     COMMISSION_CLOSE_F = "commission_close"
     COMMISSION_HOLDING_F = "commission_holding"
     IS_CLOSED = "is_closed"
-
-    @staticmethod
-    def BuildFromCap(open_date: datetime,
-                    open_price: float,
-                    amount: float,
-                    asset: str,
-                    using_cap: float,
-                    commission_open: float = 0) -> Deal:
-        return Deal(open_date, open_price, amount, asset, using_cap, commission_open)
 
     def __init__(self,
                  open_date: datetime,
                  open_price: float,
                  amount: float,
                  asset: str,
-                 using_capital: float,
+                 capital: float,
                  commission_open: float = 0):
         Deal.G_COUNTER = Deal.G_COUNTER + 1
         self.__id = Deal.G_COUNTER
@@ -53,7 +44,7 @@ class Deal:
             raise AttributeError("Deal must has amount != 0", name="amount")
         if commission_open > 0:
             raise AttributeError("Commisison open must be <= 0")
-        if using_capital <= 0:
+        if capital <= 0:
             raise AttributeError("Using cap must me > 0")
         
         self.__open_date: datetime = open_date
@@ -62,13 +53,12 @@ class Deal:
         self.__amount: float = amount
         self.__commission_open: float = commission_open
         
-        self.__using_cap: float = using_capital
+        self.__cap: float = capital
         self.__asset: str = asset
         self.__update_profit_and_interest()
         self.__logger = logging.getLogger(f"Deal({asset})_{open_date.strftime('%Y%m%d%H%M%S')}")
         
-        if W_001 and using_capital > open_price * amount:
-            self.__logger.warning("using_capital (%f) > open_price (%f) * amount (%f)", using_capital,open_price,amount )
+        
 
     @property
     def id(self) -> int:
@@ -82,7 +72,7 @@ class Deal:
         self.__update_profit_and_interest()
         return self
 
-    def close_deal(self, date: datetime, price: float, commission_close: float = 0) -> CloseDeal:
+    def close_deal(self, date: datetime, price: float, commission_close: float = 0) -> Deal:
         """Close deal
 
         Args:
@@ -95,7 +85,7 @@ class Deal:
             ClosedDealException: operation forbidden for closed deals. Deal has been already closed
 
         Returns:
-            CloseDeal: Deal with addition typing attributes
+            Deal: self instance
         """
         if date is None or price is None:
             raise AttributeError("Close date and close price must be not none")
@@ -129,7 +119,8 @@ class Deal:
     def __update_profit_and_interest(self):
         self.__profit = (self.__last_price - self.open_price) * \
             self.amount + self.commission_total
-        self.__interest = self.__profit / self.__using_cap  # type: ignore
+        self.__interest_by_pos = self.__profit / self.opened_size  # type: ignore
+        self.__interest_by_acc = self.__profit / self.opened_capital  # type: ignore
 
     def add_commision_holding(self, commision: float) -> Deal:
         """Add commision for deal
@@ -156,6 +147,10 @@ class Deal:
     @property
     def is_short(self) -> bool:
         return self.amount < 0
+    
+    @property
+    def is_closed(self) -> bool:
+        return self.__close_date is not None
 
     @property
     def direction(self) -> str:
@@ -180,22 +175,31 @@ class Deal:
     @property
     def open_date(self) -> datetime:
         return self.__open_date
-
-    @property
-    def open_price(self) -> float:
-        return self.__open_price
-
+    
     @property
     def close_date(self) -> Union[datetime, None]:
         """Close date, if deal is not Closed than None
         """
         return self.__close_date
-
+    
     @property
-    def close_price(self) -> Union[float, None]:
-        """Close price, if deal is not Closed than None
+    def open_price(self) -> float:
+        return self.__open_price
+    
+    @property
+    def last_price(self) -> float:
+        """Last fixed price of deal instrument
         """
         return self.__last_price
+    
+    @property
+    def close_price(self) -> float|None:
+        """Closed price of deal instrument
+        """
+        if self.is_closed:
+            return self.__last_price
+        else:
+            return None
 
     @property
     def amount(self) -> float:
@@ -222,14 +226,28 @@ class Deal:
         return self.__asset
     
     @property
-    def using_capital(self)->float:
+    def opened_capital(self)->float:
         """Using capital for deal. If you use leverage it could be less than asset * open_price
 
         Returns:
             float: _description_
         """
-        return self.__using_cap
+        return self.__cap
     
+    @property
+    def opened_size(self)->float:
+        """Position capitalization when opened.\n
+        opened_size = opened_price * amoount_abs
+        """
+        return self.open_price * self.amount_abs
+    
+    @property
+    def last_size(self)->float:
+        """Current position capitalization.\n
+        opened_size = last_price * amoount_abs
+        """
+        return self.last_price * self.amount_abs
+
     @property
     def commission_open(self) -> float:
         return self.__commission_open
@@ -254,21 +272,19 @@ class Deal:
         return self.__profit
 
     @property
-    def interest(self) -> float:
-        """Percent gained from deal.\n
-        interest = profit / using_capital
+    def interest_to_position(self) -> float:
+        """Profit relative to deal.\n
+        interest_by_position = profit / (opened_price * amount)
         """
-        return self.__interest
-
-    @property
-    def is_closed(self) -> bool:
-        return self.__close_date is not None
+        return self.__interest_by_pos
     
     @property
-    def as_closed(self)->CloseDeal:
-        if not self.is_closed:
-            raise Exception("Cann't convert opened deal as closed deal")
-        return self # type: ignore
+    def interest_to_account(self) -> float:
+        """Percent profit by account.\n
+        interest_by_position = profit / opened_capital
+        """
+        return self.__interest_by_acc
+
 
     def to_dict(self) -> Dict:
         return {
@@ -276,9 +292,9 @@ class Deal:
             self.OPEN_PRICE_F: self.open_price,
             self.AMOUNT_F: self.amount,
             self.ASSET_F: self.asset,
-            self.USING_CAP_F: self.using_capital,
+            self.OPENED_CAPITAL_F: self.opened_capital,
             self.CLOSE_DATE_F: self.close_date,
-            self.CLOSE_PRICE_F: self.close_price,
+            self.LAST_PRICE_F: self.last_price,
             self.COMMISSION_OPEN_F: self.__commission_open,            
             self.COMMISSION_HOLDING_F: self.__commission_holding,
             self.COMMISSION_CLOSE_F: self.__commission_close,
@@ -298,7 +314,7 @@ class Deal:
         # Custom less-than comparison for sorting
         key_order = [
             self.OPEN_DATE_F, self.CLOSE_DATE_F, self.AMOUNT_F,
-            self.OPEN_PRICE_F, self.CLOSE_PRICE_F,
+            self.OPEN_PRICE_F, self.LAST_PRICE_F,
             self.COMMISSION_OPEN_F, self.COMMISSION_CLOSE_F, self.COMMISSION_HOLDING_F
         ]
         for key in key_order:
@@ -318,16 +334,15 @@ class Deal:
             Deal.OPEN_PRICE_F: self.open_price,
             Deal.AMOUNT_F: self.amount,
             Deal.ASSET_F: self.asset,
-            Deal.USING_CAP_F: self.using_capital,
+            Deal.OPENED_CAPITAL_F: self.opened_capital,
             Deal.COMMISSION_OPEN_F: self.commission_open,
             Deal.COMMISSION_HOLDING_F: self.commission_holding,
+            Deal.LAST_PRICE_F: self.last_price,
             Deal.IS_CLOSED : int(self.is_closed)
         }
-        if self.is_closed:
-            closed_self = self.as_closed            
-            json_dic[Deal.CLOSE_DATE_F] = closed_self.close_date.isoformat()
-            json_dic[Deal.CLOSE_PRICE_F] = closed_self.close_price            
-            json_dic[Deal.COMMISSION_CLOSE_F] = closed_self.commission_close
+        if self.is_closed:           
+            json_dic[Deal.CLOSE_DATE_F] = self.close_date.isoformat() # type: ignore
+            json_dic[Deal.COMMISSION_CLOSE_F] = self.commission_close
         return json.dumps(json_dic)
 
     @classmethod
@@ -337,31 +352,15 @@ class Deal:
                     data[Deal.OPEN_PRICE_F], 
                     data[Deal.AMOUNT_F], 
                     data[Deal.ASSET_F],
-                    data[Deal.USING_CAP_F],
+                    data[Deal.OPENED_CAPITAL_F],
                     data[Deal.COMMISSION_OPEN_F])
         
         deal.add_commision_holding(data[Deal.COMMISSION_HOLDING_F])
-        
+        deal.set_last_price(data[Deal.LAST_PRICE_F])
+
         if data[Deal.IS_CLOSED] == 1:
             deal.close_deal(
                 datetime.fromisoformat(data[Deal.CLOSE_DATE_F]),
-                data[Deal.CLOSE_PRICE_F],
+                data[Deal.LAST_PRICE_F],
                 data[Deal.COMMISSION_CLOSE_F])
         return deal
-
-class CloseDeal(Deal):
-    @property
-    def close_date(self) -> datetime:
-        return super().close_date# type: ignore
-
-    @property
-    def close_price(self) -> float:
-        return super().close_price# type: ignore
-    
-    @property
-    def profit(self) -> float:
-        return super().profit# type: ignore
-
-    @property
-    def interest(self) -> float:
-        return super().interest# type: ignore
