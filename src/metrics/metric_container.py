@@ -1,5 +1,7 @@
+from __future__ import annotations
 from typing import Dict,List
 from datetime import datetime
+from ..models.simulation_log import SimulationLog
 from .capital_metric import CapitalMetric,DatePeriod
 from .deal_metric import DealMetric,Deal
 import pprint
@@ -7,6 +9,14 @@ import pprint
 class MetricContainer:
     CAP_F = "capital"
     DEALS_F = "deals"
+    
+    @staticmethod
+    def build_by_log(simulation_log: SimulationLog)->MetricContainer:
+        start_dt = min(simulation_log.capital_log.keys())
+        end_dt = max(simulation_log.capital_log.keys())
+        dp = DatePeriod(start_dt,end_dt)
+        return MetricContainer(dp, simulation_log.capital_log, simulation_log.deal_list)
+    
     def __init__(self, date_period_cfg: DatePeriod,capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
         self.__capital_metric = CapitalMetric(date_period_cfg, capital_log)
         self.__deal_meatric = DealMetric(deal_list)
