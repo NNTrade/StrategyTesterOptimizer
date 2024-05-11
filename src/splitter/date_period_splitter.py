@@ -1,6 +1,8 @@
 from __future__ import annotations
 import logging
 from re import sub
+import time
+from tkinter import NO
 from ..common.date_period import DatePeriod
 from datetime import timedelta
 from typing import List, Tuple
@@ -16,7 +18,7 @@ class DatePeriodSplitter:
         return DatePeriodSplitter.from_days([360, 60])
 
     @staticmethod
-    def split_date_period(date_period: DatePeriod, sub_intervals: List[timedelta | int], cut_tail: bool = True) -> List[List[DatePeriod]]:
+    def split_date_period(date_period: DatePeriod, sub_intervals: List[timedelta | int], shift: timedelta | int | None = None, cut_tail: bool = True) -> List[List[DatePeriod]]:
         """Split date period into sub intervals by given proportions config
 
         Args:
@@ -39,10 +41,11 @@ class DatePeriodSplitter:
             else:
                 raise AttributeError(
                     "Wrong type of proportion %s", type(proportion))
+        if isinstance(shift, int):
+            shift = timedelta(shift)            
+        return DatePeriodSplitter(using_proportions, shift, cut_tail).split(date_period)
 
-        return DatePeriodSplitter(using_proportions, cut_tail).split(date_period)
-
-    def __init__(self, proportions: List[timedelta], cut_tail: bool = True):
+    def __init__(self, proportions: List[timedelta], shift: timedelta | None = None, cut_tail: bool = True):
         """_summary_
 
         Args:
@@ -52,6 +55,7 @@ class DatePeriodSplitter:
         self.cut_tail = cut_tail
         self.__logger = logging.getLogger(type(DatePeriodSplitter).__name__)
         self.__proportions: List[timedelta] = proportions
+        self.__shift = sum(proportions, timedelta()) if shift is None else shift
 
     @property
     def proportions(self) -> List[timedelta]:
@@ -64,20 +68,26 @@ class DatePeriodSplitter:
         self.__logger.info(f"Splitting {date_period} on proportios: ({
                            ','.join([str(p) for p in self.__proportions])})")
         return_intervals = []
-        start_sub_interval = date_period.from_date
-        end_sub_interval = start_sub_interval
-        
-        while end_sub_interval < date_period.untill_date:
+        cur_dt = date_period.from_date
+
+        while cur_dt < date_period.untill_date:
+            start_sub_interval = cur_dt
+            end_sub_interval = start_sub_interval
+            
             sub_set = []
             for porportion in self.__proportions:
                 end_sub_interval = start_sub_interval + porportion
-                sub_set.append(DatePeriod(start_sub_interval, end_sub_interval))
+                sub_set.append(DatePeriod(
+                    start_sub_interval, end_sub_interval))
                 start_sub_interval = end_sub_interval
             if end_sub_interval <= date_period.untill_date:
                 return_intervals.append(sub_set)
+                if end_sub_interval == date_period.untill_date:
+                    break
             else:
                 if not self.cut_tail:
                     raise AttributeError(
                         "Cannot split interval on round parts")
+            cur_dt = cur_dt + self.__shift
 
         return return_intervals
