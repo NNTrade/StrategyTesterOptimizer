@@ -7,10 +7,10 @@ from pandas import DataFrame, Series
 
 class DataFrameSplitter:
     @staticmethod
-    def split_data(data: DataFrame|Series,propotions:List[int], shift:int|None = None, cut_tail:bool = True) -> List[List[DataFrame|Series]]:
+    def split_data(data: DataFrame | Series, propotions: List[int], shift: int | None = None, cut_tail: bool = True) -> List[List[DataFrame | Series]]:
         return DataFrameSplitter(propotions, shift, cut_tail).split(data)
-    
-    def __init__(self, propotions:List[int], shift:int|None = None, cut_tail:bool = True) -> None:
+
+    def __init__(self, propotions: List[int], shift: int | None = None, cut_tail: bool = True) -> None:
         """_summary_
 
         Args:
@@ -25,15 +25,15 @@ class DataFrameSplitter:
     @property
     def proportions(self) -> List[int]:
         return self.__proportions.copy()
-    
-    def split(self, data: DataFrame|Series) -> List[List[DataFrame|Series]]:
+
+    def split(self, data: DataFrame | Series) -> List[List[DataFrame | Series]]:
         """splitt date period to list of optimization and forward analization periods
         """
-        ','.join([str(p) for p in self.__proportions])
-        self.__logger.info(f"Splitting data on proportios: ({','.join([str(p) for p in self.__proportions])})")
-        
+        proprotinos_str = ','.join([str(p) for p in self.__proportions])
+        self.__logger.info(f"Splitting data on proportios: ({proprotinos_str})")
+
         return_intervals = []
-        cur_idx = 0       
+        cur_idx = 0
         data_len = len(data)
 
         while cur_idx < data_len:
