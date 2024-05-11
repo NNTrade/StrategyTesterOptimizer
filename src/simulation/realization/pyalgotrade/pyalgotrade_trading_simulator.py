@@ -59,7 +59,7 @@ class PyalgotradeTradingSimulator(absTradingSimulator):
             return  Frequency.WEEK
         elif step_timeframe == TimeFrame.D:
             return  Frequency.DAY
-        elif step_timeframe == TimeFrame.H or \
+        elif step_timeframe == TimeFrame.H1 or \
              step_timeframe == TimeFrame.H4:
             return  Frequency.HOUR
         elif step_timeframe == TimeFrame.m1 or \

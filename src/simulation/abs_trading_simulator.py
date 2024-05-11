@@ -1,13 +1,11 @@
 from __future__ import annotations
 import logging
-from re import S
 from pandas import DataFrame
-
-from src.common.date_period import DatePeriod
+from ..common.date_period import DatePeriod
 from .report.simulation_report import SimulationReport
 from .config import SimulationConfig,StrategyId
 from .cache.abs_simulation_log_storage import absSimulationLogStorage
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 from typing import Union, Dict
 from .models import SimulationLog
 

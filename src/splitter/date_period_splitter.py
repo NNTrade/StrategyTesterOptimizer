@@ -67,9 +67,9 @@ class DatePeriodSplitter:
     def split(self, date_period: DatePeriod) -> List[List[DatePeriod]]:
         """splitt date period to list of optimization and forward analization periods
         """
-        ','.join([str(p) for p in self.__proportions])
-        self.__logger.info(f"Splitting {date_period} on proportios: ({
-                           ','.join([str(p) for p in self.__proportions])})")
+        proprotinos_str = ','.join([str(p) for p in self.__proportions])
+        self.__logger.info(
+            f"Splitting {date_period} on proportios: ({proprotinos_str})")
         return_intervals = []
         cur_dt = date_period.from_date
 
