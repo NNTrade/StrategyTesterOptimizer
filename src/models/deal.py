@@ -22,6 +22,7 @@ class Deal:
     COMMISSION_CLOSE_F = "commission_close"
     COMMISSION_HOLDING_F = "commission_holding"
     IS_CLOSED = "is_closed"
+    PRICE_LOG_F = "price_log"
 
     def __init__(self,
                  open_date: datetime,
@@ -30,13 +31,7 @@ class Deal:
                  asset: str,
                  capital: float,
                  commission_open: float = 0):
-        Deal.G_COUNTER = Deal.G_COUNTER + 1
-        self.__id = Deal.G_COUNTER
-        self.__close_date: Union[datetime, None] = None
-        self.__last_price: float = open_price
-        self.__commission_close: float = 0
-        self.__commission_holding: float = 0
-
+        
         if open_price <= 0:
             raise AttributeError("Open price must be > 0", name="open_price")
 
@@ -47,6 +42,13 @@ class Deal:
         if capital <= 0:
             raise AttributeError("Using cap must me > 0")
         
+        Deal.G_COUNTER = Deal.G_COUNTER + 1
+        self.__id = Deal.G_COUNTER
+        self.__commission_close: float = 0
+        self.__commission_holding: float = 0
+        self.__price_log:Dict[datetime,float] = {}
+        self.__is_closed = False
+
         self.__open_date: datetime = open_date
         self.__open_price: float = open_price
 
@@ -55,22 +57,38 @@ class Deal:
         
         self.__cap: float = capital
         self.__asset: str = asset
-        self.__update_profit_and_interest()
+        self.__last_price_date = datetime(1,1,1)
+        self.set_last_price(open_date, open_price)
         self.__logger = logging.getLogger(f"Deal#{self.__id}({asset})_{open_date.strftime('%Y%m%d%H%M%S')}")
         
-        
-
     @property
     def id(self) -> int:
         return self.__id
 
-    def set_last_price(self, price: float) -> Deal:
-        if self.is_closed:
-            raise Exception("Cann't set last price for closed deal")
+    def set_last_price(self, date:datetime, price: float) -> Deal:
+        """Set last fixing price in log
 
-        self.__last_price = price
-        self.__update_profit_and_interest()
+        Args:
+            date (datetime): Date of price
+            price (float): price
+
+        Raises:
+            ClosedDealException: Cann't set last price for closed deal
+            AttributeError: Cann't set price for same date twice
+        """
+        if self.is_closed:
+            raise ClosedDealException("Cann't set last price for closed deal")
+        
+        self.__update_last_price(date, price)
         return self
+
+    def __update_last_price(self, date, price):
+        if date <= self.__last_price_date:
+            raise AttributeError("New price date cannt't be <= last price date",name="date")
+        self.__last_price = price
+        self.__last_price_date = date
+        self.__price_log[date] = price
+        self.__update_profit_and_interest()
 
     def close_deal(self, date: datetime, price: float, commission_close: float = 0) -> Deal:
         """Close deal
@@ -109,11 +127,9 @@ class Deal:
         if commission_close > 0:
              raise AttributeError("Commisison close must be <= 0")
         
-        self.__last_price = price
-        self.__close_date = date
         self.__commission_close = commission_close
-
-        self.__update_profit_and_interest()
+        self.__update_last_price(date, price)
+        self.__is_closed = True
         return self  # type: ignore
 
     def __update_profit_and_interest(self):
@@ -150,7 +166,7 @@ class Deal:
     
     @property
     def is_closed(self) -> bool:
-        return self.__close_date is not None
+        return self.__is_closed
 
     @property
     def direction(self) -> str:
@@ -177,10 +193,19 @@ class Deal:
         return self.__open_date
     
     @property
+    def last_price_date(self) -> datetime:
+        """Close date, if deal is not Closed than None
+        """
+        return self.__last_price_date
+        
+    @property
     def close_date(self) -> Union[datetime, None]:
         """Close date, if deal is not Closed than None
         """
-        return self.__close_date
+        if self.is_closed:
+            return self.__last_price_date
+        else:
+            return None
     
     @property
     def open_price(self) -> float:
@@ -200,7 +225,11 @@ class Deal:
             return self.__last_price
         else:
             return None
-
+        
+    @property
+    def price_log(self)->Dict[datetime,float]:
+        return self.__price_log.copy()
+    
     @property
     def amount(self) -> float:
         """amount of asset in deal. Positive is Long, Negative is short
@@ -288,22 +317,25 @@ class Deal:
 
     def to_dict(self) -> Dict:
         return {
-            self.OPEN_DATE_F: self.open_date,
-            self.OPEN_PRICE_F: self.open_price,
-            self.AMOUNT_F: self.amount,
-            self.ASSET_F: self.asset,
-            self.OPENED_CAPITAL_F: self.opened_capital,
-            self.CLOSE_DATE_F: self.close_date,
-            self.LAST_PRICE_F: self.last_price,
-            self.COMMISSION_OPEN_F: self.__commission_open,            
-            self.COMMISSION_HOLDING_F: self.__commission_holding,
-            self.COMMISSION_CLOSE_F: self.__commission_close,
-            self.IS_CLOSED: int(self.is_closed)
+            Deal.OPEN_DATE_F: self.open_date,
+            Deal.OPEN_PRICE_F: self.open_price,
+            Deal.AMOUNT_F: self.amount,
+            Deal.ASSET_F: self.asset,
+            Deal.OPENED_CAPITAL_F: self.opened_capital,
+            Deal.CLOSE_DATE_F: self.close_date,
+            Deal.LAST_PRICE_F: self.last_price,
+            Deal.COMMISSION_OPEN_F: self.__commission_open,            
+            Deal.COMMISSION_HOLDING_F: self.__commission_holding,
+            Deal.COMMISSION_CLOSE_F: self.__commission_close,
+            Deal.IS_CLOSED: int(self.is_closed),
+            Deal.PRICE_LOG_F: self.price_log
         }
 
     def __hash__(self):
         # Create a hash based on a tuple of hashable attributes
-        return hash(tuple(self.to_dict().items()))
+        hash_dict = self.to_dict()
+        hash_dict.pop(Deal.PRICE_LOG_F)
+        return hash(tuple([*hash_dict.values(), hash(tuple(self.price_log.items()))]))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Deal):
@@ -338,7 +370,8 @@ class Deal:
             Deal.COMMISSION_OPEN_F: self.commission_open,
             Deal.COMMISSION_HOLDING_F: self.commission_holding,
             Deal.LAST_PRICE_F: self.last_price,
-            Deal.IS_CLOSED : int(self.is_closed)
+            Deal.IS_CLOSED : int(self.is_closed),
+            Deal.PRICE_LOG_F: {k.isoformat():v for k,v in self.__price_log.items()}
         }
         if self.is_closed:           
             json_dic[Deal.CLOSE_DATE_F] = self.close_date.isoformat() # type: ignore
@@ -356,7 +389,15 @@ class Deal:
                     data[Deal.COMMISSION_OPEN_F])
         
         deal.add_commision_holding(data[Deal.COMMISSION_HOLDING_F])
-        deal.set_last_price(data[Deal.LAST_PRICE_F])
+        
+        price_log:Dict[str,float] = data[Deal.PRICE_LOG_F]
+        if len(price_log)> 1:
+            price_log_arr = list(price_log.items())[1:]
+            if data[Deal.IS_CLOSED]:      
+                price_log_arr = price_log_arr[:-1]
+            for dt_str,p in price_log_arr:
+                dt = datetime.fromisoformat(dt_str)
+                deal.set_last_price(dt,p)
 
         if data[Deal.IS_CLOSED] == 1:
             deal.close_deal(
