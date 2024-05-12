@@ -16,6 +16,15 @@ class Deal_TestCase(unittest.TestCase):
         # Act
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 1)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+
+        self.assertEqual(asserted_deal.last_price,123)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 1))
+
+        self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
+        self.assertIsNone(asserted_deal.close_date)
+
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, 2)
         self.assertEqual(asserted_deal.open_price, 123)
@@ -45,6 +54,12 @@ class Deal_TestCase(unittest.TestCase):
         # Act
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 1)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+        
+        self.assertEqual(asserted_deal.last_price,123)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 1))
+
         self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
 
@@ -109,11 +124,17 @@ class Deal_TestCase(unittest.TestCase):
                              amount=2, asset="A", capital=10, commission_open=-3)
 
         # Act
-        asserted_deal.set_last_price(130)
+        asserted_deal.set_last_price(datetime(2020, 1, 2), 130)
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 2)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 2)], 130)
+
+        self.assertEqual(asserted_deal.last_price,130)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 2),130)
+
         self.assertEqual(asserted_deal.open_price, 123)
-        self.assertEqual(asserted_deal.last_price, 130)
         self.assertIsNone(asserted_deal.close_price)
 
         self.assertEqual(asserted_deal.profit, 11)
@@ -124,11 +145,18 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.last_size, 130*2)
 
         # Act
-        asserted_deal.set_last_price(124)
+        asserted_deal.set_last_price(datetime(2020, 1, 3), 124)
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 3)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 2)], 130)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 3)], 124)
+
+        self.assertEqual(asserted_deal.last_price,124)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+
         self.assertEqual(asserted_deal.open_price, 123)
-        self.assertEqual(asserted_deal.last_price, 124)
         self.assertIsNone(asserted_deal.close_price)
 
         self.assertEqual(asserted_deal.profit, -1)
@@ -148,8 +176,14 @@ class Deal_TestCase(unittest.TestCase):
         asserted_deal.close_deal(datetime(2020, 1, 3), 130, -4)
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 2)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 3)], 130)
+
+        self.assertEqual(asserted_deal.last_price,130)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+
         self.assertEqual(asserted_deal.open_price, 123)
-        self.assertEqual(asserted_deal.last_price, 130)
         self.assertEqual(asserted_deal.close_price, 130)
 
         self.assertTrue(asserted_deal.is_closed)
@@ -173,8 +207,14 @@ class Deal_TestCase(unittest.TestCase):
         asserted_deal.close_deal(datetime(2020, 1, 3), 120, -4)
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 2)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 3)], 120)
+
+        self.assertEqual(asserted_deal.last_price,120)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+
         self.assertEqual(asserted_deal.open_price, 123)
-        self.assertEqual(asserted_deal.last_price, 120)
         self.assertEqual(asserted_deal.close_price, 120)
 
         self.assertTrue(asserted_deal.is_closed)
@@ -198,8 +238,14 @@ class Deal_TestCase(unittest.TestCase):
         asserted_deal.close_deal(datetime(2020, 1, 3), 110, -4)
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 2)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 3)], 110)
+
+        self.assertEqual(asserted_deal.last_price,110)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+
         self.assertEqual(asserted_deal.open_price, 123)
-        self.assertEqual(asserted_deal.last_price, 110)
         self.assertEqual(asserted_deal.close_price, 110)
 
         self.assertTrue(asserted_deal.is_closed)
@@ -223,8 +269,14 @@ class Deal_TestCase(unittest.TestCase):
         asserted_deal.close_deal(datetime(2020, 1, 3), 126, -4)
 
         # Assert
+        self.assertEqual(len(asserted_deal.price_log), 2)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 3)], 126)
+
+        self.assertEqual(asserted_deal.last_price,126)
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+
         self.assertEqual(asserted_deal.open_price, 123)
-        self.assertEqual(asserted_deal.last_price, 126)
         self.assertEqual(asserted_deal.close_price, 126)
 
         self.assertTrue(asserted_deal.is_closed)
@@ -271,24 +323,84 @@ class Deal_TestCase(unittest.TestCase):
 
     def test_WHEN_compare_commision_closed_THEN_correct_result(self):
         # Array
-        base_d = Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -
-                      1).set_last_price(14).close_deal(datetime(2020, 1, 3), 18)
+        base_d = Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)\
+            .add_commision_holding(3)\
+            .set_last_price(datetime(2020, 1, 2), 14).close_deal(datetime(2020, 1, 4), 18, -10)
         eq_d_arr = [
-            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -
-                 1).set_last_price(14).close_deal(datetime(2020, 1, 3), 18)
+            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14).close_deal(datetime(2020, 1, 4), 18, -10)
         ]
-        not_eq_d_arr = [
-            Deal(datetime(2020, 1, 1), 10, 100, "A",
-                 0.3, -1).add_commision_holding(3),
-            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -
-                 1).close_deal(datetime(2020, 1, 2), 3),
-            Deal(datetime(2020, 1, 2), 10, 100, "A", 0.3, -1),
-            Deal(datetime(2020, 1, 1), 11, 100, "A", 0.3, -1),
-            Deal(datetime(2020, 1, 1), 10, 101, "A", 0.3, -1),
-            Deal(datetime(2020, 1, 1), 10, 100, "B", 0.3, -1),
-            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.4, -1),
-            Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -3),
-        ]
+        not_eq_d_dict = {
+            "With another open date": Deal(datetime(2020, 1, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With another open price": Deal(datetime(2020, 1, 1), 11, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With another amount": Deal(datetime(2020, 1, 1), 10, 101, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With another asset": Deal(datetime(2020, 1, 1), 10, 100, "B", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With another capital": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.4, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With another open commision": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -20)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+
+            "With out hold commision": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .set_last_price(datetime(2020, 1, 2), 14),
+            "With another hold commision": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(4)
+            .set_last_price(datetime(2020, 1, 2), 14),
+            "With addition hold commision": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+
+            "With another last price date": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 3), 14)\
+                .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With another last price price": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 15)\
+                .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With another addition last price": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14)
+            .set_last_price(datetime(2020, 1, 3), 14)
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+            "With out last price ": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)\
+            .close_deal(datetime(2020, 1, 4), 18, -10),
+
+            "Not closed": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
+            .add_commision_holding(3)
+            .set_last_price(datetime(2020, 1, 2), 14),
+            "With another close date": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)\
+                    .add_commision_holding(3)\
+                    .set_last_price(datetime(2020,1,2),14)\
+                        .close_deal(datetime(2020, 1, 5), 18,-10),
+            "With another close price": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)\
+                    .add_commision_holding(3)\
+                    .set_last_price(datetime(2020,1,2),14)\
+                        .close_deal(datetime(2020, 1, 4), 19,-10),
+            "With another close commission": Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)\
+                    .add_commision_holding(3)\
+                    .set_last_price(datetime(2020,1,2),14)\
+                        .close_deal(datetime(2020, 1, 4), 18,-11),
+        }
         # Act
 
         # Assert
@@ -298,9 +410,9 @@ class Deal_TestCase(unittest.TestCase):
             self.assertEqual(hash(base_d), hash(d), msg=d)
             self.assertEqual(base_d, d, msg=d)
 
-        for d in not_eq_d_arr:
-            self.assertNotEqual(hash(base_d), hash(d), msg=d)
-            self.assertNotEqual(base_d, d, msg=d)
+        for check,d in not_eq_d_dict.items():            
+            self.assertNotEqual(base_d, d, msg=check)
+            self.assertNotEqual(hash(base_d), hash(d), msg=check)
 
     def test_WHEN_serialization_and_deserialization_THEN_equals(self):
         # Array
@@ -321,6 +433,7 @@ class Deal_TestCase(unittest.TestCase):
         expected_cfg = Deal(datetime(2020, 1, 2, 10, 12, 3),
                             1.2, 10, "A", 0.2, -1.2)
         expected_cfg.add_commision_holding(10)
+        expected_cfg.set_last_price(datetime(2020, 1, 3, 10, 12, 3), 1.5)
 
         # Act
         json_str = expected_cfg.to_json()
@@ -336,6 +449,7 @@ class Deal_TestCase(unittest.TestCase):
         expected_cfg = Deal(datetime(2020, 1, 2, 10, 12, 3),
                             1.2, 10, "A", 0.2, -1.2)
         expected_cfg.add_commision_holding(10)
+        expected_cfg.set_last_price(datetime(2020, 1, 2, 10, 12, 4), 1.5)
         expected_cfg.close_deal(datetime(2020, 1, 3, 10, 12, 3), 2, -0.8)
 
         # Act

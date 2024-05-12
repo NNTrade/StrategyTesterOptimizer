@@ -99,7 +99,7 @@ class DealMetric_avg_net_profit_by_all_success_loss_TestCase(unittest.TestCase):
                  # 0
                  capital=10).close_deal(date=datetime(2023, 9, 3), price=3),
             Deal(datetime(2023, 9, 1), open_price=2, asset="A",
-                 amount=3, capital=12).set_last_price(4),  # +6/12
+                 amount=3, capital=12).set_last_price(datetime(2023, 9, 4),4),  # +6/12
         ]
         assert deals[0].profit == 3
         assert deals[1].profit == 6
@@ -128,7 +128,7 @@ class DealMetric_avg_net_profit_by_all_success_loss_TestCase(unittest.TestCase):
             Deal(datetime(2023, 9, 2), open_price=3, amount=3, capital=10,
                  asset="A").close_deal(datetime(2023, 9, 3), 3),  # 0
             Deal(datetime(2023, 9, 1), open_price=4, amount=3,
-                 capital=12, asset="A").set_last_price(2),  # -6/12
+                 capital=12, asset="A").set_last_price(datetime(2023, 9, 4),2),  # -6/12
         ]
         assert deals[0].profit == -3
         assert deals[1].profit == -6
@@ -158,7 +158,7 @@ class DealMetric_avg_net_profit_by_all_success_loss_TestCase(unittest.TestCase):
             Deal(datetime(2023, 9, 2), open_price=3, amount=3, asset="A",
                  capital=10).close_deal(datetime(2023, 9, 3), 3),  # 0
             Deal(datetime(2023, 9, 1), open_price=2, amount=3, asset="A",
-                 capital=10).set_last_price(4),  # +6
+                 capital=10).set_last_price(datetime(2023, 9, 4),4),  # +6
         ]
         assert deals[0].profit == -3
         assert deals[1].profit == 6
@@ -213,7 +213,7 @@ class DealMetric_avg_net_interest_by_all_success_loss_TestCase(unittest.TestCase
                  # 0
                  capital=10).close_deal(date=datetime(2023, 9, 3), price=3),
             Deal(datetime(2023, 9, 1), open_price=2, asset="A",
-                 amount=3, capital=12).set_last_price(4),  # +6/12
+                 amount=3, capital=12).set_last_price(datetime(2023, 9, 4),4),  # +6/12
         ]
         assert deals[0].interest_to_account == 3/6
         assert deals[1].interest_to_account == 6/6
@@ -252,7 +252,7 @@ class DealMetric_avg_net_interest_by_all_success_loss_TestCase(unittest.TestCase
             Deal(datetime(2023, 9, 2), open_price=3, amount=3, capital=10,
                  asset="A").close_deal(datetime(2023, 9, 3), 3),  # 0
             Deal(datetime(2023, 9, 1), open_price=4, amount=3,
-                 capital=12, asset="A").set_last_price(2),  # -6/12
+                 capital=12, asset="A").set_last_price(datetime(2023, 9, 4),2),  # -6/12
         ]
         assert deals[0].interest_to_account == -3/6
         assert deals[1].interest_to_account == -6/6
@@ -292,7 +292,7 @@ class DealMetric_avg_net_interest_by_all_success_loss_TestCase(unittest.TestCase
             Deal(datetime(2023, 9, 2), open_price=3, amount=3, asset="A",
                  capital=10).close_deal(datetime(2023, 9, 3), 3),  # 0/10
             Deal(datetime(2023, 9, 1), open_price=2, amount=3, asset="A",
-                 capital=10).set_last_price(4),  # +6/10
+                 capital=10).set_last_price(datetime(2023, 9, 4),4),  # +6/10
         ]
         assert deals[0].interest_to_account == -3/10
         assert deals[1].interest_to_account == 6/10
@@ -340,7 +340,7 @@ class DealMetric_PROM_TestCase(unittest.TestCase):
             Deal(datetime(2023, 9, 2), open_price=3, amount=3, asset="A",
                  capital=10).close_deal(datetime(2023, 9, 3), 3),  # 0
             Deal(datetime(2023, 9, 1), open_price=2, amount=3,
-                 asset="A", capital=10).set_last_price(4),  # +6
+                 asset="A", capital=10).set_last_price(datetime(2023, 9, 4),4),  # +6
         ]
         assert deals[0].profit == -3
         assert deals[1].profit == 6
@@ -369,7 +369,7 @@ class DealMetric_PROM_TestCase(unittest.TestCase):
             Deal(datetime(2023, 9, 2), open_price=3, amount=3, asset="A",
                  capital=10).close_deal(datetime(2023, 9, 3), 3),  # 0
             Deal(datetime(2023, 9, 1), open_price=2,  amount=3,
-                 asset="A", capital=10).set_last_price(4),  # +6
+                 asset="A", capital=10).set_last_price(datetime(2023, 9, 4),4),  # +6
         ]
         assert deals[0].profit == 3
         assert deals[1].profit == 6
@@ -398,7 +398,7 @@ class DealMetric_PROM_TestCase(unittest.TestCase):
             Deal(datetime(2023, 9, 2), open_price=3, amount=3, asset="A",
                  capital=10).close_deal(datetime(2023, 9, 3), 3),  # 0
             Deal(datetime(2023, 9, 1), open_price=4, amount=3, asset="A",
-                 capital=10).set_last_price(2),  # -6
+                 capital=10).set_last_price(datetime(2023, 9, 4),2),  # -6
         ]
         asserted_rep = DealMetric(deals)
         expected_AGP = 0
@@ -430,7 +430,7 @@ class DealMetric_PROM_TestCase(unittest.TestCase):
             Deal(datetime(2023, 9, 2), open_price=3,  amount=3, capital=10,
                  asset="A").close_deal(datetime(2023, 9, 3), 3),  # 0
             Deal(datetime(2023, 9, 1), open_price=2, amount=3, capital=10,
-                 asset="A").set_last_price(2),  # 0
+                 asset="A").set_last_price(datetime(2023, 9, 4),2),  # 0
         ]
         asserted_rep = DealMetric(deals)
 
