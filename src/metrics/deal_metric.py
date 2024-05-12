@@ -1,3 +1,4 @@
+from datetime import timedelta
 from math import sqrt
 import pprint
 from ..models.deal import Deal
@@ -17,7 +18,7 @@ class DealMetric:
     AVG_INTEREST_TO_POS_BY_SUCCESS_F = "avg_interest_to_position_by_success"
     AVG_INTEREST_TO_POS_BY_LOSS_F = "avg_interest_to_position_by_loss"
     AVG_INTEREST_TO_POS_F = "avg_interest_to_position"
-
+    AVG_DEAL_LENGHT_IN_DAYS_F = "avg_deal_len_in_days"
     PROM_F = "PROM"
 
     def __init__(self, deal_list: List[Deal]) -> None:
@@ -28,6 +29,9 @@ class DealMetric:
         
         fail_deals = [d for d in deal_list if d.profit < 0]
         self.__fail_deal_count = len(fail_deals)
+
+        closed_deals_len = [d.lenght_in_days.days for d in deal_list if d.is_closed] # type: ignore
+        self.__avg_deal_length_in_days = float(np.mean(closed_deals_len)) if len(closed_deals_len) else None
 
         if self.__deal_count > 0:
             self.__avg_profit_all = float(np.mean([d.profit for d in deal_list]))
@@ -157,6 +161,10 @@ class DealMetric:
         return self.__avg_interest_to_pos_by_loss
     
     @property
+    def avg_deal_lenght_in_days(self)->float|None:
+        return self.__avg_deal_length_in_days
+
+    @property
     def deal_count(self) -> int:
         """Totap deal counts
 
@@ -188,6 +196,7 @@ class DealMetric:
             DealMetric.DEAL_COUNT_F: self.deal_count,
             DealMetric.SUCCESS_DEAL_COUNT_F: self.success_deal,
             DealMetric.FAIL_DEAL_COUNT_F: self.fail_deal,
+            DealMetric.AVG_DEAL_LENGHT_IN_DAYS_F: self.avg_deal_lenght_in_days,
             DealMetric.AVG_NET_PROFIT_F: self.avg_profit_all,
             DealMetric.AVG_NET_PROFIT_BY_SUCCESS_F: self.avg_profit_by_success,
             DealMetric.AVG_NET_PROFIT_BY_LOSS_F: self.avg_profit_by_loss,

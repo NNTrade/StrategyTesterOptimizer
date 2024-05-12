@@ -1,7 +1,7 @@
 from __future__ import annotations
 from turtle import position
 from typing import Dict, Union
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from ..common.exceptions import ClosedDealException
 import logging
@@ -17,6 +17,7 @@ class Deal:
     AMOUNT_F = "amount"
     OPENED_CAPITAL_F = "opened_capital"
     CLOSE_DATE_F = "close_date"
+    LENGHT_IN_DAYS_F = "lenght_in_days"
     LAST_PRICE_F = "last_price"
     COMMISSION_OPEN_F = "commission_open"
     COMMISSION_CLOSE_F = "commission_close"
@@ -208,6 +209,12 @@ class Deal:
             return None
     
     @property
+    def lenght_in_days(self)->timedelta|None:
+        if self.is_closed:
+            return (self.close_date - self.open_date) # type: ignore
+        return None
+
+    @property
     def open_price(self) -> float:
         return self.__open_price
     
@@ -323,6 +330,7 @@ class Deal:
             Deal.ASSET_F: self.asset,
             Deal.OPENED_CAPITAL_F: self.opened_capital,
             Deal.CLOSE_DATE_F: self.close_date,
+            Deal.LENGHT_IN_DAYS_F: self.lenght_in_days,
             Deal.LAST_PRICE_F: self.last_price,
             Deal.COMMISSION_OPEN_F: self.__commission_open,            
             Deal.COMMISSION_HOLDING_F: self.__commission_holding,

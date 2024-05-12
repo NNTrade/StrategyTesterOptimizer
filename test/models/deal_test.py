@@ -1,3 +1,4 @@
+from datetime import timedelta
 import unittest
 import logging
 from src.models.deal import Deal, datetime
@@ -24,6 +25,7 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
+        self.assertIsNone(asserted_deal.lenght_in_days)
 
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, 2)
@@ -62,6 +64,7 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
+        self.assertIsNone(asserted_deal.lenght_in_days)
 
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, -2)
@@ -182,6 +185,10 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.last_price,130)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+        
+        self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
+        self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
+        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 130)
@@ -214,6 +221,10 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.last_price,120)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
 
+        self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
+        self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
+        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
+
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 120)
 
@@ -245,6 +256,10 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.last_price,110)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
 
+        self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
+        self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
+        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
+
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 110)
 
@@ -275,6 +290,10 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.last_price,126)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+
+        self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
+        self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
+        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 126)
