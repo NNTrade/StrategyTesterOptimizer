@@ -42,6 +42,7 @@ class DealMetric_TestCase(unittest.TestCase):
 
         # Assert
         self.assertEqual(3, asserted_deal_count)
+        self.assertIsNone(asserted_rep.avg_deal_lenght_in_days)
 
     def test_WHEN_request_success_and_fail_deal_count_THEN_return_correct_info(self):
         # Array
@@ -63,6 +64,7 @@ class DealMetric_TestCase(unittest.TestCase):
         # Assert
         self.assertEqual(2, asserted_success_deal_count)
         self.assertEqual(1, asserted_loss_deal_count)
+        self.assertEqual(asserted_rep.avg_deal_lenght_in_days, 4/3)
 
 
 class DealMetric_avg_net_profit_by_all_success_loss_TestCase(unittest.TestCase):
