@@ -11,7 +11,15 @@ class CapitalMetric:
     STR_YIELD_YEAR_F = "yield/year"
     CAPITAL_LOADING_LOG = "capital_load_log"
     AVG_CAPITAL_LOADING_LOG = "avg_capital_load_log"
-
+    
+    @staticmethod
+    def calc_yield_total(final_cap, start_cap)->float:
+        return final_cap/start_cap - 1
+    
+    @staticmethod
+    def calc_yield_per_year(final_cap, start_cap, years):
+        return pow((CapitalMetric.calc_yield_total(final_cap,start_cap) + 1), 1/years) - 1
+    
     @staticmethod
     def calc_capital_loading_log(capital_log: Dict[datetime, float], deal_log:List[Deal])-> Dict[datetime, float]:
         opened_deal_in_date = {od: [d for d in deal_log if d.open_date==od] for od in capital_log.keys()}
@@ -40,11 +48,17 @@ class CapitalMetric:
         self.__start_cap = capital_log[min(capital_log.keys())]
         self.__final_cap = capital_log[max(
             capital_log.keys())]
-        self.__strategy_yield = self.__final_cap/self.__start_cap - 1
+        self.__date_config: DatePeriod = date_config
+
+        self.__strategy_yield = CapitalMetric.calc_yield_total(self.__final_cap,self.__start_cap)
+        self.__strategy_yield_per_year = CapitalMetric.calc_yield_per_year(
+                    self.__final_cap,
+                    self.__start_cap, 
+                    self.__date_config.period_in_years)
+
         self.__strategy_max_yield = max(capital_log.values())/self.__start_cap - 1
 
         self.__calc_max_loss(capital_log, self.__start_cap)
-        self.__date_config: DatePeriod = date_config
         self.__loading_log:Dict[datetime,float] = CapitalMetric.calc_capital_loading_log(capital_log,deal_log)
         pass
 
@@ -108,7 +122,7 @@ class CapitalMetric:
         Returns:
             float: Strategy Yield per year
         """
-        return pow((self.strategy_yield + 1), 1/self.__date_config.period_in_years) - 1
+        return self.__strategy_yield_per_year    
 
     def to_dict(self) -> Dict:
         return {
