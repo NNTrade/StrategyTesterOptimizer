@@ -10,7 +10,7 @@ class CapitalMetric:
     MAX_FALL_F = "max_fall"
     STR_YIELD_YEAR_F = "yield/year"
     CAPITAL_LOADING_LOG = "capital_load_log"
-    AVG_CAPITAL_LOADING_LOG = "avg_capital_load_log"
+    AVG_CAPITAL_LOADING = "avg_capital_load"
     
     @staticmethod
     def calc_yield_total(final_cap, start_cap)->float:
@@ -91,7 +91,7 @@ class CapitalMetric:
         return self.__loading_log.copy()
     
     @property
-    def avg_loading_log(self)->float:
+    def avg_loading(self)->float:
         return np.mean(list(self.__loading_log.values())) # type: ignore
     
     @property

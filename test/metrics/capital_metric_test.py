@@ -103,7 +103,7 @@ class CapitalMetric_AvgCapitalLog_TestCase(unittest.TestCase):
 
         # Act
         asserted_avg_cap_load = CapitalMetric(DatePeriod(
-            datetime(2020, 1, 1), datetime(2020, 1, 7)), using_cap_log, using_deal_log).avg_loading_log
+            datetime(2020, 1, 1), datetime(2020, 1, 7)), using_cap_log, using_deal_log).avg_loading
 
         # Assert
         self.assertEqual(asserted_avg_cap_load, expected_avg_cap_load)
