@@ -290,6 +290,25 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 126*2)
 
+    def test_WHEN_last_price_or_close_date_same_date_as_open_date_THEN_overwrite(self):
+        # Array
+        asserted_deal = Deal(datetime(2020, 1, 1), open_price=123,
+                             amount=2, asset="A", capital=10, commission_open=-3)
+
+        # Act
+        asserted_deal.set_last_price(datetime(2020, 1, 1), 130)
+    
+        # Assert
+        self.assertEqual(asserted_deal.last_price, 130)
+        self.assertEqual(asserted_deal.last_price_date, datetime(2020, 1, 1))
+
+        # Act
+        asserted_deal.close_deal(datetime(2020, 1, 1), 135)
+
+        # Assert
+        self.assertEqual(asserted_deal.last_price, 135)
+        self.assertEqual(asserted_deal.last_price_date, datetime(2020, 1, 1))
+
     def test_WHEN_compare_THEN_correct_result(self):
         # Array
         base_d = Deal(datetime(2020, 1, 1), 10, 100, "A", 0.3, -1)
