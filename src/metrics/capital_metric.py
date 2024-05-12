@@ -30,12 +30,18 @@ class CapitalMetric:
             use_cap = 0
             for i in range(len(cur_open_deal)):
                 deal = cur_open_deal.pop(0)
-                use_cap += deal.amount * deal.price_log[dt]
+                try:
+                    use_cap += deal.amount * deal.price_log[dt]
+                except KeyError as ex:
+                    raise KeyError(f"Cann't find price on date {dt} in deal {deal.id} opened {deal.open_date}")
                 if deal.close_date != dt:
                     cur_open_deal.append(deal)
 
             for deal in deal_opened_in_this_day:
-                use_cap += deal.amount * deal.price_log[dt]
+                try:
+                    use_cap += deal.amount * deal.price_log[dt]
+                except KeyError as ex:
+                    raise KeyError(f"Cann't find price on date {dt} in deal {deal.id} opened {deal.open_date}")
                 cur_open_deal.append(deal)
             loading_cap_dict[dt] = use_cap/cap
         return loading_cap_dict
