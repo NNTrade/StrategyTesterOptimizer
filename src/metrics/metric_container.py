@@ -18,7 +18,7 @@ class MetricContainer:
         return MetricContainer(dp, simulation_log.capital_log, simulation_log.deal_list)
     
     def __init__(self, date_period_cfg: DatePeriod,capital_log: Dict[datetime, float], deal_list: List[Deal]) -> None:
-        self.__capital_metric = CapitalMetric(date_period_cfg, capital_log)
+        self.__capital_metric = CapitalMetric(date_period_cfg, capital_log,deal_list)
         self.__deal_meatric = DealMetric(deal_list)
         pass
 
