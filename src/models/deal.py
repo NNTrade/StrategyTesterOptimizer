@@ -83,7 +83,7 @@ class Deal:
         return self
 
     def __update_last_price(self, date, price):
-        if date <= self.__last_price_date:
+        if date < self.__last_price_date:
             raise AttributeError("New price date cannt't be <= last price date",name="date")
         self.__last_price = price
         self.__last_price_date = date
