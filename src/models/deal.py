@@ -303,7 +303,7 @@ class Deal:
     @property
     def profit(self) -> float:
         """Result amount of cash gained or loss by deal.\n
-        profit = (open_price - close_price) * amount - commision_total 
+        profit = (last_price - open_price) * amount - commision_total 
         """
         return self.__profit
 
