@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 from src.simulation.models import Deal
 from src.metrics import DealMetric
-
+import numpy as np
 
 class DealMetric_TestCase(unittest.TestCase):
 
@@ -231,6 +231,13 @@ class DealMetric_avg_net_interest_by_all_success_loss_TestCase(unittest.TestCase
         # Act
 
         # Assert
+        self.assertAlmostEqual(
+            pow(np.prod([3/6,6/6,6/12, 6/12]), 365/6), asserted_rep.avg_interest_to_account_per_year_all)  # type: ignore
+        self.assertAlmostEqual(
+            pow(np.prod([3/6,6/6,6/12]), 365/3), asserted_rep.avg_interest_to_account_per_year_by_success)  # type: ignore
+        self.assertAlmostEqual(
+            0, asserted_rep.avg_interest_to_account_per_year_by_loss)  # type: ignore
+        
         self.assertAlmostEqual(
             (3/6+6/6+6/12)/4, asserted_rep.avg_interest_to_account_all)  # type: ignore
         self.assertAlmostEqual(

@@ -27,9 +27,9 @@ class Deal:
     PROFIT = "profit"
     INTEREST_TO_POSITION = "interest_to_position"
     INTEREST_TO_ACCOUNT = "interest_to_account"
-    INTEREST_TO_POSITION_PER = "interest_to_position_per_year"  
-    INTEREST_TO_ACCOUNT_PER = "interest_to_account_per_year"
-    
+    INTEREST_TO_POSITION_PER_YEAR = "interest_to_position_per_year"  
+    INTEREST_TO_ACCOUNT_PER_YEAR = "interest_to_account_per_year"
+
     def __init__(self,
                  open_date: datetime,
                  open_price: float,
@@ -329,14 +329,17 @@ class Deal:
         """Percent profit by account for a year\n
         interest_to_position_per_year = (profit / (opened_price * amount)) ^ (365 / lenght_in_days)
         """
-        return pow(self.interest_to_position, 365/self.lenght_in_days.days)
+        lenght_in_days = self.lenght_in_days.days if self.lenght_in_days.days > 0 else 1
+            
+        return pow(self.interest_to_position, 365/lenght_in_days)
     
     @property
     def interest_to_account_per_year(self) -> float:
         """Percent profit by account for a year\n
         interest_to_account_per_year = (profit / opened_capital) ^ (365 / lenght_in_days)
         """
-        return pow(self.interest_to_account, 365/self.lenght_in_days.days)
+        lenght_in_days = self.lenght_in_days.days if self.lenght_in_days.days > 0 else 1
+        return pow(self.interest_to_account, 365/lenght_in_days)
 
 
     def to_dict(self, extended:bool=False) -> Dict:

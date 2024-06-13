@@ -25,7 +25,7 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
-        self.assertIsNone(asserted_deal.lenght_in_days)
+        self.assertEqual(asserted_deal.lenght_in_days, timedelta(0))
 
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, 2)
@@ -48,6 +48,8 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.profit, -3)
         self.assertEqual(asserted_deal.interest_to_account, -3/10)
         self.assertEqual(asserted_deal.interest_to_position, -3/(123*2))
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(-3/10,365/1))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(-3/(123*2),365/1))
 
     def test_WHEN_short_deal_is_opened_THEN_properties_is_correct(self):
         # Array
@@ -64,7 +66,7 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
-        self.assertIsNone(asserted_deal.lenght_in_days)
+        self.assertEqual(asserted_deal.lenght_in_days, timedelta(0))
 
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, -2)
@@ -91,6 +93,8 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.profit, -3)
         self.assertEqual(asserted_deal.interest_to_account, -3/10)
         self.assertEqual(asserted_deal.interest_to_position, -3/(123*2))
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(-3/10,365/1))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(-3/(123*2),365/1))
 
     def test_WHEN_add_commission_THEN_commission_is_changed(self):
         # Array
@@ -120,6 +124,9 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.profit, -10)
         self.assertEqual(asserted_deal.interest_to_account, -10/10)
         self.assertEqual(asserted_deal.interest_to_position, -10/(123*2))
+        
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(-10/10,365/1))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(-10/(123*2),365/1))
 
     def test_WHEN_update_last_price_THEN_commission_is_changed(self):
         # Array
@@ -136,6 +143,7 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.last_price,130)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 2),130)
+        self.assertEqual(asserted_deal.lenght_in_days,timedelta(1))
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertIsNone(asserted_deal.close_price)
@@ -143,6 +151,9 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.profit, 11)
         self.assertEqual(asserted_deal.interest_to_account, 11/10)
         self.assertEqual(asserted_deal.interest_to_position, 11/(123*2))
+        
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(11/10,365/1))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(11/(123*2),365/1))
 
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 130*2)
@@ -158,6 +169,7 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.last_price,124)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertIsNone(asserted_deal.close_price)
@@ -165,6 +177,9 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.profit, -1)
         self.assertEqual(asserted_deal.interest_to_account, -1/10)
         self.assertEqual(asserted_deal.interest_to_position, -1/(123*2))
+        
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(-1/10,365/2))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(-1/(123*2),365/2))
 
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 124*2)
@@ -200,6 +215,9 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.interest_to_account, 2/10)
         self.assertEqual(asserted_deal.interest_to_position, 2/(123*2))
+        
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(2/10,365/2))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(2/(123*2),365/2))
 
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 130*2)
@@ -236,6 +254,9 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.interest_to_account, -18/10)
         self.assertEqual(asserted_deal.interest_to_position, -18/(123*2))
 
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(-18/10,365/2))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(-18/(123*2),365/2))
+
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 120*2)
 
@@ -270,6 +291,9 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.interest_to_account, 14/10)
         self.assertEqual(asserted_deal.interest_to_position, 14/(123*2))
+
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(14/10,365/2))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(14/(123*2),365/2))
 
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 110*2)
@@ -306,6 +330,9 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.interest_to_account, -18/10)
         self.assertEqual(asserted_deal.interest_to_position, -18/(123*2))
 
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(-18/10,365/2))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(-18/(123*2),365/2))
+
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 126*2)
 
@@ -321,12 +348,18 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.last_price, 130)
         self.assertEqual(asserted_deal.last_price_date, datetime(2020, 1, 1))
 
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(11/10,365/1))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(11/(123*2),365/1))
+
         # Act
         asserted_deal.close_deal(datetime(2020, 1, 1), 135)
 
         # Assert
         self.assertEqual(asserted_deal.last_price, 135)
         self.assertEqual(asserted_deal.last_price_date, datetime(2020, 1, 1))
+
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(21/10,365/1))
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(21/(123*2),365/1))
 
     def test_WHEN_compare_THEN_correct_result(self):
         # Array

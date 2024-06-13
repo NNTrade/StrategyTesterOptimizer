@@ -183,7 +183,7 @@ class DealMetric:
         Returns:
             Union[float,None]: average deal net income >= 0
         """
-        return self.__avg_interest_to_pos_per_year_by_success
+        return self.__avg_interest_to_pos_by_success
     
     @property
     def avg_interest_to_account_per_year_by_success(self)->float:
