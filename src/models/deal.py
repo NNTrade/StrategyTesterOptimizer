@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pickletools import read_uint1
 from turtle import position
 from typing import Dict, Union
 from datetime import datetime, timedelta
@@ -347,30 +348,7 @@ class Deal:
         return pow(self.interest_to_account+1, 365/lenght_in_days)-1
 
 
-    def to_dict(self, extended:bool=False) -> Dict:
-        return_dict = {
-            Deal.OPEN_DATE_F: self.open_date,
-            Deal.OPEN_PRICE_F: self.open_price,
-            Deal.AMOUNT_F: self.amount,
-            Deal.ASSET_F: self.asset,
-            Deal.OPENED_CAPITAL_F: self.opened_capital,
-            Deal.CLOSE_DATE_F: self.close_date,
-            Deal.LENGHT_IN_TIMEDELTA_F: self.lenght_in_timedelta,
-            Deal.LENGHT_IN_DAYS_F: self.lenght_in_days,
-            Deal.LAST_PRICE_F: self.last_price,
-            Deal.COMMISSION_OPEN_F: self.__commission_open,            
-            Deal.COMMISSION_HOLDING_F: self.__commission_holding,
-            Deal.COMMISSION_CLOSE_F: self.__commission_close,
-            Deal.IS_CLOSED: int(self.is_closed),
-            Deal.PRICE_LOG_F: self.price_log,
-        }
-        if extended:            
-            return_dict[Deal.PROFIT]= self.profit
-            return_dict[Deal.INTEREST_TO_POSITION]= self.interest_to_position
-            return_dict[Deal.INTEREST_TO_ACCOUNT]=self.interest_to_account
-            return_dict[Deal.INTEREST_TO_POSITION_PER_YEAR]= self.interest_to_position_per_year
-            return_dict[Deal.INTEREST_TO_ACCOUNT_PER_YEAR]=self.interest_to_account_per_year
-        return return_dict
+   
 
     def __hash__(self):
         # Create a hash based on a tuple of hashable attributes
@@ -401,6 +379,31 @@ class Deal:
     def __repr__(self):
         return self.__str__()
     
+    def to_dict(self, extended:bool=False) -> Dict:
+        return_dict = {
+            Deal.OPEN_DATE_F: self.open_date,
+            Deal.OPEN_PRICE_F: self.open_price,
+            Deal.CLOSE_DATE_F: self.close_date,
+            Deal.AMOUNT_F: self.amount,
+            Deal.ASSET_F: self.asset,
+            Deal.OPENED_CAPITAL_F: self.opened_capital,
+            Deal.LAST_PRICE_F: self.last_price,
+            Deal.COMMISSION_OPEN_F: self.__commission_open,            
+            Deal.COMMISSION_HOLDING_F: self.__commission_holding,
+            Deal.COMMISSION_CLOSE_F: self.__commission_close,
+            Deal.IS_CLOSED: int(self.is_closed),
+            Deal.PRICE_LOG_F: self.price_log,   
+        }
+        if extended:
+            return_dict[Deal.LENGHT_IN_TIMEDELTA_F]= self.lenght_in_timedelta
+            return_dict[Deal.LENGHT_IN_DAYS_F]= self.lenght_in_days
+            return_dict[Deal.PROFIT]=self.profit
+            return_dict[Deal.INTEREST_TO_POSITION]= self.interest_to_position
+            return_dict[Deal.INTEREST_TO_ACCOUNT]=self.interest_to_account
+            return_dict[Deal.INTEREST_TO_POSITION_PER_YEAR]= self.interest_to_position_per_year
+            return_dict[Deal.INTEREST_TO_ACCOUNT_PER_YEAR]=self.interest_to_account_per_year
+        return return_dict
+    
     def to_json(self):
         json_dic = {
             Deal.OPEN_DATE_F: self.open_date.isoformat(),
@@ -408,9 +411,9 @@ class Deal:
             Deal.AMOUNT_F: self.amount,
             Deal.ASSET_F: self.asset,
             Deal.OPENED_CAPITAL_F: self.opened_capital,
-            Deal.COMMISSION_OPEN_F: self.commission_open,
-            Deal.COMMISSION_HOLDING_F: self.commission_holding,
             Deal.LAST_PRICE_F: self.last_price,
+            Deal.COMMISSION_OPEN_F: self.commission_open,
+            Deal.COMMISSION_HOLDING_F: self.commission_holding,      
             Deal.IS_CLOSED : int(self.is_closed),
             Deal.PRICE_LOG_F: {k.isoformat():v for k,v in self.__price_log.items()}
         }
