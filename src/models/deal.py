@@ -24,7 +24,12 @@ class Deal:
     COMMISSION_HOLDING_F = "commission_holding"
     IS_CLOSED = "is_closed"
     PRICE_LOG_F = "price_log"
-
+    PROFIT = "profit"
+    INTEREST_TO_POSITION = "interest_to_position"
+    INTEREST_TO_ACCOUNT = "interest_to_account"
+    INTEREST_TO_POSITION_PER = "interest_to_position_per_year"  
+    INTEREST_TO_ACCOUNT_PER = "interest_to_account_per_year"
+    
     def __init__(self,
                  open_date: datetime,
                  open_price: float,
@@ -209,10 +214,8 @@ class Deal:
             return None
     
     @property
-    def lenght_in_days(self)->timedelta|None:
-        if self.is_closed:
-            return (self.close_date - self.open_date) # type: ignore
-        return None
+    def lenght_in_days(self)->timedelta:
+        return (self.last_price_date - self.open_date) # type: ignore
 
     @property
     def open_price(self) -> float:
@@ -320,10 +323,24 @@ class Deal:
         interest_by_position = profit / opened_capital
         """
         return self.__interest_by_acc
+    
+    @property
+    def interest_to_position_per_year(self) -> float:
+        """Percent profit by account for a year\n
+        interest_to_position_per_year = (profit / (opened_price * amount)) ^ (365 / lenght_in_days)
+        """
+        return pow(self.interest_to_position, 365/self.lenght_in_days.days)
+    
+    @property
+    def interest_to_account_per_year(self) -> float:
+        """Percent profit by account for a year\n
+        interest_to_account_per_year = (profit / opened_capital) ^ (365 / lenght_in_days)
+        """
+        return pow(self.interest_to_account, 365/self.lenght_in_days.days)
 
 
-    def to_dict(self) -> Dict:
-        return {
+    def to_dict(self, extended:bool=False) -> Dict:
+        return_dict = {
             Deal.OPEN_DATE_F: self.open_date,
             Deal.OPEN_PRICE_F: self.open_price,
             Deal.AMOUNT_F: self.amount,
@@ -338,6 +355,13 @@ class Deal:
             Deal.IS_CLOSED: int(self.is_closed),
             Deal.PRICE_LOG_F: self.price_log
         }
+        if extended:            
+            return_dict[Deal.PROFIT]= self.profit
+            return_dict[Deal.INTEREST_TO_POSITION]= self.interest_to_position
+            return_dict[Deal.INTEREST_TO_ACCOUNT]=self.interest_to_account
+            return_dict[Deal.INTEREST_TO_POSITION_PER_YEAR]= self.interest_to_position_per_year
+            return_dict[Deal.INTEREST_TO_ACCOUNT_PER_YEAR]=self.interest_to_account_per_year
+        return return_dict
 
     def __hash__(self):
         # Create a hash based on a tuple of hashable attributes

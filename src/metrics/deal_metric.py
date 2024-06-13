@@ -2,7 +2,7 @@ from datetime import timedelta
 from math import sqrt
 import pprint
 from ..models.deal import Deal
-from typing import Union,List,Dict
+from typing import Tuple, Union,List,Dict
 import numpy as np
 
 class DealMetric:
@@ -18,9 +18,31 @@ class DealMetric:
     AVG_INTEREST_TO_POS_BY_SUCCESS_F = "avg_interest_to_position_by_success"
     AVG_INTEREST_TO_POS_BY_LOSS_F = "avg_interest_to_position_by_loss"
     AVG_INTEREST_TO_POS_F = "avg_interest_to_position"
+    AVG_INTEREST_TO_ACC_PER_YEAR_BY_SUCCESS_F = "avg_interest_to_account_per_year_by_success"
+    AVG_INTEREST_TO_ACC_PER_YEAR_BY_LOSS_F = "avg_interest_to_account_per_year_by_loss"
+    AVG_INTEREST_TO_ACC_PER_YEAR_F = "avg_interest_to_account_per_year"
+    AVG_INTEREST_TO_POS_PER_YEAR_BY_SUCCESS_F = "avg_interest_to_position_per_year_by_success"
+    AVG_INTEREST_TO_POS_PER_YEAR_BY_LOSS_F = "avg_interest_to_position_per_year_by_loss"
+    AVG_INTEREST_TO_POS_PER_YEAR_F = "avg_interest_to_position_per_year"
     AVG_DEAL_LENGHT_IN_DAYS_F = "avg_deal_len_in_days"
     PROM_F = "PROM"
 
+    @staticmethod
+    def get_avg_interest(deal_list:List[Deal])->Tuple[float,float,float,float]:
+        """_summary_
+
+        Args:
+            deal_list (List[Deal]): list of deals
+
+        Returns:
+            Tuple[float,float,float,float]: avg_interest_to_pos, avg_interest_to_acc,avg_interest_to_pos_per_year,avg_interest_to_acc_per_year
+        """
+        avg_interest_to_pos = float(np.mean([d.interest_to_position for d in deal_list]))
+        avg_interest_to_acc = float(np.mean([d.interest_to_account for d in deal_list]))
+        avg_interest_to_pos_per_year = float(pow(np.prod([d.interest_to_position for d in deal_list]),365/np.sum([d.lenght_in_days.days for d in deal_list])))
+        avg_interest_to_acc_per_year = float(pow(np.prod([d.interest_to_account for d in deal_list]),365/np.sum([d.lenght_in_days.days for d in deal_list])))
+        return avg_interest_to_pos, avg_interest_to_acc,avg_interest_to_pos_per_year,avg_interest_to_acc_per_year
+    
     def __init__(self, deal_list: List[Deal]) -> None:
         self.__deal_count = len(deal_list)
 
@@ -35,30 +57,33 @@ class DealMetric:
 
         if self.__deal_count > 0:
             self.__avg_profit_all = float(np.mean([d.profit for d in deal_list]))
-            self.__avg_interest_to_pos = float(np.mean([d.interest_to_position for d in deal_list]))
-            self.__avg_interest_to_acc = float(np.mean([d.interest_to_account for d in deal_list]))
+            self.__avg_interest_to_pos, self.__avg_interest_to_acc, self.__avg_interest_to_pos_per_year, self.__avg_interest_to_acc_per_year  = DealMetric.get_avg_interest(deal_list)
         else:
             self.__avg_profit_all = None
             self.__avg_interest_to_pos = None
             self.__avg_interest_to_acc = None
+            self.__avg_interest_to_pos_per_year = None 
+            self.__avg_interest_to_acc_per_year = None
 
         if self.__success_deal_count > 0:
             self.__avg_profit_by_success = float(np.mean([d.profit for d in success_deals]))
-            self.__avg_interest_to_pos_by_success = float(np.mean([d.interest_to_position for d in success_deals]))
-            self.__avg_interest_to_acc_by_success = float(np.mean([d.interest_to_account for d in success_deals]))
+            self.__avg_interest_to_pos_by_success, self.__avg_interest_to_acc_by_success, self.__avg_interest_to_pos_per_year_by_success, self.__avg_interest_to_acc_per_year_by_success  = DealMetric.get_avg_interest(success_deals)
         else:
             self.__avg_profit_by_success = 0
             self.__avg_interest_to_pos_by_success =0
             self.__avg_interest_to_acc_by_success = 0
+            self.__avg_interest_to_pos_per_year_by_success = 0
+            self.__avg_interest_to_acc_per_year_by_success = 0
 
         if self.__fail_deal_count > 0:
             self.__avg_profit_by_loss = float(np.mean([d.profit for d in fail_deals]))
-            self.__avg_interest_to_pos_by_loss = float(np.mean([d.interest_to_position for d in fail_deals]))
-            self.__avg_interest_to_acc_by_loss = float(np.mean([d.interest_to_account for d in fail_deals]))
+            self.__avg_interest_to_pos_by_loss, self.__avg_interest_to_acc_by_loss, self.__avg_interest_to_pos_per_year_by_loss, self.__avg_interest_to_acc_per_year_by_loss  = DealMetric.get_avg_interest(fail_deals)
         else:
             self.__avg_profit_by_loss = 0
             self.__avg_interest_to_pos_by_loss = 0
             self.__avg_interest_to_acc_by_loss = 0
+            self.__avg_interest_to_pos_per_year_by_loss = 0 
+            self.__avg_interest_to_acc_per_year_by_loss = 0
         pass
 
     @property
@@ -125,8 +150,26 @@ class DealMetric:
         return self.__avg_interest_to_pos
     
     @property
+    def avg_interest_to_account_per_year_all(self)->Union[float, None]:
+        """Average deal interest per year relative to account capital. If no deals then None
+
+        Returns:
+            Union[float,None]: average deal net income
+        """
+        return self.__avg_interest_to_acc_per_year
+    
+    @property
+    def avg_interest_to_position_per_year_all(self)->Union[float, None]:
+        """Average deal interest per year relative to position open size (open price * amount) ^ (365/deal_lenght_in_days). If no deals then None
+
+        Returns:
+            Union[float,None]: average deal net income
+        """
+        return self.__avg_interest_to_pos_per_year
+    
+    @property
     def avg_interest_to_account_by_success(self)->float:
-        """Average interest per success deal relative to account capital. If no nuccess deals then 0
+        """Average interest by success deal relative to account capital. If no nuccess deals then 0
 
         Returns:
             Union[float,None]: average deal net income >= 0
@@ -135,16 +178,34 @@ class DealMetric:
     
     @property
     def avg_interest_to_position_by_success(self)->float:
-        """Average interest per success deal relative to position open size (open price * amount). If no nuccess deals then 0
+        """Average interest by success deal relative to position open size (open price * amount)^(365/lenght_in_days). If no nuccess deals then 0
 
         Returns:
             Union[float,None]: average deal net income >= 0
         """
-        return self.__avg_interest_to_pos_by_success
+        return self.__avg_interest_to_pos_per_year_by_success
+    
+    @property
+    def avg_interest_to_account_per_year_by_success(self)->float:
+        """Average interest per year by success deal relative to account capital. If no nuccess deals then 0
+
+        Returns:
+            Union[float,None]: average deal net income >= 0
+        """
+        return self.__avg_interest_to_acc_per_year_by_success
+    
+    @property
+    def avg_interest_to_position_per_year_by_success(self)->float:
+        """Average interest per year by success deal relative to position open size (open price * amount). If no nuccess deals then 0
+
+        Returns:
+            Union[float,None]: average deal net income >= 0
+        """
+        return self.__avg_interest_to_pos_per_year_by_success
     
     @property
     def avg_interest_to_account_by_loss(self)->float:
-        """Average interest per loss deal relative to account capital. If no fail deals then 0
+        """Average interest by loss deal relative to account capital. If no fail deals then 0
 
         Returns:
             Union[float,None]: average deal net loss <=0
@@ -153,13 +214,31 @@ class DealMetric:
     
     @property
     def avg_interest_to_position_by_loss(self)->float:
-        """Average interest per loss deal relative to position open size (open price * amount). If no fail deals then 0
+        """Average interest by loss deal relative to position open size (open price * amount). If no fail deals then 0
 
         Returns:
             Union[float,None]: average deal net loss <=0
         """
         return self.__avg_interest_to_pos_by_loss
     
+    @property
+    def avg_interest_to_account_per_year_by_loss(self)->float:
+        """Average interest per year by loss deal relative to account capital. If no fail deals then 0
+
+        Returns:
+            Union[float,None]: average deal net loss <=0
+        """
+        return self.__avg_interest_to_acc_per_year_by_loss
+    
+    @property
+    def avg_interest_to_position_per_year_by_loss(self)->float:
+        """Average interest per year by loss deal relative to position open size (open price * amount)^(365/lenght_in_days). If no fail deals then 0
+
+        Returns:
+            Union[float,None]: average deal net loss <=0
+        """
+        return self.__avg_interest_to_pos_per_year_by_loss
+
     @property
     def avg_deal_lenght_in_days(self)->float|None:
         return self.__avg_deal_length_in_days
@@ -206,6 +285,12 @@ class DealMetric:
             DealMetric.AVG_INTEREST_TO_ACC_BY_SUCCESS_F:self.avg_interest_to_account_by_success,
             DealMetric.AVG_INTEREST_TO_ACC_BY_LOSS_F:self.avg_interest_to_account_by_loss, 
             DealMetric.AVG_INTEREST_TO_ACC_F:self.avg_interest_to_account_all,
+            DealMetric.AVG_INTEREST_TO_POS_PER_YEAR_BY_SUCCESS_F:self.avg_interest_to_position_per_year_by_success,
+            DealMetric.AVG_INTEREST_TO_POS_PER_YEAR_BY_LOSS_F:self.avg_interest_to_position_per_year_by_loss, 
+            DealMetric.AVG_INTEREST_TO_POS_PER_YEAR_F:self.avg_interest_to_position_per_year_all,
+            DealMetric.AVG_INTEREST_TO_ACC_PER_YEAR_BY_SUCCESS_F:self.avg_interest_to_account_per_year_by_success,
+            DealMetric.AVG_INTEREST_TO_ACC_PER_YEAR_BY_LOSS_F:self.avg_interest_to_account_per_year_by_loss, 
+            DealMetric.AVG_INTEREST_TO_ACC_PER_YEAR_F:self.avg_interest_to_account_per_year_all,
             DealMetric.PROM_F: self.PROM
         }
 
