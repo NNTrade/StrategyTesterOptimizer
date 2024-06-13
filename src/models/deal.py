@@ -331,7 +331,7 @@ class Deal:
         """
         lenght_in_days = self.lenght_in_days.days if self.lenght_in_days.days > 0 else 1
             
-        return pow(self.interest_to_position, 365/lenght_in_days)
+        return pow(self.interest_to_position+1, 365/lenght_in_days)-1
     
     @property
     def interest_to_account_per_year(self) -> float:
@@ -339,7 +339,7 @@ class Deal:
         interest_to_account_per_year = (profit / opened_capital) ^ (365 / lenght_in_days)
         """
         lenght_in_days = self.lenght_in_days.days if self.lenght_in_days.days > 0 else 1
-        return pow(self.interest_to_account, 365/lenght_in_days)
+        return pow(self.interest_to_account+1, 365/lenght_in_days)-1
 
 
     def to_dict(self, extended:bool=False) -> Dict:
