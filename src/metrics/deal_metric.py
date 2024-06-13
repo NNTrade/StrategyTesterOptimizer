@@ -39,8 +39,8 @@ class DealMetric:
         """
         avg_interest_to_pos = float(np.mean([d.interest_to_position for d in deal_list]))
         avg_interest_to_acc = float(np.mean([d.interest_to_account for d in deal_list]))
-        avg_interest_to_pos_per_year = float(pow(np.prod([d.interest_to_position for d in deal_list]),365/np.sum([d.lenght_in_days.days for d in deal_list])))
-        avg_interest_to_acc_per_year = float(pow(np.prod([d.interest_to_account for d in deal_list]),365/np.sum([d.lenght_in_days.days for d in deal_list])))
+        avg_interest_to_pos_per_year = float(pow(np.prod([d.interest_to_position for d in deal_list]),365/np.sum([d.lenght_in_days for d in deal_list])))
+        avg_interest_to_acc_per_year = float(pow(np.prod([d.interest_to_account for d in deal_list]),365/np.sum([d.lenght_in_days for d in deal_list])))
         return avg_interest_to_pos, avg_interest_to_acc,avg_interest_to_pos_per_year,avg_interest_to_acc_per_year
     
     def __init__(self, deal_list: List[Deal]) -> None:
@@ -52,7 +52,7 @@ class DealMetric:
         fail_deals = [d for d in deal_list if d.profit < 0]
         self.__fail_deal_count = len(fail_deals)
 
-        closed_deals_len = [d.lenght_in_days.days for d in deal_list if d.is_closed] # type: ignore
+        closed_deals_len = [d.lenght_in_days for d in deal_list if d.is_closed] # type: ignore
         self.__avg_deal_length_in_days = float(np.mean(closed_deals_len)) if len(closed_deals_len) else None
 
         if self.__deal_count > 0:

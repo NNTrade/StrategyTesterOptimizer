@@ -25,7 +25,8 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
-        self.assertEqual(asserted_deal.lenght_in_days, timedelta(0))
+        self.assertEqual(asserted_deal.lenght_in_timedelta, timedelta(0))
+        self.assertEqual(asserted_deal.lenght_in_days, 0)
 
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, 2)
@@ -66,7 +67,8 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date, datetime(2020, 1, 1))
         self.assertIsNone(asserted_deal.close_date)
-        self.assertEqual(asserted_deal.lenght_in_days, timedelta(0))
+        self.assertEqual(asserted_deal.lenght_in_timedelta, timedelta(0))
+        self.assertEqual(asserted_deal.lenght_in_days, 0)
 
         self.assertEqual(asserted_deal.amount_abs, 2)
         self.assertEqual(asserted_deal.amount, -2)
@@ -143,7 +145,8 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.last_price,130)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 2),130)
-        self.assertEqual(asserted_deal.lenght_in_days,timedelta(1))
+        self.assertEqual(asserted_deal.lenght_in_timedelta,timedelta(1))
+        self.assertEqual(asserted_deal.lenght_in_days, 1)
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertIsNone(asserted_deal.close_price)
@@ -169,7 +172,8 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.last_price,124)
         self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
-        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_timedelta,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_days, 2)
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertIsNone(asserted_deal.close_price)
@@ -191,19 +195,20 @@ class Deal_TestCase(unittest.TestCase):
 
         # Act
         asserted_deal.add_commision_holding(-5)
-        asserted_deal.close_deal(datetime(2020, 1, 3), 130, -4)
+        asserted_deal.close_deal(datetime(2020, 1, 3,12), 130, -4)
 
         # Assert
         self.assertEqual(len(asserted_deal.price_log), 2)
         self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 1)], 123)
-        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 3)], 130)
+        self.assertEqual(asserted_deal.price_log[datetime(2020, 1, 3,12)], 130)
 
         self.assertEqual(asserted_deal.last_price,130)
-        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3))
+        self.assertEqual(asserted_deal.last_price_date,datetime(2020, 1, 3,12))
         
         self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
-        self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
-        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
+        self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3,12))
+        self.assertEqual(asserted_deal.lenght_in_timedelta,timedelta(2,hours=12))
+        self.assertEqual(asserted_deal.lenght_in_days, 2.5)
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 130)
@@ -216,8 +221,8 @@ class Deal_TestCase(unittest.TestCase):
         self.assertEqual(asserted_deal.interest_to_account, 2/10)
         self.assertEqual(asserted_deal.interest_to_position, 2/(123*2))
         
-        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(2/10+1,365/2)-1)
-        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(2/(123*2)+1,365/2)-1)
+        self.assertEqual(asserted_deal.interest_to_account_per_year, pow(2/10+1,365/2.5)-1)
+        self.assertEqual(asserted_deal.interest_to_position_per_year, pow(2/(123*2)+1,365/2.5)-1)
 
         self.assertEqual(asserted_deal.opened_size, 123*2)
         self.assertEqual(asserted_deal.last_size, 130*2)
@@ -241,7 +246,8 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
         self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
-        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_timedelta,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_days, 2)
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 120)
@@ -279,7 +285,8 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
         self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
-        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_timedelta,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_days, 2)
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 110)
@@ -317,7 +324,8 @@ class Deal_TestCase(unittest.TestCase):
 
         self.assertEqual(asserted_deal.open_date,datetime(2020, 1, 1))
         self.assertEqual(asserted_deal.close_date,datetime(2020, 1, 3))
-        self.assertEqual(asserted_deal.lenght_in_days,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_timedelta,timedelta(2))
+        self.assertEqual(asserted_deal.lenght_in_days, 2)
 
         self.assertEqual(asserted_deal.open_price, 123)
         self.assertEqual(asserted_deal.close_price, 126)

@@ -17,6 +17,7 @@ class Deal:
     AMOUNT_F = "amount"
     OPENED_CAPITAL_F = "opened_capital"
     CLOSE_DATE_F = "close_date"
+    LENGHT_IN_TIMEDELTA_F = "lenght_in_timedelta"
     LENGHT_IN_DAYS_F = "lenght_in_days"
     LAST_PRICE_F = "last_price"
     COMMISSION_OPEN_F = "commission_open"
@@ -214,8 +215,12 @@ class Deal:
             return None
     
     @property
-    def lenght_in_days(self)->timedelta:
-        return (self.last_price_date - self.open_date) # type: ignore
+    def lenght_in_timedelta(self)->timedelta:
+        return (self.last_price_date - self.open_date)
+    
+    @property
+    def lenght_in_days(self)->float:
+        return self.lenght_in_timedelta.total_seconds() / (24 * 3600) # type: ignore
 
     @property
     def open_price(self) -> float:
@@ -329,7 +334,7 @@ class Deal:
         """Percent profit by account for a year\n
         interest_to_position_per_year = (profit / (opened_price * amount)) ^ (365 / lenght_in_days)
         """
-        lenght_in_days = self.lenght_in_days.days if self.lenght_in_days.days > 0 else 1
+        lenght_in_days = self.lenght_in_days if self.lenght_in_days > 0 else 1
             
         return pow(self.interest_to_position+1, 365/lenght_in_days)-1
     
@@ -338,7 +343,7 @@ class Deal:
         """Percent profit by account for a year\n
         interest_to_account_per_year = (profit / opened_capital) ^ (365 / lenght_in_days)
         """
-        lenght_in_days = self.lenght_in_days.days if self.lenght_in_days.days > 0 else 1
+        lenght_in_days = self.lenght_in_days if self.lenght_in_days > 0 else 1
         return pow(self.interest_to_account+1, 365/lenght_in_days)-1
 
 
@@ -350,13 +355,14 @@ class Deal:
             Deal.ASSET_F: self.asset,
             Deal.OPENED_CAPITAL_F: self.opened_capital,
             Deal.CLOSE_DATE_F: self.close_date,
+            Deal.LENGHT_IN_TIMEDELTA_F: self.lenght_in_timedelta,
             Deal.LENGHT_IN_DAYS_F: self.lenght_in_days,
             Deal.LAST_PRICE_F: self.last_price,
             Deal.COMMISSION_OPEN_F: self.__commission_open,            
             Deal.COMMISSION_HOLDING_F: self.__commission_holding,
             Deal.COMMISSION_CLOSE_F: self.__commission_close,
             Deal.IS_CLOSED: int(self.is_closed),
-            Deal.PRICE_LOG_F: self.price_log
+            Deal.PRICE_LOG_F: self.price_log,
         }
         if extended:            
             return_dict[Deal.PROFIT]= self.profit
