@@ -24,13 +24,13 @@ class Deal:
     COMMISSION_OPEN_F = "commission_open"
     COMMISSION_CLOSE_F = "commission_close"
     COMMISSION_HOLDING_F = "commission_holding"
-    IS_CLOSED = "is_closed"
+    IS_CLOSED_F = "is_closed"
     PRICE_LOG_F = "price_log"
-    PROFIT = "profit"
-    INTEREST_TO_POSITION = "interest_to_position"
-    INTEREST_TO_ACCOUNT = "interest_to_account"
-    INTEREST_TO_POSITION_PER_YEAR = "interest_to_position_per_year"  
-    INTEREST_TO_ACCOUNT_PER_YEAR = "interest_to_account_per_year"
+    PROFIT_F = "profit"
+    INTEREST_TO_POSITION_F = "interest_to_position"
+    INTEREST_TO_ACCOUNT_F = "interest_to_account"
+    INTEREST_TO_POSITION_PER_YEAR_F = "interest_to_position_per_year"  
+    INTEREST_TO_ACCOUNT_PER_YEAR_F = "interest_to_account_per_year"
 
     def __init__(self,
                  open_date: datetime,
@@ -391,17 +391,17 @@ class Deal:
             Deal.COMMISSION_OPEN_F: self.__commission_open,            
             Deal.COMMISSION_HOLDING_F: self.__commission_holding,
             Deal.COMMISSION_CLOSE_F: self.__commission_close,
-            Deal.IS_CLOSED: int(self.is_closed),
+            Deal.IS_CLOSED_F: int(self.is_closed),
             Deal.PRICE_LOG_F: self.price_log,   
         }
         if extended:
             return_dict[Deal.LENGHT_IN_TIMEDELTA_F]= self.lenght_in_timedelta
             return_dict[Deal.LENGHT_IN_DAYS_F]= self.lenght_in_days
-            return_dict[Deal.PROFIT]=self.profit
-            return_dict[Deal.INTEREST_TO_POSITION]= self.interest_to_position
-            return_dict[Deal.INTEREST_TO_ACCOUNT]=self.interest_to_account
-            return_dict[Deal.INTEREST_TO_POSITION_PER_YEAR]= self.interest_to_position_per_year
-            return_dict[Deal.INTEREST_TO_ACCOUNT_PER_YEAR]=self.interest_to_account_per_year
+            return_dict[Deal.PROFIT_F]=self.profit
+            return_dict[Deal.INTEREST_TO_POSITION_F]= self.interest_to_position
+            return_dict[Deal.INTEREST_TO_ACCOUNT_F]=self.interest_to_account
+            return_dict[Deal.INTEREST_TO_POSITION_PER_YEAR_F]= self.interest_to_position_per_year
+            return_dict[Deal.INTEREST_TO_ACCOUNT_PER_YEAR_F]=self.interest_to_account_per_year
         return return_dict
     
     def to_json(self):
@@ -414,7 +414,7 @@ class Deal:
             Deal.LAST_PRICE_F: self.last_price,
             Deal.COMMISSION_OPEN_F: self.commission_open,
             Deal.COMMISSION_HOLDING_F: self.commission_holding,      
-            Deal.IS_CLOSED : int(self.is_closed),
+            Deal.IS_CLOSED_F : int(self.is_closed),
             Deal.PRICE_LOG_F: {k.isoformat():v for k,v in self.__price_log.items()}
         }
         if self.is_closed:           
@@ -437,13 +437,13 @@ class Deal:
         price_log:Dict[str,float] = data[Deal.PRICE_LOG_F]
         if len(price_log)> 1:
             price_log_arr = list(price_log.items())[1:]
-            if data[Deal.IS_CLOSED]:      
+            if data[Deal.IS_CLOSED_F]:      
                 price_log_arr = price_log_arr[:-1]
             for dt_str,p in price_log_arr:
                 dt = datetime.fromisoformat(dt_str)
                 deal.set_last_price(dt,p)
 
-        if data[Deal.IS_CLOSED] == 1:
+        if data[Deal.IS_CLOSED_F] == 1:
             deal.close_deal(
                 datetime.fromisoformat(data[Deal.CLOSE_DATE_F]),
                 data[Deal.LAST_PRICE_F],
